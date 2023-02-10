@@ -1,0 +1,7 @@
+[*.yml]
+indent_style = space
+indent_size = 2
+
+[*.txt]
+indent_style = space
+tab_width = 4
