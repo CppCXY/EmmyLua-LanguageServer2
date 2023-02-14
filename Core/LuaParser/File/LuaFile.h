@@ -3,7 +3,7 @@
 #include <string_view>
 #include <string>
 #include <vector>
-#include "LuaP"
+#include "LuaParser/Types/EndOfLineType.h"
 
 class LuaFile
 {

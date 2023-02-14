@@ -2,8 +2,8 @@
 
 #include <vector>
 #include <string>
-#include "Ast/LuaSyntaxNodeKind.h"
-#include "Lexer/LuaTokenKind.h"
+#include "LuaParser/Ast/LuaSyntaxNodeKind.h"
+#include "LuaParser/Lexer/LuaTokenKind.h"
 #include "LuaParseError.h"
 
 class LuaParser;

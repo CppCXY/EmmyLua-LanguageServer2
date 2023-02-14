@@ -17,7 +17,6 @@ if(APPLE)
 endif ()
 
 add_subdirectory(3rd/fmt-9.1.0)
-add_subdirectory(Core/LuaParser)
 add_subdirectory(Util)
 add_subdirectory(Core)
 add_subdirectory(LanguageServer)

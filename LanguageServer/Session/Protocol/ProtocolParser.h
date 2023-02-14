@@ -4,7 +4,7 @@
 #include <string_view>
 #include <memory>
 #include <variant>
-#include "Core/LSP/LSP.h"
+#include "Core/Lib/LSP/LSP.h"
 
 
 class ProtocolParser

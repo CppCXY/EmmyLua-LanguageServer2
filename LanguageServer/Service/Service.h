@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "Core/LSP/LSP.h"
+#include "Core/Lib/LSP/LSP.h"
 #include "ServiceType.h"
 
 class LanguageServer;

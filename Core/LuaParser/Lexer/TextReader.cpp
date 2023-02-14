@@ -1,5 +1,5 @@
-#include "LuaParser/Lexer/TextReader.h"
-#include "LuaParser/Lexer/LuaDefine.h"
+#include "TextReader.h"
+#include "LuaDefine.h"
 
 
 TextReader::TextReader(std::string_view text)

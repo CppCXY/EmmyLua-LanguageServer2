@@ -52,7 +52,7 @@ void LanguageServer::SendNotification(std::string_view method, std::shared_ptr<l
 
     if (_session) {
         auto dumpResult = json.dump();
-        std::string message = util::format("Content-Length:{}\r\n\r\n", dumpResult.size());
+        std::string message = fmt::format("Content-Length:{}\r\n\r\n", dumpResult.size());
 
         message.append(dumpResult);
         _session->Send(std::move(message));
@@ -71,7 +71,7 @@ void LanguageServer::SendRequest(std::string_view method, std::shared_ptr<lsp::S
     }
     if (_session) {
         auto dumpResult = json.dump();
-        std::string message = util::format("Content-Length:{}\r\n\r\n", dumpResult.size());
+        std::string message = fmt::format("Content-Length:{}\r\n\r\n", dumpResult.size());
 
         message.append(dumpResult);
         _session->Send(std::move(message));

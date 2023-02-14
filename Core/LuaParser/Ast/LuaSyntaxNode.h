@@ -5,8 +5,8 @@
 #include <memory>
 #include <functional>
 #include "LuaSyntaxNodeKind.h"
-#include "Types/TextRange.h"
-#include "Lexer/LuaTokenKind.h"
+#include "LuaParser/Types/TextRange.h"
+#include "LuaParser/Lexer/LuaTokenKind.h"
 #include "LuaSyntaxMultiKind.h"
 
 class LuaSyntaxTree;

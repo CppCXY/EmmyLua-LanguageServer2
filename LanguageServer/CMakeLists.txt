@@ -4,13 +4,10 @@ project(LanguageServer)
 
 add_executable(LanguageServer)
 
-add_dependencies(LanguageServer Core fmt)
+add_dependencies(LanguageServer Core)
 
-target_include_directories(LanguageServer PUBLIC
-        ${EmmyLuaLS_SOURCE_DIR}/3rd/asio-1.20.0/include
-        ${EmmyLuaLS_SOURCE_DIR}/3rd/nlohmann_json/include
-        ${EmmyLuaLS_SOURCE_DIR}/3rd/mimalloc-2.0.3/include
-        PRIVATE
+target_include_directories(LanguageServer PRIVATE
+        ${EmmyLuaLS_SOURCE_DIR}/3rd/asio-1.24.0/include
         ./
         ${EmmyLuaLS_SOURCE_DIR}
         )
@@ -57,7 +54,7 @@ target_sources(LanguageServer
         # ${EmmyLuaLS_SOURCE_DIR}/3rd/mimalloc-2.0.3/static.c
         )
 
-target_link_libraries(LanguageServer PRIVATE Core fmt)
+target_link_libraries(LanguageServer PUBLIC Core)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Windows")
     target_compile_definitions(LanguageServer PUBLIC -D_WIN32_WINNT=0x0601)

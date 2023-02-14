@@ -1,9 +1,9 @@
 ﻿#include "LuaParser.h"
-#include "Lexer/LuaDefine.h"
-#include "Lexer/LuaTokenTypeDetail.h"
+#include "LuaParser/Lexer/LuaDefine.h"
+#include "LuaParser/Lexer/LuaTokenTypeDetail.h"
 #include "LuaOperatorType.h"
-#include "exception/LuaParseException.h"
-#include "File/LuaFile.h"
+#include "LuaParser/exception/LuaParseException.h"
+#include "LuaParser/File/LuaFile.h"
 #include <fmt/format.h>
 
 LuaParser::LuaParser(std::shared_ptr<LuaFile> luaFile, std::vector<LuaToken> &&tokens)
@@ -863,7 +863,7 @@ void LuaParser::LocalAttribute() {
         auto attributeName = CheckName();
         CheckAndNext('>');
         if (attributeName != "const" && attributeName != "close") {
-            LuaExpectedError(util::format("unknown attribute {}", attributeName));
+            LuaExpectedError(fmt::format("unknown attribute {}", attributeName));
         }
         m.Complete(*this, LuaSyntaxNodeKind::Attribute);
         return;
@@ -873,7 +873,7 @@ void LuaParser::LocalAttribute() {
 
 void LuaParser::Check(LuaTokenKind c) {
     if (Current() != c) {
-        LuaExpectedError(util::format("{} expected", c));
+        LuaExpectedError(fmt::format("{} expected", c));
     }
 }
 
@@ -969,7 +969,7 @@ BinOpr LuaParser::GetBinaryOperator(LuaTokenKind op) {
 
 void LuaParser::CheckAndNext(LuaTokenKind kind) {
     if (Current() != kind) {
-        LuaExpectedError(util::format("token type {} expected", kind), kind);
+        LuaExpectedError(fmt::format("token type {} expected", kind), kind);
         return;
     }
 

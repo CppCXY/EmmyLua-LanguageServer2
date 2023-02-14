@@ -2,12 +2,12 @@
 
 #include <memory>
 #include <vector>
-#include "Lexer/LuaLexer.h"
+#include "LuaParser/Lexer/LuaLexer.h"
 #include "LuaOperatorType.h"
 #include "LuaAttribute.h"
 #include "LuaParseError.h"
-#include "Ast/LuaSyntaxNode.h"
-#include "Ast/LuaSyntaxTree.h"
+#include "LuaParser/Ast/LuaSyntaxNode.h"
+#include "LuaParser/Ast/LuaSyntaxTree.h"
 #include "Mark.h"
 
 class LuaParser

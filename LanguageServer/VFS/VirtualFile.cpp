@@ -2,7 +2,7 @@
 #include "Util/Url.h"
 #include "LuaParser/Lexer/LuaLexer.h"
 #include "LuaParser/Parse/LuaParser.h"
-#include "Core/LineIndex/LineIndex.h"
+#include "Core/Lib/LineIndex/LineIndex.h"
 #include "VirtualFileSystem.h"
 
 VirtualFile::VirtualFile(std::size_t fileId)

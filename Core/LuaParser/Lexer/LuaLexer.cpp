@@ -1,8 +1,8 @@
-﻿#include "LuaParser/Lexer/LuaLexer.h"
+﻿#include "LuaLexer.h"
 #include <limits>
-#include "LuaParser/Lexer/LuaDefine.h"
-#include "LuaParser/Lexer/LuaIdentify.h"
-#include "LuaParser/Lexer/LuaTokenTypeDetail.h"
+#include "LuaDefine.h"
+#include "LuaIdentify.h"
+#include "LuaTokenTypeDetail.h"
 #include "Util/Utf8.h"
 #include "LuaParser/File/LuaFile.h"
 
