@@ -158,17 +158,6 @@ std::shared_ptr<lsp::DocumentDiagnosticReport> LSPHandle::OnTextDocumentDiagnost
         return report;
     }
 
-    auto opSyntaxTree = vfs.GetVirtualFile(params->textDocument.uri).GetSyntaxTree(vfs);
-    if (!opSyntaxTree.has_value()) {
-        return report;
-    }
-
-    auto &syntaxTree = opSyntaxTree.value();
-
-    if (syntaxTree.HasError()) {
-        return report;
-    }
-
     auto diagnostics = _server->GetService<DiagnosticService>()->Diagnostic(
             opFileId.value());
     report->resultId = std::to_string(opFileId.value());
