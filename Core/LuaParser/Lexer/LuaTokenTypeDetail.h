@@ -46,15 +46,10 @@ enum LuaTokenTypeDetail : int
 	TK_STRING,
     TK_LONG_STRING,
 	TK_SHORT_COMMENT,// 短注释
-	TK_DOC_COMMENT, // emmylua doc
 	TK_LONG_COMMENT, //长注释
 	TK_SHEBANG, //shebang
     TK_EOF, // 文件末尾
     TK_ERR, // 错误Token
-	// DOC
-	TK_DOC_TAG_FORMAT,
-	TK_DOC_DISABLE_NEXT,
-	TK_DOC_DISABLE,
 
-	TK_UNKNOWN, //对自定义tokenParser来说是未知
+	TK_UNKNOWN,
 };

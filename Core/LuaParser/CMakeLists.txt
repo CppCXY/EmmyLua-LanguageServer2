@@ -3,8 +3,8 @@ target_sources(Core
         PRIVATE
 
         # parse
-        Parse/LuaParser.cpp
-        Parse/Mark.cpp
+        Parser/LuaParser.cpp
+        Parser/Mark.cpp
 
         # lexer
         Lexer/LuaLexer.cpp

@@ -4,7 +4,6 @@
 #include <vector>
 #include "LuaParser/Lexer/LuaLexer.h"
 #include "LuaOperatorType.h"
-#include "LuaAttribute.h"
 #include "LuaParseError.h"
 #include "LuaParser/Ast/LuaSyntaxNode.h"
 #include "LuaParser/Ast/LuaSyntaxTree.h"
