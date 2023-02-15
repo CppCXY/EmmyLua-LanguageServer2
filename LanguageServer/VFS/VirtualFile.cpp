@@ -1,7 +1,7 @@
 #include "VirtualFile.h"
 #include "Lib/LineIndex/LineIndex.h"
 #include "LuaParser/Lexer/LuaLexer.h"
-#include "LuaParser/Parse/LuaParser.h"
+#include "LuaParser/Parser/LuaParser.h"
 #include "Util/Url.h"
 #include "VirtualFileSystem.h"
 

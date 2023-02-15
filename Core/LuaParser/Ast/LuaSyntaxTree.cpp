@@ -1,6 +1,6 @@
 #include "LuaSyntaxTree.h"
 #include <algorithm>
-#include "LuaParser/Parse/LuaParser.h"
+#include "LuaParser/Parser/LuaParser.h"
 #include "LuaParser/Lexer/LuaTokenTypeDetail.h"
 #include <fmt/format.h>
 

@@ -4,7 +4,7 @@
 #include <vector>
 #include <stack>
 #include "LuaParser/File/LuaFile.h"
-#include "LuaParser/Parse/Mark.h"
+#include "LuaParser/Parser/Mark.h"
 #include "LuaParser/Lexer/LuaToken.h"
 #include "NodeOrToken.h"
 #include "LuaSyntaxNode.h"
