@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string_view>
-#include "Core/Lib/LSP/LSP.h"
+#include "Lib/LSP/LSP.h"
 #include "VirtualFile.h"
 #include "DB/FileDB.h"
 #include "DB/UriDB.h"

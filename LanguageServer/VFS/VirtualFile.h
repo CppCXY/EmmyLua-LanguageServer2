@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Core/Lib/LSP/LSP.h"
-#include "Core/LuaParser/Ast/LuaSyntaxTree.h"
+#include "Lib/LSP/LSP.h"
+#include "LuaParser/Ast/LuaSyntaxTree.h"
 #include "DB/FileDB.h"
-#include "Core/Lib/LineIndex/LineIndex.h"
+#include "Lib/LineIndex/LineIndex.h"
 
 class VirtualFileSystem;
 

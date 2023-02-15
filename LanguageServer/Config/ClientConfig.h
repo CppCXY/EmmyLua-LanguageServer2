@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Lib/LSP/LSP.h"
+#include "Lib/LSP/LSP.h"
 
 class ClientConfig : lsp::Serializable {
 public:

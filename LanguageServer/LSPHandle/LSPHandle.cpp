@@ -50,23 +50,14 @@ std::shared_ptr<lsp::InitializeResult> LSPHandle::OnInitialize(std::shared_ptr<l
 
     auto result = std::make_shared<lsp::InitializeResult>();
 
-    result->capabilities.documentFormattingProvider = true;
-    result->capabilities.documentRangeFormattingProvider = true;
-
-    lsp::DocumentOnTypeFormattingOptions typeOptions;
-
-    typeOptions.firstTriggerCharacter = "\n";
-
-    result->capabilities.documentOnTypeFormattingProvider = typeOptions;
-
     result->capabilities.textDocumentSync.change = lsp::TextDocumentSyncKind::Incremental;
     result->capabilities.textDocumentSync.openClose = true;
 
-    result->capabilities.codeActionProvider = true;
-    result->capabilities.executeCommandProvider.commands =
-            _server->GetService<CommandService>()->GetCommands();
+//    result->capabilities.codeActionProvider = true;
+//    result->capabilities.executeCommandProvider.commands =
+//            _server->GetService<CommandService>()->GetCommands();
 
-    result->capabilities.diagnosticProvider.identifier = "EmmyLuaCodeStyle";
+    result->capabilities.diagnosticProvider.identifier = "EmmyLua";
     result->capabilities.diagnosticProvider.workspaceDiagnostics = false;
     result->capabilities.diagnosticProvider.interFileDependencies = false;
 
@@ -75,16 +66,16 @@ std::shared_ptr<lsp::InitializeResult> LSPHandle::OnInitialize(std::shared_ptr<l
 //        _server->GetService<ConfigService>()->LoadEditorconfig(configFile.workspace, configFile.path);
 //    }
 
-    std::filesystem::path localePath = params->initializationOptions.localeRoot;
-    localePath /= params->locale + ".json";
+//    std::filesystem::path localePath = params->initializationOptions.localeRoot;
+//    localePath /= params->locale + ".json";
 
 //    if (std::filesystem::exists(localePath) && std::filesystem::is_regular_file(localePath)) {
 //        _server->GetService<ConfigService>()->LoadLanguageTranslator(localePath.string());
 //    }
 
-    ClientConfig clientConfig;
-    clientConfig.Deserialize(params->initializationOptions.vscodeConfig);
-    _server->GetService<ConfigService>()->UpdateClientConfig(clientConfig);
+//    ClientConfig clientConfig;
+//    clientConfig.Deserialize(params->initializationOptions.vscodeConfig);
+//    _server->GetService<ConfigService>()->UpdateClientConfig(clientConfig);
 
     return result;
 }

@@ -4,7 +4,7 @@
 
 #include <asio.hpp>
 #include <asio/io_context.hpp>
-#include "Core/Lib/LSP/LSP.h"
+#include "Lib/LSP/LSP.h"
 #include "Session/IOSession.h"
 #include "Service/ServiceType.h"
 #include "VFS/VirtualFile.h"

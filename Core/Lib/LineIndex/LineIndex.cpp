@@ -2,10 +2,10 @@
 #include <algorithm>
 
 LineIndex::LineIndex() {
-
 }
 
 void LineIndex::Parse(std::string &text) {
+    _newLines.clear();
     _newLines.resize(1, LineOffset(0));
     for (std::size_t i = 0; i < text.size();) {
         char c = text[i];
@@ -49,4 +49,15 @@ std::size_t LineIndex::GetOffset(const LineCol &lineCol) {
 
 std::size_t LineIndex::GetTotalLine() {
     return _newLines.size();
+}
+
+lsp::Range LineIndex::ToLspRange(TextRange range) {
+    return lsp::Range(
+            ToLspPosition(range.StartOffset),
+            ToLspPosition(range.EndOffset));
+}
+
+lsp::Position LineIndex::ToLspPosition(std::size_t offset) {
+    auto lc = GetLineCol(offset);
+    return lsp::Position(lc.Line, lc.Col);
 }

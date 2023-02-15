@@ -3,7 +3,7 @@
 #include <memory>
 #include <functional>
 #include <map>
-#include "Core/Lib/LSP/LSP.h"
+#include "Lib/LSP/LSP.h"
 
 class LanguageServer;
 

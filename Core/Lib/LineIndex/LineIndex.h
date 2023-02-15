@@ -3,6 +3,8 @@
 #include <vector>
 
 #include "LineTypes.h"
+#include "Lib/LSP/LSP.h"
+#include "LuaParser/Types/TextRange.h"
 
 class LineIndex {
 public:
@@ -15,6 +17,10 @@ public:
     std::size_t GetOffset(const LineCol& lineCol);
 
     std::size_t GetTotalLine();
+
+    lsp::Range ToLspRange(TextRange range);
+
+    lsp::Position ToLspPosition(std::size_t offset);
 private:
     std::vector<LineOffset> _newLines;
 };

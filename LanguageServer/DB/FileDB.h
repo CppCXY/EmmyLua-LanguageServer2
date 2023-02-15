@@ -3,7 +3,7 @@
 #include "DBBase.h"
 #include <string>
 #include <vector>
-#include "Core/Lib/LSP/LSP.h"
+#include "Lib/LSP/LSP.h"
 
 class FileDB : public SharedDBBase<std::size_t, std::string> {
 public:
