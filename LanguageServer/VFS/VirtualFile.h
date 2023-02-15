@@ -16,7 +16,7 @@ public:
 
     std::optional<LuaSyntaxTree> GetSyntaxTree(VirtualFileSystem& vfs) const;
 
-    std::shared_ptr<LineIndex> GetLineIndex(VirtualFileSystem& vfs) const;
+    std::shared_ptr<LuaFile> GetLuaFile(VirtualFileSystem& vfs) const;
 private:
 	std::size_t _fileId;
 };

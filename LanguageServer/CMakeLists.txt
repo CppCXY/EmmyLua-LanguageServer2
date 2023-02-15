@@ -41,7 +41,6 @@ target_sources(LanguageServer
         # DB
         DB/FileDB.cpp
         DB/UriDB.cpp
-        DB/LineIndexDB.cpp
 
         # service
         Service/Service.cpp

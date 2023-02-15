@@ -24,40 +24,53 @@ void LineIndex::Parse(std::string &text) {
     }
 }
 
-LineCol LineIndex::GetLineCol(std::size_t offset) {
-    auto lineIt = std::partition_point(
-            _newLines.begin(), _newLines.end(),
-            [offset](LineOffset &lo) {
-                return lo.Start <= offset;
-            });
-    std::size_t line = 0;
-    if (lineIt > _newLines.begin()) {
-        line = static_cast<std::size_t>(lineIt - _newLines.begin() - 1);
-    }
+LineCol LineIndex::GetLineCol(std::size_t offset) const {
+    auto line = GetLine(offset);
     auto lineStartOffset = _newLines.at(line).Start;
     auto colOffset = offset - lineStartOffset;
     auto col = _newLines.at(line).GetCol(colOffset);
     return {line, col};
 }
 
-std::size_t LineIndex::GetOffset(const LineCol &lineCol) {
+std::size_t LineIndex::GetLine(std::size_t offset) const {
+    auto lineIt = std::partition_point(
+            _newLines.begin(), _newLines.end(),
+            [offset](const LineOffset &lo) {
+                return lo.Start <= offset;
+            });
+    std::size_t line = 0;
+    if (lineIt > _newLines.begin()) {
+        line = static_cast<std::size_t>(lineIt - _newLines.begin() - 1);
+    }
+    return line;
+}
+
+std::size_t LineIndex::GetCol(std::size_t offset) const {
+    auto line = GetLine(offset);
+    auto lineStartOffset = _newLines.at(line).Start;
+    auto colOffset = offset - lineStartOffset;
+    return _newLines.at(line).GetCol(colOffset);
+}
+
+std::size_t LineIndex::GetOffset(const LineCol &lineCol) const {
     if (lineCol.Line < _newLines.size()) {
         return _newLines.at(lineCol.Line).GetOffset(lineCol.Col);
     }
     return 0;
 }
 
-std::size_t LineIndex::GetTotalLine() {
+std::size_t LineIndex::GetTotalLine() const {
     return _newLines.size();
 }
 
-lsp::Range LineIndex::ToLspRange(TextRange range) {
-    return lsp::Range(
-            ToLspPosition(range.StartOffset),
-            ToLspPosition(range.EndOffset));
+lsp::Range LineIndex::ToLspRange(TextRange range) const {
+    auto p1 = ToLspPosition(range.StartOffset);
+    auto p2 = ToLspPosition(range.EndOffset);
+    p2.character++;
+    return lsp::Range(p1, p2);
 }
 
-lsp::Position LineIndex::ToLspPosition(std::size_t offset) {
+lsp::Position LineIndex::ToLspPosition(std::size_t offset) const {
     auto lc = GetLineCol(offset);
     return lsp::Position(lc.Line, lc.Col);
 }

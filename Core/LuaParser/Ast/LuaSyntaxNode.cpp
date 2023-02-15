@@ -12,19 +12,19 @@ TextRange LuaSyntaxNode::GetTextRange(const LuaSyntaxTree &t) const {
 }
 
 std::size_t LuaSyntaxNode::GetStartLine(const LuaSyntaxTree &t) const {
-    return t.GetFile().GetLine(t.GetStartOffset(_index));
+    return t.GetFile().GetLineIndex().GetLine(t.GetStartOffset(_index));
 }
 
 std::size_t LuaSyntaxNode::GetStartCol(const LuaSyntaxTree &t) const {
-    return t.GetFile().GetColumn(t.GetStartOffset(_index));
+    return t.GetFile().GetLineIndex().GetCol(t.GetStartOffset(_index));
 }
 
 std::size_t LuaSyntaxNode::GetEndLine(const LuaSyntaxTree &t) const {
-    return t.GetFile().GetLine(t.GetEndOffset(_index));
+    return t.GetFile().GetLineIndex().GetLine(t.GetEndOffset(_index));
 }
 
 std::size_t LuaSyntaxNode::GetEndCol(const LuaSyntaxTree &t) const {
-    return t.GetFile().GetColumn(t.GetEndOffset(_index));
+    return t.GetFile().GetLineIndex().GetCol(t.GetEndOffset(_index));
 }
 
 std::string_view LuaSyntaxNode::GetText(const LuaSyntaxTree &t) const {

@@ -6,7 +6,7 @@ enum class LuaSyntaxNodeKind {
 
     File,
 
-    Block,
+    Body,
 
     EmptyStatement,
 

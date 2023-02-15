@@ -12,15 +12,19 @@ public:
 
     void Parse(std::string &text);
 
-    LineCol GetLineCol(std::size_t offset);
+    LineCol GetLineCol(std::size_t offset) const;
 
-    std::size_t GetOffset(const LineCol& lineCol);
+    std::size_t GetLine(std::size_t offset) const;
 
-    std::size_t GetTotalLine();
+    std::size_t GetCol(std::size_t offset) const;
 
-    lsp::Range ToLspRange(TextRange range);
+    std::size_t GetOffset(const LineCol& lineCol) const;
 
-    lsp::Position ToLspPosition(std::size_t offset);
+    std::size_t GetTotalLine() const;
+
+    lsp::Range ToLspRange(TextRange range) const;
+
+    lsp::Position ToLspPosition(std::size_t offset) const;
 private:
     std::vector<LineOffset> _newLines;
 };

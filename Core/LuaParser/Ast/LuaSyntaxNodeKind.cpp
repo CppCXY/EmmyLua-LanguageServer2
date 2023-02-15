@@ -7,8 +7,8 @@ std::string_view detail::debug::GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "None";
         case LuaSyntaxNodeKind::File:
             return "File";
-        case LuaSyntaxNodeKind::Block:
-            return "Block";
+        case LuaSyntaxNodeKind::Body:
+            return "Body";
         case LuaSyntaxNodeKind::EmptyStatement:
             return "EmptyStatement";
         case LuaSyntaxNodeKind::LocalStatement:

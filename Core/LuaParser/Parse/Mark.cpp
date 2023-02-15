@@ -56,6 +56,6 @@ Marker CompleteMarker::Precede(LuaParser &p) {
 
     return m;
 }
-
-
-
+bool CompleteMarker::IsNone() const {
+    return Kind == LuaSyntaxNodeKind::None;
+}

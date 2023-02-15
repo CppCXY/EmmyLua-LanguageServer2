@@ -27,9 +27,9 @@ public:
 
     void Push(std::size_t cLen);
 
-    std::size_t GetCol(std::size_t colOffset);
+    std::size_t GetCol(std::size_t colOffset) const;
 
-    std::size_t GetOffset(std::size_t colNum);
+    std::size_t GetOffset(std::size_t colNum) const;
 
     std::size_t Start;
     std::vector<UnitChars> CharsOffsets;

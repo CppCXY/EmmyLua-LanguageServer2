@@ -51,6 +51,8 @@ struct CompleteMarker {
 
     Marker Precede(LuaParser& p);
 
+    bool IsNone() const;
+
     std::size_t Start;
     std::size_t Finish;
     LuaSyntaxNodeKind Kind;

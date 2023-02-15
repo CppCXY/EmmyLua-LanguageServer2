@@ -1,15 +1,13 @@
 ﻿#include "TextRange.h"
 
 TextRange::TextRange()
-        : TextRange(0, 0) {
-
+    : TextRange(0, 0) {
 }
 
 
 TextRange::TextRange(std::size_t startOffset, std::size_t endOffset)
-        :
-        StartOffset(startOffset),
-        EndOffset(endOffset) {
+    : StartOffset(startOffset),
+      EndOffset(endOffset) {
 }
 
 bool TextRange::IsEmpty() const {
@@ -27,4 +25,3 @@ bool TextRange::ContainOffset(std::size_t offset) const {
 bool TextRange::Between(TextRange &leftRange, TextRange &rightRange) const {
     return this->StartOffset > leftRange.EndOffset && this->EndOffset < rightRange.StartOffset;
 }
-

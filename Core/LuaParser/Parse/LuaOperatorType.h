@@ -10,7 +10,6 @@ enum class UnOpr
 	OPR_NOUNOPR
 };
 
-
 /*
 ** grep "ORDER OPR" if you change these enums  (ORDER OP)
 */

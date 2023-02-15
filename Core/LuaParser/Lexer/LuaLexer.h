@@ -21,19 +21,13 @@ class LuaLexer
 public:
 	explicit LuaLexer(std::shared_ptr<LuaFile> file);
 
-    bool Parse();
+    std::vector<LuaToken>& Tokenize();
 
 	std::vector<LuaTokenError>& GetErrors();
 
 	bool HasError() const;
 
 	std::shared_ptr<LuaFile> GetFile();
-
-	std::vector<LuaToken>& GetTokens();
-
-    void SupportNonStandardSymbol();
-
-//	void SetCustomParser(std::shared_ptr<LuaCustomParser> parser);
 private:
 	static std::map<std::string, LuaTokenKind, std::less<>> LuaReserved;
 
@@ -54,6 +48,8 @@ private:
 	bool IsReserved(std::string_view text);
 
 	void TokenError(std::string_view message, TextRange range);
+
+    void TokenError(std::string_view message, std::size_t offset);
 
 	int _linenumber;
     bool _supportNonStandardSymbol;

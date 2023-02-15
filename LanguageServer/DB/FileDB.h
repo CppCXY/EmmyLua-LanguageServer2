@@ -1,11 +1,12 @@
 #pragma once
 
 #include "DBBase.h"
+#include "Lib/LSP/LSP.h"
+#include "LuaParser/File/LuaFile.h"
 #include <string>
 #include <vector>
-#include "Lib/LSP/LSP.h"
 
-class FileDB : public SharedDBBase<std::size_t, std::string> {
+class FileDB : public SharedDBBase<std::size_t, LuaFile> {
 public:
     FileDB();
 

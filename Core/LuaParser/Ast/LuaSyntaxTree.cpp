@@ -107,8 +107,8 @@ void LuaSyntaxTree::EatInlineComment(LuaParser &p) {
             case TK_LONG_COMMENT:
             case TK_SHEBANG: {
                 auto prevToken = tokens[index - 1];
-                if (_file->GetLine(prevToken.Range.EndOffset)
-                    == _file->GetLine(tokens[index].Range.StartOffset)) {
+                if (_file->GetLineIndex().GetLine(prevToken.Range.EndOffset)
+                    == _file->GetLineIndex().GetLine(tokens[index].Range.StartOffset)) {
                     EatToken(p);
                 }
                 break;
@@ -530,8 +530,7 @@ bool LuaSyntaxTree::HasError() const {
 }
 
 bool LuaSyntaxTree::IsEatAllComment(LuaSyntaxNodeKind kind) const {
-    return kind == LuaSyntaxNodeKind::Block
-           || kind == LuaSyntaxNodeKind::TableFieldList
+    return kind == LuaSyntaxNodeKind::Body || kind == LuaSyntaxNodeKind::TableFieldList
            || kind == LuaSyntaxNodeKind::File;
 }
 

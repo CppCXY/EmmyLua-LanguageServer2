@@ -1,56 +1,52 @@
 ﻿#include "LuaLexer.h"
-#include <limits>
 #include "LuaDefine.h"
 #include "LuaIdentify.h"
 #include "LuaTokenTypeDetail.h"
 #include "Util/Utf8.h"
-#include "LuaParser/File/LuaFile.h"
+#include <limits>
 
 std::map<std::string, LuaTokenKind, std::less<>> LuaLexer::LuaReserved = {
-        {"and",      TK_AND},
-        {"break",    TK_BREAK},
-        {"do",       TK_DO},
-        {"else",     TK_ELSE},
-        {"elseif",   TK_ELSEIF},
-        {"end",      TK_END},
-        {"false",    TK_FALSE},
-        {"for",      TK_FOR},
+        {"and", TK_AND},
+        {"break", TK_BREAK},
+        {"do", TK_DO},
+        {"else", TK_ELSE},
+        {"elseif", TK_ELSEIF},
+        {"end", TK_END},
+        {"false", TK_FALSE},
+        {"for", TK_FOR},
         {"function", TK_FUNCTION},
-        {"goto",     TK_GOTO},
-        {"if",       TK_IF},
-        {"in",       TK_IN},
-        {"local",    TK_LOCAL},
-        {"nil",      TK_NIL},
-        {"not",      TK_NOT},
-        {"or",       TK_OR},
-        {"repeat",   TK_REPEAT},
-        {"return",   TK_RETURN},
-        {"then",     TK_THEN},
-        {"true",     TK_TRUE},
-        {"until",    TK_UNTIL},
-        {"while",    TK_WHILE},
-        {"//",       TK_IDIV},
-        {"..",       TK_CONCAT},
-        {"...",      TK_DOTS},
-        {"==",       TK_EQ},
-        {">=",       TK_GE},
-        {"<=",       TK_LE},
-        {"~=",       TK_NE},
-        {"<<",       TK_SHL},
-        {">>",       TK_SHR},
-        {"::",       TK_DBCOLON}
-};
+        {"goto", TK_GOTO},
+        {"if", TK_IF},
+        {"in", TK_IN},
+        {"local", TK_LOCAL},
+        {"nil", TK_NIL},
+        {"not", TK_NOT},
+        {"or", TK_OR},
+        {"repeat", TK_REPEAT},
+        {"return", TK_RETURN},
+        {"then", TK_THEN},
+        {"true", TK_TRUE},
+        {"until", TK_UNTIL},
+        {"while", TK_WHILE},
+        {"//", TK_IDIV},
+        {"..", TK_CONCAT},
+        {"...", TK_DOTS},
+        {"==", TK_EQ},
+        {">=", TK_GE},
+        {"<=", TK_LE},
+        {"~=", TK_NE},
+        {"<<", TK_SHL},
+        {">>", TK_SHR},
+        {"::", TK_DBCOLON}};
 
 LuaLexer::LuaLexer(std::shared_ptr<LuaFile> file)
-        :
-        _linenumber(0),
-        _supportNonStandardSymbol(false),
-        _reader(file->GetSource()),
-        _file(file) {
+    : _linenumber(0),
+      _supportNonStandardSymbol(false),
+      _reader(file->GetSource()),
+      _file(file) {
 }
 
-bool LuaLexer::Parse() {
-    _file->Reset();
+std::vector<LuaToken> &LuaLexer::Tokenize() {
     while (true) {
         auto type = Lex();
         if (type == TK_EOF) {
@@ -58,15 +54,9 @@ bool LuaLexer::Parse() {
         }
 
         _tokens.emplace_back(type, _reader.GetTokenRange());
-        if (!_errors.empty()) {
-            _file->SetTotalLine(_linenumber);
-            _file->UpdateLineInfo(_linenumber);
-            return false;
-        }
     }
 
-    _file->SetTotalLine(_linenumber);
-    return true;
+    return _tokens;
 }
 
 std::vector<LuaTokenError> &LuaLexer::GetErrors() {
@@ -79,10 +69,6 @@ bool LuaLexer::HasError() const {
 
 std::shared_ptr<LuaFile> LuaLexer::GetFile() {
     return _file;
-}
-
-std::vector<LuaToken> &LuaLexer::GetTokens() {
-    return _tokens;
 }
 
 LuaTokenKind LuaLexer::Lex() {
@@ -123,7 +109,7 @@ LuaTokenKind LuaLexer::Lex() {
                     }
                 } else if (_reader.GetCurrentChar() == '-') {
                     _reader.SaveAndNext();
-//                    type = TK_DOC_COMMENT;
+                    //                    type = TK_DOC_COMMENT;
                 }
 
                 // is short comment
@@ -305,7 +291,7 @@ LuaTokenKind LuaLexer::ReadNumeral() {
     for (;;) {
         if (_reader.CheckNext2(expo)) /* exponent mark? */
         {
-            _reader.CheckNext2("-+"); /* optional exponent sign */
+            _reader.CheckNext2("-+");                                                      /* optional exponent sign */
         } else if (lisxdigit(_reader.GetCurrentChar()) || _reader.GetCurrentChar() == '.') /* '%x|%.' */
         {
             _reader.SaveAndNext();
@@ -342,11 +328,8 @@ std::size_t LuaLexer::SkipSep() {
         count++;
     }
 
-    return _reader.GetCurrentChar() == ch
-           ? count + 2
-           : (count == 0)
-             ? 1
-             : 0;
+    return _reader.GetCurrentChar() == ch ? count + 2
+                                          : ((count == 0) ? 1 : 0);
 }
 
 void LuaLexer::ReadLongString(std::size_t sep) {
@@ -359,7 +342,7 @@ void LuaLexer::ReadLongString(std::size_t sep) {
     for (;;) {
         switch (_reader.GetCurrentChar()) {
             case EOZ: {
-                TokenError("unfinished long string starting", TextRange(_reader.GetPos(), _reader.GetPos()));
+                TokenError("unfinished long string starting", _reader.GetPos());
                 return;
             }
             case ']': {
@@ -389,7 +372,7 @@ void LuaLexer::ReadString(int del) {
             case EOZ:
             case '\n':
             case '\r': {
-                TokenError("unfinished string", TextRange(_reader.GetPos(), _reader.GetPos()));
+                TokenError("unfinished string", _reader.GetPos());
                 return;
             }
             case '\\': {
@@ -397,7 +380,7 @@ void LuaLexer::ReadString(int del) {
 
                 switch (_reader.GetCurrentChar()) {
                     case EOZ:
-                        TokenError("unfinished string", TextRange(_reader.GetPos(), _reader.GetPos()));
+                        TokenError("unfinished string", _reader.GetPos());
                         return;
                     case 'z': {
                         _reader.SaveAndNext();
@@ -422,32 +405,19 @@ void LuaLexer::ReadString(int del) {
             }
         }
         _reader.SaveAndNext();
-        // 空语句
-        no_save:;
+    // 空语句
+    no_save:;
     }
     _reader.SaveAndNext();
 }
-
 
 void LuaLexer::IncLinenumber() {
     int old = _reader.GetCurrentChar();
 
     _reader.NextChar();
-
     if (CurrentIsNewLine() && _reader.GetCurrentChar() != old) {
         _reader.NextChar(); /* skip '\n\r' or '\r\n' */
-        _file->SetEndOfLineState(EndOfLine::CRLF);
-    } else if (old == '\n') {
-        _file->SetEndOfLineState(EndOfLine::LF);
-    } else {
-        _file->SetEndOfLineState(EndOfLine::CR);
     }
-
-    if (++_linenumber >= std::numeric_limits<int>::max()) {
-        return;
-    }
-
-    _file->PushLine(_reader.GetPos());
 }
 
 bool LuaLexer::CurrentIsNewLine() {
@@ -461,4 +431,8 @@ bool LuaLexer::IsReserved(std::string_view text) {
 
 void LuaLexer::TokenError(std::string_view message, TextRange range) {
     _errors.emplace_back(message, range, 0);
+}
+
+void LuaLexer::TokenError(std::string_view message, std::size_t offset) {
+    TokenError(message, TextRange(offset, offset));
 }

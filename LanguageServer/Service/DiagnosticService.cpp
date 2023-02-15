@@ -1,11 +1,10 @@
 #include "DiagnosticService.h"
-#include "LanguageServer.h"
 #include "CodeActionService.h"
 #include "ConfigService.h"
+#include "LanguageServer.h"
 
 DiagnosticService::DiagnosticService(LanguageServer *owner)
-        : Service(owner) {
-
+    : Service(owner) {
 }
 
 std::vector<lsp::Diagnostic>
@@ -17,17 +16,19 @@ DiagnosticService::Diagnostic(std::size_t fileId) {
     if (!opSyntaxTree.has_value()) {
         return diagnostics;
     }
-    auto lineIndex = vFile.GetLineIndex(vfs);
-    if(!lineIndex){
+
+    auto luaFile = vFile.GetLuaFile(vfs);
+    if (!luaFile) {
         return diagnostics;
     }
+    auto &lineIndex = luaFile->GetLineIndex();
 
     auto &syntaxTree = opSyntaxTree.value();
     if (syntaxTree.HasError()) {
-        for(auto& err: syntaxTree.GetErrors()){
-            auto& d = diagnostics.emplace_back();
+        for (auto &err: syntaxTree.GetErrors()) {
+            auto &d = diagnostics.emplace_back();
             d.message = err.ErrorMessage;
-            d.range = lineIndex->ToLspRange(err.ErrorRange);
+            d.range = lineIndex.ToLspRange(err.ErrorRange);
         }
     }
 

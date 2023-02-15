@@ -1,7 +1,7 @@
 #include "FileDB.h"
 
 FileDB::FileDB()
-        : SharedDBBase<std::size_t, std::string>(), _fileIdCounter(1) {
+        : SharedDBBase<std::size_t, LuaFile>(), _fileIdCounter(1) {
 
 }
 
@@ -10,8 +10,9 @@ std::size_t FileDB::AllocFileId() {
 }
 
 void FileDB::ApplyFileUpdate(std::size_t fileId, std::string &&text) {
-    auto ptr = std::make_shared<std::string>(std::move(text));
-    Input(fileId, std::move(ptr));
+    auto luaFile = std::make_shared<LuaFile>(std::move(text));
+    luaFile->BuildLineIndex();
+    Input(fileId, std::move(luaFile));
 }
 
 void FileDB::ApplyFileUpdate(std::vector<lsp::TextDocumentContentChangeEvent> &changeEvent) {

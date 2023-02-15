@@ -42,83 +42,83 @@ private:
 
 	void StatementList();
 
-	void Statement();
+    CompleteMarker Statement();
 
-	void IfStatement();
+    CompleteMarker ErrorStatement();
 
-	void WhileStatement();
+    CompleteMarker IfStatement();
 
-	void DoStatement();
+    CompleteMarker WhileStatement();
 
-	void ForStatement();
+    CompleteMarker DoStatement();
 
-	void RepeatStatement();
+    CompleteMarker ForStatement();
 
-	void FunctionStatement();
+    CompleteMarker RepeatStatement();
 
-	void LocalFunctionStatement();
+    CompleteMarker FunctionStatement();
 
-	void LocalStatement();
+    CompleteMarker LocalFunctionStatement();
 
-	void LabelStatement();
+    CompleteMarker LocalStatement();
 
-	void ReturnStatement();
+    CompleteMarker LabelStatement();
 
-	void BreakStatement();
+    CompleteMarker ReturnStatement();
 
-	void GotoStatement();
+    CompleteMarker BreakStatement();
 
-	void ExpressionStatement();
+    CompleteMarker GotoStatement();
 
-	void ForNumber();
+    CompleteMarker ExpressionStatement();
 
-	void ForList();
+    CompleteMarker ForNumber();
 
-	void ForBody();
+    CompleteMarker ForList();
 
-	void Condition();
+    CompleteMarker ForBody();
 
-	void TestThenBlock();
+    void TestThenBlock();
 
-    void NameDefList();
+    CompleteMarker NameDefList();
 
-	void Block();
+    CompleteMarker Body();
 
-	void ExpressionList(LuaTokenKind stopToken = 0);
+    CompleteMarker ExpressionList(LuaTokenKind stopToken = 0);
 
-	void Expression();
+    CompleteMarker Expression();
 
-	void Subexpression(int limit);
+    CompleteMarker Subexpression(int limit);
 
     CompleteMarker SimpleExpression();
 
     CompleteMarker TableConstructor();
 
-    void FieldList();
+    CompleteMarker FieldList();
 
-	void Field();
+    CompleteMarker Field();
 
-	void ListField();
+    void ListField();
 
-	void RectField();
+    void RectField();
 
-	void FunctionBody();
+    CompleteMarker FunctionBody();
 
-	void ParamList();
+    CompleteMarker ParamList();
 
     CompleteMarker SuffixedExpression();
 
-	void FunctionCallArgs();
+    CompleteMarker CallExpression();
 
-	void FieldSel();
+    CompleteMarker FieldSel();
 
-	void YIndex();
+    CompleteMarker YIndex();
 
 	void FunctionName();
 
-	std::string_view CheckName();
+	void CheckName();
 
-	void LocalAttribute();
+    CompleteMarker LocalAttribute();
 
 	void Check(LuaTokenKind c);
 
@@ -143,6 +143,8 @@ private:
 	bool TestAndNext(LuaTokenKind kind);
 
 	void LuaExpectedError(std::string_view message, LuaTokenKind expectedToken = 0);
+
+    void LuaError(std::string_view message);
 
     std::vector<LuaToken> _tokens;
     std::size_t _tokenIndex;

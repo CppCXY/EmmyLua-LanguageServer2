@@ -5,7 +5,6 @@
 #include "VirtualFile.h"
 #include "DB/FileDB.h"
 #include "DB/UriDB.h"
-#include "DB/LineIndexDB.h"
 
 class VirtualFileSystem {
 public:
@@ -29,11 +28,9 @@ public:
 
     UriDB &GetUriDB();
 
-    LineIndexDB& GetLineIndexDB();
-
 private:
     FileDB _fileDB;
     UriDB _uriDB;
-    LineIndexDB _lineIndexDB;
+
     std::vector<std::string> _workspaceReadyFiles;
 };

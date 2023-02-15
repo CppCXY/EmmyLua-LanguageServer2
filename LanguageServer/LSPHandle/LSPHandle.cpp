@@ -151,7 +151,6 @@ std::shared_ptr<lsp::DocumentDiagnosticReport> LSPHandle::OnTextDocumentDiagnost
 
     auto diagnostics = _server->GetService<DiagnosticService>()->Diagnostic(
             opFileId.value());
-    report->resultId = std::to_string(opFileId.value());
 
     report->items = std::move(diagnostics);
     return report;
