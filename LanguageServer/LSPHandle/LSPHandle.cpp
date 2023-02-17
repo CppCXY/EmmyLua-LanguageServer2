@@ -8,9 +8,6 @@
 #include "Util/Url.h"
 #include "nlohmann/json.hpp"
 #include <fmt/format.h>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 
 using namespace std::placeholders;
 
@@ -25,14 +22,15 @@ LSPHandle::~LSPHandle() {
 bool LSPHandle::Initialize() {
     JsonProtocol("initialize", &LSPHandle::OnInitialize);
     JsonProtocol("initialized", &LSPHandle::OnInitialized);
-    JsonProtocol("textDocument/didChange", &LSPHandle::OnDidChange);
-    JsonProtocol("textDocument/didOpen", &LSPHandle::OnDidOpen);
-    JsonProtocol("textDocument/didClose", &LSPHandle::OnClose);
     JsonProtocol("textDocument/codeAction", &LSPHandle::OnCodeAction);
-    JsonProtocol("workspace/executeCommand", &LSPHandle::OnExecuteCommand);
-    JsonProtocol("workspace/didChangeConfiguration", &LSPHandle::OnWorkspaceDidChangeConfiguration);
     JsonProtocol("textDocument/diagnostic", &LSPHandle::OnTextDocumentDiagnostic);
     JsonProtocol("workspace/diagnostic", &LSPHandle::OnWorkspaceDiagnostic);
+
+    JsonNotification("textDocument/didChange", &LSPHandle::OnDidChange);
+    JsonNotification("textDocument/didOpen", &LSPHandle::OnDidOpen);
+    JsonNotification("textDocument/didClose", &LSPHandle::OnClose);
+    JsonNotification("workspace/executeCommand", &LSPHandle::OnExecuteCommand);
+    JsonNotification("workspace/didChangeConfiguration", &LSPHandle::OnWorkspaceDidChangeConfiguration);
     return true;
 }
 
@@ -84,7 +82,7 @@ std::shared_ptr<lsp::Serializable> LSPHandle::OnInitialized(std::shared_ptr<lsp:
     return nullptr;
 }
 
-std::shared_ptr<lsp::Serializable> LSPHandle::OnDidChange(
+void LSPHandle::OnDidChange(
         std::shared_ptr<lsp::DidChangeTextDocumentParams> params) {
     if (params->contentChanges.size() == 1) {
         auto &content = params->contentChanges.front();
@@ -98,20 +96,16 @@ std::shared_ptr<lsp::Serializable> LSPHandle::OnDidChange(
     } else {
         _server->GetVFS().UpdateFile(params->textDocument.uri, params->contentChanges);
     }
-
-    return nullptr;
 }
 
-std::shared_ptr<lsp::Serializable> LSPHandle::OnDidOpen(
+void LSPHandle::OnDidOpen(
         std::shared_ptr<lsp::DidOpenTextDocumentParams> params) {
     _server->GetVFS().UpdateFile(params->textDocument.uri, std::move(params->textDocument.text));
-    return nullptr;
 }
 
-std::shared_ptr<lsp::Serializable> LSPHandle::OnClose(
+void LSPHandle::OnClose(
         std::shared_ptr<lsp::DidCloseTextDocumentParams> params) {
     _server->GetVFS().ClearFile(params->textDocument.uri);
-    return nullptr;
 }
 
 std::shared_ptr<lsp::CodeActionResult> LSPHandle::OnCodeAction(std::shared_ptr<lsp::CodeActionParams> param) {
@@ -123,19 +117,17 @@ std::shared_ptr<lsp::CodeActionResult> LSPHandle::OnCodeAction(std::shared_ptr<l
     return codeActionResult;
 }
 
-std::shared_ptr<lsp::Serializable> LSPHandle::OnExecuteCommand(
+void LSPHandle::OnExecuteCommand(
         std::shared_ptr<lsp::ExecuteCommandParams> params) {
     _server->GetService<CommandService>()->Dispatch(params->command, params);
-    return nullptr;
 }
 
-std::shared_ptr<lsp::Serializable> LSPHandle::OnWorkspaceDidChangeConfiguration(
+void LSPHandle::OnWorkspaceDidChangeConfiguration(
         std::shared_ptr<lsp::DidChangeConfigurationParams> params) {
     ClientConfig clientConfig;
     clientConfig.Deserialize(params->settings);
     _server->GetService<ConfigService>()->UpdateClientConfig(clientConfig);
     RefreshDiagnostic();
-    return nullptr;
 }
 
 std::shared_ptr<lsp::DocumentDiagnosticReport> LSPHandle::OnTextDocumentDiagnostic(
