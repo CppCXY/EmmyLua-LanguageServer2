@@ -61,6 +61,13 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
     target_link_libraries(LanguageServer PUBLIC pthread -static-libstdc++ -static-libgcc)
 endif ()
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(LanguageServer PRIVATE /W3 /WX)
+    target_compile_options(LanguageServer PRIVATE /utf-8)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(LanguageServer PRIVATE -Wall -Werror)
+endif ()
+
 install(
         TARGETS LanguageServer
         LIBRARY DESTINATION lib

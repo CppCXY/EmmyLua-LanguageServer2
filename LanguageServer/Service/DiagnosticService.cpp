@@ -27,8 +27,8 @@ DiagnosticService::Diagnostic(std::size_t fileId) {
     if (syntaxTree.HasError()) {
         for (auto &err: syntaxTree.GetErrors()) {
             auto &d = diagnostics.emplace_back();
-            d.message = err.ErrorMessage;
-            d.range = lineIndex.ToLspRange(err.ErrorRange);
+            d.message = err.Message;
+            d.range = lineIndex.ToLspRange(err.Range);
         }
     }
 

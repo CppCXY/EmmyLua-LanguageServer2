@@ -20,3 +20,10 @@ target_link_libraries(
         PUBLIC
         Util
 )
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(Core PRIVATE /W3 /WX)
+    target_compile_options(Core PRIVATE /utf-8)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(Core PRIVATE -Wall -Werror)
+endif ()

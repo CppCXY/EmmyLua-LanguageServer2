@@ -2,6 +2,7 @@
 
 #include "Core/LuaParser/Define/LuaToken.h"
 #include "Core/LuaParser/Util/Mark.h"
+#include "LuaParser/Define/LuaSyntaxError.h"
 #include "LuaParser/File/LuaFile.h"
 #include "LuaSyntaxNode.h"
 #include "NodeOrToken.h"
@@ -61,7 +62,7 @@ public:
 
     bool HasError() const;
 
-    const std::vector<LuaParseError>& GetErrors() const;
+    const std::vector<LuaSyntaxError>& GetErrors() const;
 private:
     void StartNode(LuaSyntaxNodeKind kind, LuaParser &p);
 
@@ -85,5 +86,5 @@ private:
     std::vector<LuaSyntaxNode> _syntaxNodes;
     std::stack<std::size_t> _nodePosStack;
     std::size_t _tokenIndex;
-    std::vector<LuaParseError> _errors;
+    std::vector<LuaSyntaxError> _errors;
 };

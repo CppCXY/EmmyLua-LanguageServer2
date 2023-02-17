@@ -16,8 +16,6 @@ if(APPLE)
 	message("arm64Supported=${arm64Supported}")
 endif ()
 
-add_compile_options(/utf8)
-
 add_subdirectory(3rd/fmt-9.1.0)
 add_subdirectory(Util)
 add_subdirectory(Core)

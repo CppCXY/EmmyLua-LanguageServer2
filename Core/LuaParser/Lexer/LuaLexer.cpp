@@ -1,9 +1,10 @@
 ﻿#include "LuaLexer.h"
 #include "Core/LuaParser/Define/LuaDefine.h"
 #include "Core/LuaParser/Define/LuaIdentify.h"
-#include "Core/LuaParser/Define/LuaTokenTypeDetail.h"
 #include "Util/Utf8.h"
 #include <limits>
+
+using enum LuaTokenKind;
 
 std::map<std::string, LuaTokenKind, std::less<>> LuaLexer::LuaReserved = {
         {"and", TK_AND},
@@ -74,7 +75,7 @@ std::shared_ptr<LuaFile> LuaLexer::GetFile() {
 LuaTokenKind LuaLexer::Lex() {
     _reader.ResetBuffer();
 
-    for (;;) {
+    while (true) {
         int ch = _reader.GetCurrentChar();
         switch (ch) {
             case '\n':
@@ -92,10 +93,7 @@ LuaTokenKind LuaLexer::Lex() {
             case '-': {
                 _reader.SaveAndNext();
                 if (_reader.GetCurrentChar() != '-') {
-                    if (_supportNonStandardSymbol && _reader.CheckNext1('=')) {
-                        return '=';
-                    }
-                    return '-';
+                    return TK_MINUS;
                 }
                 // is comment
                 _reader.SaveAndNext();
@@ -122,9 +120,9 @@ LuaTokenKind LuaLexer::Lex() {
             case '+': {
                 _reader.SaveAndNext();
                 if (_supportNonStandardSymbol && _reader.CheckNext1('=')) {
-                    return '=';
+                    return TK_EQ;
                 }
-                return '+';
+                return TK_PLUS;
             }
             case '[': {
                 std::size_t sep = SkipSep();
@@ -136,14 +134,14 @@ LuaTokenKind LuaLexer::Lex() {
                                TextRange(_reader.GetPos(), _reader.GetPos()));
                     return TK_LONG_STRING;
                 }
-                return '[';
+                return TK_LBRACKET;
             }
             case '=': {
                 _reader.SaveAndNext();
                 if (_reader.CheckNext1('=')) {
-                    return TK_EQ;
+                    return TK_EQEQ;
                 } else {
-                    return '=';
+                    return TK_EQ;
                 }
             }
             case '<': {
@@ -153,7 +151,7 @@ LuaTokenKind LuaLexer::Lex() {
                 } else if (_reader.CheckNext1('<')) {
                     return TK_SHL;
                 } else {
-                    return '<';
+                    return TK_LT;
                 }
             }
             case '>': {
@@ -163,7 +161,7 @@ LuaTokenKind LuaLexer::Lex() {
                 } else if (_reader.CheckNext1('>')) {
                     return TK_SHR;
                 } else {
-                    return '>';
+                    return TK_GT;
                 }
             }
             case '/': {
@@ -171,7 +169,7 @@ LuaTokenKind LuaLexer::Lex() {
                 if (_reader.CheckNext1('/')) {
                     return TK_IDIV;
                 } else {
-                    return '/';
+                    return TK_DIV;
                 }
             }
             case '~': {
@@ -179,7 +177,7 @@ LuaTokenKind LuaLexer::Lex() {
                 if (_reader.CheckNext1('=')) {
                     return TK_NE;
                 } else {
-                    return '~';
+                    return TK_TILDE;
                 }
             }
             case ':': {
@@ -187,13 +185,11 @@ LuaTokenKind LuaLexer::Lex() {
                 if (_reader.CheckNext1(':')) {
                     return TK_DBCOLON;
                 } else {
-                    return ':';
+                    return TK_COLON;
                 }
             }
             case '"':
-            case '\'':
-                // extend support
-            case '`': {
+            case '\'': {
                 ReadString(ch);
                 return TK_STRING;
             }
@@ -206,7 +202,7 @@ LuaTokenKind LuaLexer::Lex() {
                         return TK_CONCAT;
                     }
                 } else if (!lisdigit(_reader.GetCurrentChar())) {
-                    return '.';
+                    return TK_DOT;
                 } else {
                     return ReadNumeral();
                 }
@@ -237,7 +233,55 @@ LuaTokenKind LuaLexer::Lex() {
 
                     return TK_SHEBANG;
                 }
-                return '#';
+                return TK_GETN;
+            }
+            case ']': {
+                _reader.SaveAndNext();
+                return TK_RBRACKET;
+            }
+            case '*': {
+                _reader.SaveAndNext();
+                return TK_MULT;
+            }
+            case '%': {
+                _reader.SaveAndNext();
+                return TK_MOD;
+            }
+            case '(': {
+                _reader.SaveAndNext();
+                return TK_LPARN;
+            }
+            case ')': {
+                _reader.SaveAndNext();
+                return TK_RPARN;
+            }
+            case '{': {
+                _reader.SaveAndNext();
+                return TK_LCURLY;
+            }
+            case '}': {
+                _reader.SaveAndNext();
+                return TK_RCURLY;
+            }
+            case ',': {
+                _reader.SaveAndNext();
+                return TK_COMMA;
+            }
+            case ';': {
+                _reader.SaveAndNext();
+                return TK_SEMI;
+            }
+            case '^': {
+                _reader.SaveAndNext();
+                return TK_EXP;
+            }
+            case '&': {
+                _reader.SaveAndNext();
+                return TK_BIT_AND;
+            }
+            case '|': {
+                _reader.SaveAndNext();
+                return TK_BIT_OR;
             }
             default: {
                 if (lislalpha(_reader.GetCurrentChar())) /* identifier or reserved word? */
@@ -253,11 +297,9 @@ LuaTokenKind LuaLexer::Lex() {
                     } else {
                         return TK_NAME;
                     }
-                } else /* single-char tokens ('+', '*', '%', '{', '}', ...) */
-                {
-                    int c = _reader.GetCurrentChar();
+                } else {
                     _reader.SaveAndNext();
-                    return c;
+                    return TK_ERR;
                 }
             }
         }
@@ -430,7 +472,7 @@ bool LuaLexer::IsReserved(std::string_view text) {
 }
 
 void LuaLexer::TokenError(std::string_view message, TextRange range) {
-    _errors.emplace_back(message, range, 0);
+    _errors.emplace_back(message, range);
 }
 
 void LuaLexer::TokenError(std::string_view message, std::size_t offset) {

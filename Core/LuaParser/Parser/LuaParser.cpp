@@ -1,10 +1,10 @@
 ﻿#include "LuaParser.h"
 #include "Core/LuaParser/Define/LuaDefine.h"
 #include "Core/LuaParser/Define/LuaOperatorType.h"
-#include "Core/LuaParser/Define/LuaTokenTypeDetail.h"
-#include "LuaParser/File/LuaFile.h"
 #include "LuaParser/exception/LuaParseException.h"
 #include <fmt/format.h>
+
+using enum LuaTokenKind;
 
 LuaParser::LuaParser(std::shared_ptr<LuaFile> luaFile, std::vector<LuaToken> &&tokens)
     : _tokens(tokens),
@@ -95,7 +95,7 @@ LuaTokenKind LuaParser::Current() {
         }
     }
 
-    if (_errors.size() > 100) {
+    if (_errors.size() > 10) {
         std::string_view error = "too many errors, parse fail";
         throw LuaParseException(error);
     }
@@ -127,7 +127,7 @@ bool LuaParser::BlockFollow(bool rightbrace) {
         case TK_EOF:
         case TK_UNTIL:
             return true;
-        case ')':
+        case TK_RPARN:
             return rightbrace;
         default:
             return false;
@@ -144,7 +144,7 @@ void LuaParser::StatementList() {
 
 CompleteMarker LuaParser::Statement() {
     switch (Current()) {
-        case ';': {
+        case TK_SEMI: {
             auto m = Mark();
             Next();
             return m.Complete(*this, LuaSyntaxNodeKind::EmptyStatement);
@@ -261,11 +261,11 @@ CompleteMarker LuaParser::ForStatement() {
     Check(TK_NAME);
 
     switch (LookAhead()) {
-        case '=': {
+        case TK_EQ: {
             ForNumber();
             break;
         }
-        case ',':
+        case TK_COMMA:
         case TK_IN: {
             ForList();
             break;
@@ -283,15 +283,15 @@ CompleteMarker LuaParser::ForNumber() {
 
     CheckName();
 
-    CheckAndNext('=');
+    CheckAndNext(TK_EQ);
 
     Expression();
 
-    CheckAndNext(',');
+    CheckAndNext(TK_COMMA);
 
     Expression();
 
-    if (TestAndNext(','))// optional step
+    if (TestAndNext(TK_COMMA))// optional step
     {
         Expression();
     }
@@ -379,14 +379,14 @@ CompleteMarker LuaParser::LocalStatement() {
     do {
         CheckName();
         LocalAttribute();
-    } while (TestAndNext(','));
+    } while (TestAndNext(TK_COMMA));
     nm.Complete(*this, LuaSyntaxNodeKind::NameDefList);
 
-    if (TestAndNext('=')) {
+    if (TestAndNext(TK_EQ)) {
         ExpressionList();
     }
     // 如果有一个分号则加入到localstatement
-    TestAndNext(';');
+    TestAndNext(TK_SEMI);
 
     return m.Complete(*this, LuaSyntaxNodeKind::LocalStatement);
 }
@@ -408,11 +408,11 @@ CompleteMarker LuaParser::ReturnStatement() {
 
     CheckAndNext(TK_RETURN);
 
-    if (!(BlockFollow() || Current() == ';')) {
+    if (!(BlockFollow() || Current() == TK_SEMI)) {
         ExpressionList();
     }
 
-    TestAndNext(';');
+    TestAndNext(TK_SEMI);
 
     return m.Complete(*this, LuaSyntaxNodeKind::ReturnStatement);
 }
@@ -422,7 +422,7 @@ CompleteMarker LuaParser::BreakStatement() {
 
     CheckAndNext(TK_BREAK);
 
-    TestAndNext(';');
+    TestAndNext(TK_SEMI);
 
     return m.Complete(*this, LuaSyntaxNodeKind::BreakStatement);
 }
@@ -434,7 +434,7 @@ CompleteMarker LuaParser::GotoStatement() {
 
     CheckName();
 
-    TestAndNext(';');
+    TestAndNext(TK_SEMI);
 
     return m.Complete(*this, LuaSyntaxNodeKind::GotoStatement);
 }
@@ -448,22 +448,22 @@ CompleteMarker LuaParser::ExpressionStatement() {
         return cm;
     }
 
-    if (Current() == '=' || Current() == ',') {
-        while (TestAndNext(',')) {
+    if (Current() == TK_EQ || Current() == TK_COMMA) {
+        while (TestAndNext(TK_COMMA)) {
             SuffixedExpression();
         }
         cm = m.Complete(*this, LuaSyntaxNodeKind::VarList);
         m = cm.Precede(*this);
 
-        CheckAndNext('=');
+        CheckAndNext(TK_EQ);
 
         ExpressionList();
 
         // 如果发现一个分号，会认为分号为该语句的结尾
-        TestAndNext(';');
+        TestAndNext(TK_SEMI);
         return m.Complete(*this, LuaSyntaxNodeKind::AssignStatement);
     } else {
-        TestAndNext(';');
+        TestAndNext(TK_SEMI);
         return m.Complete(*this, LuaSyntaxNodeKind::ExpressionStatement);
     }
 }
@@ -474,7 +474,9 @@ void LuaParser::TestThenBlock() {
         Next();
     }
     Expression();
+
     CheckAndNext(TK_THEN);
+
     Body();
 }
 
@@ -491,7 +493,7 @@ CompleteMarker LuaParser::ExpressionList(LuaTokenKind stopToken) {
     auto m = Mark();
 
     Expression();
-    while (TestAndNext(',')) {
+    while (TestAndNext(TK_COMMA)) {
         if (Current() == stopToken) {
             break;
         }
@@ -559,7 +561,7 @@ CompleteMarker LuaParser::SimpleExpression() {
             Next();
             return m.Complete(*this, LuaSyntaxNodeKind::StringLiteralExpression);
         }
-        case '{': {
+        case TK_LCURLY: {
             return TableConstructor();
         }
         case TK_FUNCTION: {
@@ -581,11 +583,11 @@ CompleteMarker LuaParser::SimpleExpression() {
 */
 CompleteMarker LuaParser::TableConstructor() {
     auto m = Mark();
-    CheckAndNext('{');
+    CheckAndNext(TK_LCURLY);
 
     FieldList();
 
-    CheckAndNext('}');
+    CheckAndNext(TK_RCURLY);
 
     return m.Complete(*this, LuaSyntaxNodeKind::TableExpression);
 }
@@ -593,7 +595,7 @@ CompleteMarker LuaParser::TableConstructor() {
 CompleteMarker LuaParser::FieldList() {
     auto m = Mark();
 
-    while (Current() != '}') {
+    while (Current() != TK_RCURLY) {
         Field();
         if (Current() == TK_EOF) {
             break;
@@ -609,14 +611,14 @@ CompleteMarker LuaParser::Field() {
 
     switch (Current()) {
         case TK_NAME: {
-            if (LookAhead() != '=') {
+            if (LookAhead() != TK_EQ) {
                 ListField();
             } else {
                 RectField();
             }
             break;
         }
-        case '[': {
+        case TK_LBRACKET : {
             RectField();
             break;
         }
@@ -626,7 +628,7 @@ CompleteMarker LuaParser::Field() {
         }
     }
 
-    if (Current() == ',' || Current() == ';') {
+    if (Current() == TK_COMMA || Current() == TK_SEMI) {
         auto m2 = Mark();
         Next();
         m2.Complete(*this, LuaSyntaxNodeKind::TableFieldSep);
@@ -647,7 +649,7 @@ void LuaParser::RectField() {
         YIndex();
     }
 
-    CheckAndNext('=');
+    CheckAndNext(TK_EQ);
 
     Expression();
 }
@@ -656,11 +658,11 @@ void LuaParser::RectField() {
 CompleteMarker LuaParser::FunctionBody() {
     auto m = Mark();
 
-    CheckAndNext('(');
+    CheckAndNext(TK_LPARN);
 
     ParamList();
 
-    CheckAndNext(')');
+    CheckAndNext(TK_RPARN);
 
     Body();
 
@@ -673,7 +675,7 @@ CompleteMarker LuaParser::ParamList() {
     auto m = Mark();
 
     bool isVararg = false;
-    if (Current() != ')') {
+    if (Current() != TK_RPARN) {
         do {
             switch (Current()) {
                 case TK_NAME: {
@@ -685,7 +687,7 @@ CompleteMarker LuaParser::ParamList() {
                     Next();
                     break;
                 }
-                case ')': {
+                case TK_RPARN: {
                     break;
                 }
                 default: {
@@ -693,7 +695,7 @@ CompleteMarker LuaParser::ParamList() {
                     goto endLoop;
                 }
             }
-        } while (!isVararg && TestAndNext(','));
+        } while (!isVararg && TestAndNext(TK_COMMA));
     endLoop:
         // empty stat
         void(0);
@@ -710,23 +712,23 @@ CompleteMarker LuaParser::SuffixedExpression() {
     bool suffix = false;
     for (;;) {
         switch (Current()) {
-            case '.': {
+            case TK_DOT: {
                 FieldSel();
                 break;
             }
-            case '[': {
+            case TK_LBRACKET: {
                 YIndex();
                 break;
             }
-            case ':': {
+            case TK_COLON: {
                 FieldSel();
                 CallExpression();
                 break;
             }
-            case '(':
+            case TK_LPARN:
             case TK_LONG_STRING:
             case TK_STRING:
-            case '{': {
+            case TK_LCURLY: {
                 CallExpression();
                 break;
             }
@@ -748,17 +750,17 @@ CompleteMarker LuaParser::CallExpression() {
     auto m = Mark();
 
     switch (Current()) {
-        case '(': {
+        case TK_LPARN: {
             Next();
-            if (Current() != ')') {
+            if (Current() != TK_RPARN) {
                 // extend grammar, allow pcall(1,2,)
-                ExpressionList(')');
+                ExpressionList(TK_RPARN);
             }
 
-            CheckAndNext(')');
+            CheckAndNext(TK_RPARN);
             break;
         }
-        case '{': {
+        case TK_LCURLY: {
             TableConstructor();
             break;
         }
@@ -782,6 +784,7 @@ CompleteMarker LuaParser::FieldSel() {
     auto m = Mark();
 
     Next();
+
     CheckAndNext(TK_NAME);
 
     return m.Complete(*this, LuaSyntaxNodeKind::IndexExpression);
@@ -791,9 +794,11 @@ CompleteMarker LuaParser::FieldSel() {
 CompleteMarker LuaParser::YIndex() {
     auto m = Mark();
 
-    CheckAndNext('[');
+    CheckAndNext(TK_LBRACKET);
+
     Expression();
-    CheckAndNext(']');
+
+    CheckAndNext(TK_RBRACKET);
 
     return m.Complete(*this, LuaSyntaxNodeKind::IndexExpression);
 }
@@ -803,11 +808,11 @@ void LuaParser::FunctionName() {
 
     CheckAndNext(TK_NAME);
 
-    while (Current() == '.') {
+    while (Current() == TK_DOT) {
         FieldSel();
     }
 
-    if (Current() == ':') {
+    if (Current() == TK_COLON) {
         FieldSel();
     }
 
@@ -823,7 +828,7 @@ void LuaParser::CheckName() {
 /* ATTRIB -> ['<' Name '>'] */
 CompleteMarker LuaParser::LocalAttribute() {
     auto m = Mark();
-    if (TestAndNext('<')) {
+    if (TestAndNext(TK_LT)) {
         if (Current() == TK_NAME) {
             auto range = _tokens[_tokenIndex].Range;
             auto attr = _file->Slice(range.StartOffset, range.EndOffset);
@@ -835,7 +840,7 @@ CompleteMarker LuaParser::LocalAttribute() {
             LuaExpectedError(fmt::format("expected attribute 'const' or 'close'"));
         }
 
-        CheckAndNext('>');
+        CheckAndNext(TK_GT);
         return m.Complete(*this, LuaSyntaxNodeKind::Attribute);
     }
     m.Undo(*this);
@@ -844,7 +849,7 @@ CompleteMarker LuaParser::LocalAttribute() {
 
 void LuaParser::Check(LuaTokenKind c) {
     if (Current() != c) {
-        LuaExpectedError(fmt::format("{} expected", c));
+        LuaExpectedError(fmt::format("'{}' expected", c));
     }
 }
 
@@ -852,10 +857,10 @@ void LuaParser::Check(LuaTokenKind c) {
 CompleteMarker LuaParser::PrimaryExpression() {
     auto m = Mark();
     switch (Current()) {
-        case '(': {
+        case TK_LPARN: {
             Next();
             Expression();
-            CheckAndNext(')');
+            CheckAndNext(TK_RPARN);
             return m.Complete(*this, LuaSyntaxNodeKind::ParExpression);
         }
         case TK_NAME: {
@@ -874,13 +879,13 @@ UnOpr LuaParser::GetUnaryOperator(LuaTokenKind op) {
         case TK_NOT: {
             return UnOpr::OPR_NOT;
         }
-        case '-': {
+        case TK_MINUS: {
             return UnOpr::OPR_MINUS;
         }
-        case '~': {
+        case TK_TILDE: {
             return UnOpr::OPR_BNOT;
         }
-        case '#': {
+        case TK_GETN: {
             return UnOpr::OPR_LEN;
         }
         default: {
@@ -891,25 +896,25 @@ UnOpr LuaParser::GetUnaryOperator(LuaTokenKind op) {
 
 BinOpr LuaParser::GetBinaryOperator(LuaTokenKind op) {
     switch (op) {
-        case '+':
+        case TK_PLUS:
             return BinOpr::OPR_ADD;
-        case '-':
+        case TK_MINUS:
             return BinOpr::OPR_SUB;
-        case '*':
+        case TK_MULT:
             return BinOpr::OPR_MUL;
-        case '%':
+        case TK_MOD:
             return BinOpr::OPR_MOD;
-        case '^':
+        case TK_EXP:
             return BinOpr::OPR_POW;
-        case '/':
+        case TK_DIV:
             return BinOpr::OPR_DIV;
         case TK_IDIV:
             return BinOpr::OPR_IDIV;
-        case '&':
+        case TK_BIT_AND:
             return BinOpr::OPR_BAND;
-        case '|':
+        case TK_BIT_OR:
             return BinOpr::OPR_BOR;
-        case '~':
+        case TK_TILDE:
             return BinOpr::OPR_BXOR;
         case TK_SHL:
             return BinOpr::OPR_SHL;
@@ -921,11 +926,11 @@ BinOpr LuaParser::GetBinaryOperator(LuaTokenKind op) {
             return BinOpr::OPR_NE;
         case TK_EQ:
             return BinOpr::OPR_EQ;
-        case '<':
+        case TK_LT:
             return BinOpr::OPR_LT;
         case TK_LE:
             return BinOpr::OPR_LE;
-        case '>':
+        case TK_GT:
             return BinOpr::OPR_GT;
         case TK_GE:
             return BinOpr::OPR_GE;
@@ -974,7 +979,7 @@ CompleteMarker LuaParser::NameDefList() {
     auto m = Mark();
 
     CheckAndNext(TK_NAME);
-    while (TestAndNext(',')) {
+    while (TestAndNext(TK_COMMA)) {
         CheckAndNext(TK_NAME);
     }
 

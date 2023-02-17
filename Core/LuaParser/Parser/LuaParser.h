@@ -82,7 +82,7 @@ private:
 
     CompleteMarker Body();
 
-    CompleteMarker ExpressionList(LuaTokenKind stopToken = 0);
+    CompleteMarker ExpressionList(LuaTokenKind stopToken = LuaTokenKind::TK_UNKNOWN);
 
     CompleteMarker Expression();
 

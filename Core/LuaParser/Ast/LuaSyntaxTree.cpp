@@ -1,13 +1,13 @@
 #include "LuaSyntaxTree.h"
-#include "Core/LuaParser/Define/LuaTokenTypeDetail.h"
 #include "LuaParser/Parser/LuaParser.h"
 #include <algorithm>
 #include <fmt/format.h>
 
-LuaSyntaxTree::LuaSyntaxTree()
-        : _file(),
-          _tokenIndex(0) {
+using enum LuaTokenKind;
 
+LuaSyntaxTree::LuaSyntaxTree()
+    : _file(),
+      _tokenIndex(0) {
 }
 
 void LuaSyntaxTree::BuildTree(LuaParser &p) {
@@ -107,8 +107,7 @@ void LuaSyntaxTree::EatInlineComment(LuaParser &p) {
             case TK_LONG_COMMENT:
             case TK_SHEBANG: {
                 auto prevToken = tokens[index - 1];
-                if (_file->GetLineIndex().GetLine(prevToken.Range.EndOffset)
-                    == _file->GetLineIndex().GetLine(tokens[index].Range.StartOffset)) {
+                if (_file->GetLineIndex().GetLine(prevToken.Range.EndOffset) == _file->GetLineIndex().GetLine(tokens[index].Range.StartOffset)) {
                     EatToken(p);
                 }
                 break;
@@ -332,7 +331,7 @@ std::size_t LuaSyntaxTree::GetPrevToken(std::size_t index) const {
             if (tokenIndex != 0) {
                 return _tokens[tokenIndex - 1].NodeIndex;
             }
-        } else { // Node, 可能存在无元素节点
+        } else {// Node, 可能存在无元素节点
             for (auto nodeIndex = index - 1; nodeIndex > 0; nodeIndex--) {
                 if (IsToken(nodeIndex)) {
                     return nodeIndex;
@@ -353,7 +352,7 @@ std::size_t LuaSyntaxTree::GetNextToken(std::size_t index) const {
         auto &n = _nodeOrTokens[index];
         if (n.Type == NodeOrTokenType::Token) {
             tokenNodeIndex = index;
-        } else { // Node, 可能存在无元素节点
+        } else {// Node, 可能存在无元素节点
             auto lastTokenIndex = GetLastToken(index);
             if (lastTokenIndex != 0) {
                 tokenNodeIndex = lastTokenIndex;
@@ -509,14 +508,14 @@ std::string LuaSyntaxTree::GetDebugView() {
             debugView.resize(debugView.size() + indent, '\t');
             debugView.append(fmt::format("{{ Node, index: {}, SyntaxKind: {} }}\n",
                                          node.GetIndex(),
-                                         detail::debug::GetSyntaxKindDebugName(node.GetSyntaxKind(*this))));
+                                         node.GetSyntaxKind(*this)));
             indent++;
         } else if (node.IsToken(*this)) {
             traverseStack.pop();
             debugView.resize(debugView.size() + indent, '\t');
             debugView.append(fmt::format("{{ Token, index: {}, TokenKind: {} }}\n",
-                                          node.GetIndex(),
-                                          node.GetText(*this)));
+                                         node.GetIndex(),
+                                         node.GetText(*this)));
         } else {
             traverseStack.pop();
             indent--;
@@ -530,10 +529,9 @@ bool LuaSyntaxTree::HasError() const {
 }
 
 bool LuaSyntaxTree::IsEatAllComment(LuaSyntaxNodeKind kind) const {
-    return kind == LuaSyntaxNodeKind::Body || kind == LuaSyntaxNodeKind::TableFieldList
-           || kind == LuaSyntaxNodeKind::File;
+    return kind == LuaSyntaxNodeKind::Body || kind == LuaSyntaxNodeKind::TableFieldList || kind == LuaSyntaxNodeKind::File;
 }
 
-const std::vector<LuaParseError> &LuaSyntaxTree::GetErrors() const {
+const std::vector<LuaSyntaxError> &LuaSyntaxTree::GetErrors() const {
     return _errors;
 }

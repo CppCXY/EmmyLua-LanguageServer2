@@ -15,9 +15,8 @@ target_sources(Core
         Ast/LuaSyntaxNode.cpp
         Ast/LuaSyntaxTree.cpp
         Ast/LuaSyntaxMultiKind.cpp
-        Ast/LuaSyntaxNodeKind.cpp
 
-        # types
+        # define
         Define/TextRange.cpp
 
         # file

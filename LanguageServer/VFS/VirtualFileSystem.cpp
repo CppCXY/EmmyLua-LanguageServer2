@@ -73,57 +73,13 @@ void VirtualFileSystem::UpdateFile(std::string_view uri, std::vector<lsp::TextDo
         return;
     }
     auto fileId = opFileId.value();
-    auto opLuaFile = _fileDB.Query(fileId);
-    if (!opLuaFile.has_value()) {
-        return;
-    }
-    auto luaFile = opLuaFile.value();
-
-    auto &sourceText = luaFile->GetSource();
-
-    auto &lineIndex = luaFile->GetLineIndex();
-
-    std::string text;
-    auto totalSize = sourceText.size();
-    std::vector<std::pair<TextRange, std::string>> textChanges;
-    for (auto &change: changeEvent) {
-        if (!change.range.has_value()) {
-            return;
-        }
-        auto range = change.range.value();
-        auto &content = change.text;
-        auto startOffset = lineIndex.GetOffset(LineCol(range.start.line, range.start.character));
-        auto endOffset = lineIndex.GetOffset(LineCol(range.end.line, range.end.character));
-        textChanges.emplace_back(TextRange(startOffset, endOffset), std::move(content));
-        totalSize += content.size() - (endOffset - startOffset);
-    }
-
-    std::stable_sort(textChanges.begin(), textChanges.end(), [](auto &x, auto &y) -> bool {
-        return x.first.StartOffset < y.first.StartOffset;
-    });
-
-    if (totalSize > 0) {
-        text.reserve(totalSize);
-        std::size_t start = 0;
-        for (std::size_t index = 0; index != textChanges.size(); index++) {
-            auto textRange = textChanges[index].first;
-            if (start < textRange.StartOffset) {
-                text.append(sourceText.begin() + start, sourceText.begin() + textRange.StartOffset);
-            }
-
-            auto &content = textChanges[index].second;
-
-            text.append(content);
-
-            start = textChanges[index].first.EndOffset;
-        }
-
-        if (start < sourceText.size()) {
-            text.append(sourceText.begin() + start, sourceText.end());
+    for(auto& change: changeEvent){
+        auto opRange = change.range;
+        if(opRange.has_value()){
+            auto range = change.range.value();
+            UpdateFile(fileId, range, std::move(change.text));
         }
     }
-
-    luaFile->BuildLineIndex();
 }
 
 void VirtualFileSystem::ClearFile(std::string_view uri) {
