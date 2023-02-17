@@ -1,7 +1,7 @@
 #include "LuaSyntaxTree.h"
-#include <algorithm>
+#include "Core/LuaParser/Define/LuaTokenTypeDetail.h"
 #include "LuaParser/Parser/LuaParser.h"
-#include "LuaParser/Lexer/LuaTokenTypeDetail.h"
+#include <algorithm>
 #include <fmt/format.h>
 
 LuaSyntaxTree::LuaSyntaxTree()

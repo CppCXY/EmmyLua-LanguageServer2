@@ -4,12 +4,12 @@ target_sources(Core
 
         # parse
         Parser/LuaParser.cpp
-        Parser/Mark.cpp
+        Util/Mark.cpp
 
         # lexer
         Lexer/LuaLexer.cpp
-        Lexer/LuaIdentify.cpp
-        Lexer/TextReader.cpp
+        Define/LuaIdentify.cpp
+        Util/TextReader.cpp
 
         # ast
         Ast/LuaSyntaxNode.cpp
@@ -18,11 +18,14 @@ target_sources(Core
         Ast/LuaSyntaxNodeKind.cpp
 
         # types
-        Types/TextRange.cpp
+        Define/TextRange.cpp
 
         # file
         File/LuaFile.cpp
 
         # exception
         exception/LuaParseException.cpp
+
+        # Psi
+        Psi/PsiElement.cpp
         )

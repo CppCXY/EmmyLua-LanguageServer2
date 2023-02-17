@@ -1,13 +1,13 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <stack>
+#include "Core/LuaParser/Define/LuaToken.h"
+#include "Core/LuaParser/Util/Mark.h"
 #include "LuaParser/File/LuaFile.h"
-#include "LuaParser/Parser/Mark.h"
-#include "LuaParser/Lexer/LuaToken.h"
-#include "NodeOrToken.h"
 #include "LuaSyntaxNode.h"
+#include "NodeOrToken.h"
+#include <memory>
+#include <stack>
+#include <vector>
 
 class LuaSyntaxTree {
 public:

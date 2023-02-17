@@ -1,13 +1,12 @@
 ﻿#pragma once
 
-#include <memory>
-#include <vector>
-#include "LuaParser/Lexer/LuaLexer.h"
-#include "LuaOperatorType.h"
-#include "LuaParseError.h"
+#include "Core/LuaParser/Define/LuaOperatorType.h"
+#include "Core/LuaParser/Util/Mark.h"
 #include "LuaParser/Ast/LuaSyntaxNode.h"
 #include "LuaParser/Ast/LuaSyntaxTree.h"
-#include "Mark.h"
+#include "LuaParser/Lexer/LuaLexer.h"
+#include <memory>
+#include <vector>
 
 class LuaParser
 {
@@ -20,7 +19,7 @@ public:
 
     std::vector<LuaToken>& GetTokens();
 
-	std::vector<LuaParseError>& GetErrors();
+	std::vector<LuaSyntaxError>& GetErrors();
 
 	bool HasError() const;
 
@@ -141,13 +140,13 @@ private:
 	 */
 	bool TestAndNext(LuaTokenKind kind);
 
-	void LuaExpectedError(std::string_view message, LuaTokenKind expectedToken = 0);
+	void LuaExpectedError(std::string_view message);
 
     void LuaError(std::string_view message);
 
     std::vector<LuaToken> _tokens;
     std::size_t _tokenIndex;
-	std::vector<LuaParseError> _errors;
+	std::vector<LuaSyntaxError> _errors;
 	std::shared_ptr<LuaFile> _file;
     std::vector<MarkEvent> _events;
     bool _invalid;

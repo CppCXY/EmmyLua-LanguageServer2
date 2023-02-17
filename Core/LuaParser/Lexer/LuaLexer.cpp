@@ -1,7 +1,7 @@
 ﻿#include "LuaLexer.h"
-#include "LuaDefine.h"
-#include "LuaIdentify.h"
-#include "LuaTokenTypeDetail.h"
+#include "Core/LuaParser/Define/LuaDefine.h"
+#include "Core/LuaParser/Define/LuaIdentify.h"
+#include "Core/LuaParser/Define/LuaTokenTypeDetail.h"
 #include "Util/Utf8.h"
 #include <limits>
 
@@ -59,7 +59,7 @@ std::vector<LuaToken> &LuaLexer::Tokenize() {
     return _tokens;
 }
 
-std::vector<LuaTokenError> &LuaLexer::GetErrors() {
+std::vector<LuaSyntaxError> &LuaLexer::GetErrors() {
     return _errors;
 }
 

@@ -1,6 +1,6 @@
 #pragma once
+#include "Core/LuaParser/Define/TextRange.h"
 #include <string_view>
-#include "LuaParser/Types/TextRange.h"
 
 class TextReader {
 public:

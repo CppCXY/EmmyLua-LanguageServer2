@@ -1,17 +1,15 @@
 #pragma once
 
-#include <vector>
-#include <string>
+#include "Core/LuaParser/Define/LuaTokenKind.h"
 #include "LuaParser/Ast/LuaSyntaxNodeKind.h"
-#include "LuaParser/Lexer/LuaTokenKind.h"
-#include "LuaParseError.h"
+#include <string>
+#include <vector>
 
 class LuaParser;
 
 enum class MarkEventType {
     NodeStart,
     EatToken,
-    Error,
     NodeEnd
 };
 
@@ -28,11 +26,6 @@ struct MarkEvent {
             std::size_t Index;
             LuaTokenKind Kind;
         } Token;
-
-        struct {
-            LuaTokenKind TokenKind;
-            LuaParserErrorKind ErrorKind;
-        } Error;
     } U;
 };
 

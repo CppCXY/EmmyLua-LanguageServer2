@@ -7,11 +7,11 @@
 #include <vector>
 #include <set>
 
-#include "LuaToken.h"
-#include "LuaTokenKind.h"
+#include "Core/LuaParser/Define/LuaSyntaxError.h"
+#include "Core/LuaParser/Define/LuaToken.h"
+#include "Core/LuaParser/Define/LuaTokenKind.h"
+#include "Core/LuaParser/Util/TextReader.h"
 #include "LuaParser/File/LuaFile.h"
-#include "TextReader.h"
-#include "LuaTokenError.h"
 
 /*
  * token 解析来自于lua 源代码,实现上非常接近但细节处并不相同
@@ -23,7 +23,7 @@ public:
 
     std::vector<LuaToken>& Tokenize();
 
-	std::vector<LuaTokenError>& GetErrors();
+	std::vector<LuaSyntaxError>& GetErrors();
 
 	bool HasError() const;
 
@@ -55,6 +55,6 @@ private:
     bool _supportNonStandardSymbol;
     TextReader _reader;
 	std::vector<LuaToken> _tokens;
-	std::vector<LuaTokenError> _errors;
+	std::vector<LuaSyntaxError> _errors;
 	std::shared_ptr<LuaFile> _file;
 };

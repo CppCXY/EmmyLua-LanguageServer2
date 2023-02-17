@@ -1,8 +1,8 @@
 ﻿#include "LuaParser.h"
-#include "LuaOperatorType.h"
+#include "Core/LuaParser/Define/LuaDefine.h"
+#include "Core/LuaParser/Define/LuaOperatorType.h"
+#include "Core/LuaParser/Define/LuaTokenTypeDetail.h"
 #include "LuaParser/File/LuaFile.h"
-#include "LuaParser/Lexer/LuaDefine.h"
-#include "LuaParser/Lexer/LuaTokenTypeDetail.h"
 #include "LuaParser/exception/LuaParseException.h"
 #include <fmt/format.h>
 
@@ -19,7 +19,7 @@ std::vector<MarkEvent> &LuaParser::GetEvents() {
     return _events;
 }
 
-std::vector<LuaParseError> &LuaParser::GetErrors() {
+std::vector<LuaSyntaxError> &LuaParser::GetErrors() {
     return _errors;
 }
 
@@ -940,7 +940,7 @@ BinOpr LuaParser::GetBinaryOperator(LuaTokenKind op) {
 
 void LuaParser::CheckAndNext(LuaTokenKind kind) {
     if (Current() != kind) {
-        LuaExpectedError(fmt::format("token type {} expected", kind), kind);
+        LuaExpectedError(fmt::format("token type {} expected", kind));
         return;
     }
 
@@ -955,23 +955,19 @@ bool LuaParser::TestAndNext(LuaTokenKind kind) {
     return false;
 }
 
-void LuaParser::LuaExpectedError(std::string_view message, LuaTokenKind expectedToken) {
-    auto me = MarkEvent(MarkEventType::Error);
-    me.U.Error.ErrorKind = LuaParserErrorKind::Expect;
-    me.U.Error.TokenKind = expectedToken;
-    _events.push_back(me);
+void LuaParser::LuaExpectedError(std::string_view message) {
     if (_tokenIndex < _tokens.size()) {
-        _errors.emplace_back(message, _tokens[_tokenIndex].Range, expectedToken);
+        _errors.emplace_back(message, _tokens[_tokenIndex].Range);
     } else if (!_tokens.empty()) {
         auto tokenIndex = _tokens.size() - 1;
-        _errors.emplace_back(message, _tokens[tokenIndex].Range, expectedToken);
+        _errors.emplace_back(message, _tokens[tokenIndex].Range);
     } else {
-        _errors.emplace_back(message, TextRange(0, 0), expectedToken);
+        _errors.emplace_back(message, TextRange(0, 0));
     }
 }
 
 void LuaParser::LuaError(std::string_view message) {
-    _errors.emplace_back(message, _tokens[_tokenIndex].Range, 0);
+    _errors.emplace_back(message, _tokens[_tokenIndex].Range);
 }
 
 CompleteMarker LuaParser::NameDefList() {

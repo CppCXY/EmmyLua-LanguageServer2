@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "LineTypes.h"
+#include "Core/LuaParser/Define/TextRange.h"
 #include "Lib/LSP/LSP.h"
-#include "LuaParser/Types/TextRange.h"
+#include "LineTypes.h"
 
 class LineIndex {
 public:

@@ -1,13 +1,13 @@
 ﻿#pragma once
 
+#include "Core/LuaParser/Define/LuaTokenKind.h"
+#include "Core/LuaParser/Define/TextRange.h"
+#include "LuaSyntaxMultiKind.h"
+#include "LuaSyntaxNodeKind.h"
+#include <functional>
+#include <memory>
 #include <string_view>
 #include <vector>
-#include <memory>
-#include <functional>
-#include "LuaSyntaxNodeKind.h"
-#include "LuaParser/Types/TextRange.h"
-#include "LuaParser/Lexer/LuaTokenKind.h"
-#include "LuaSyntaxMultiKind.h"
 
 class LuaSyntaxTree;
 
