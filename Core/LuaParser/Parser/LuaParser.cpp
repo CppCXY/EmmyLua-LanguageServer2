@@ -13,25 +13,17 @@ LuaParser::LuaParser(std::shared_ptr<LuaFile> file, std::vector<LuaToken> &&toke
       _current(LuaTokenKind::TK_EOF) {
 }
 
-std::vector<LuaSyntaxError> &LuaParser::GetErrors() {
-    return _errors;
-}
-
-bool LuaParser::HasError() const {
-    return !_errors.empty();
-}
-
 bool LuaParser::Parse() {
     try {
         Body();
     } catch (LuaParseException &e) {
         auto text = _file->GetSource();
-        _errors.emplace_back(e.what(), TextRange(text.size(), text.size()));
+        _file->PushError(LuaSyntaxError(e.what(), TextRange(text.size(), text.size())));
     }
 
     if (_tokenIndex < _tokens.size()) {
-        _errors.emplace_back("parsing did not complete",
-                             _tokens[_tokenIndex].Range);
+        _file->PushError(LuaSyntaxError("parsing did not complete",
+                                        _tokens[_tokenIndex].Range));
     }
 
     return true;
@@ -79,7 +71,7 @@ LuaTokenKind LuaParser::Current() {
         }
     }
 
-    if (_errors.size() > 10) {
+    if (_file->GetErrors().size() > 10) {
         std::string_view error = "too many errors, parse fail";
         throw LuaParseException(error);
     }
@@ -953,17 +945,17 @@ bool LuaParser::TestAndNext(LuaTokenKind kind) {
 
 void LuaParser::LuaExpectedError(std::string_view message) {
     if (_tokenIndex < _tokens.size()) {
-        _errors.emplace_back(message, _tokens[_tokenIndex].Range);
+        _file->PushError(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
     } else if (!_tokens.empty()) {
         auto tokenIndex = _tokens.size() - 1;
-        _errors.emplace_back(message, _tokens[tokenIndex].Range);
+        _file->PushError(LuaSyntaxError(message, _tokens[tokenIndex].Range));
     } else {
-        _errors.emplace_back(message, TextRange(0, 0));
+        _file->PushError(LuaSyntaxError(message, TextRange(0, 0)));
     }
 }
 
 void LuaParser::LuaError(std::string_view message) {
-    _errors.emplace_back(message, _tokens[_tokenIndex].Range);
+    _file->PushError(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
 }
 
 ParseState &LuaParser::GetParseState() {

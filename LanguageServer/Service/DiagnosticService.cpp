@@ -23,9 +23,10 @@ DiagnosticService::Diagnostic(std::size_t fileId) {
     }
     auto &lineIndex = luaFile->GetLineIndex();
 
-    auto &syntaxTree = opSyntaxTree.value();
-    if (syntaxTree.HasError()) {
-        for (auto &err: syntaxTree.GetErrors()) {
+//    auto &syntaxTree = opSyntaxTree.value();
+    auto &errors = luaFile->GetErrors();
+    if (!errors.empty()) {
+        for (auto &err: errors) {
             auto &d = diagnostics.emplace_back();
             d.message = err.Message;
             d.range = lineIndex.ToLspRange(err.Range);

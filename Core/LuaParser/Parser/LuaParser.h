@@ -3,8 +3,6 @@
 #include <memory>
 #include <vector>
 
-#include "LuaParser/Ast/LuaSyntaxNode.h"
-#include "LuaParser/Ast/LuaSyntaxTree.h"
 #include "LuaParser/Define/LuaOperatorType.h"
 #include "LuaParser/Kind/LuaSyntaxNodeKind.h"
 #include "LuaParser/Kind/LuaTokenKind.h"
@@ -17,10 +15,6 @@ public:
     LuaParser(std::shared_ptr<LuaFile> file, std::vector<LuaToken> &&tokens);
 
     bool Parse();
-
-    std::vector<LuaSyntaxError> &GetErrors();
-
-    bool HasError() const;
 
     std::vector<LuaToken> &GetTokens();
 
@@ -145,7 +139,6 @@ private:
 
     std::shared_ptr<LuaFile> _file;
     ParseState _p;
-    std::vector<LuaSyntaxError> _errors;
     std::vector<LuaToken> _tokens;
     std::size_t _tokenIndex;
     bool _invalid;

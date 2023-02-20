@@ -24,3 +24,11 @@ void LuaFile::BuildLineIndex() {
 std::string &LuaFile::GetSource() {
     return _source;
 }
+
+const std::vector<LuaSyntaxError> &LuaFile::GetErrors() const {
+    return _errors;
+}
+
+void LuaFile::PushError(const LuaSyntaxError &luaSyntaxError) {
+    _errors.emplace_back(luaSyntaxError);
+}

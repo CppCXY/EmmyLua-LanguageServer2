@@ -40,9 +40,10 @@ std::map<std::string, LuaTokenKind, std::less<>> LuaLexer::LuaReserved = {
         {">>", TK_SHR},
         {"::", TK_DBCOLON}};
 
-LuaLexer::LuaLexer(std::string_view source)
-    : _linenumber(0),
-      _reader(source) {
+LuaLexer::LuaLexer(std::shared_ptr<LuaFile> file)
+    : _file(file),
+      _linenumber(0),
+      _reader(file->GetSource()) {
 }
 
 std::vector<LuaToken> &LuaLexer::Tokenize() {
@@ -56,14 +57,6 @@ std::vector<LuaToken> &LuaLexer::Tokenize() {
     }
 
     return _tokens;
-}
-
-std::vector<LuaSyntaxError> &LuaLexer::GetErrors() {
-    return _errors;
-}
-
-bool LuaLexer::HasError() const {
-    return !_errors.empty();
 }
 
 LuaTokenKind LuaLexer::Lex() {
@@ -463,7 +456,7 @@ bool LuaLexer::IsReserved(std::string_view text) {
 }
 
 void LuaLexer::TokenError(std::string_view message, TextRange range) {
-    _errors.emplace_back(message, range);
+    _file->PushError(LuaSyntaxError(message, range));
 }
 
 void LuaLexer::TokenError(std::string_view message, std::size_t offset) {

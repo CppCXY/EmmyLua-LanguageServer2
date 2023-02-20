@@ -9,14 +9,14 @@
 #include "LuaParser/File/LuaFile.h"
 #include "LuaSyntaxNode.h"
 #include "NodeOrToken.h"
+#include "LuaParser/Parser/LuaParser.h"
 
-class LuaParser;
 
 class LuaSyntaxTree {
 public:
-    explicit LuaSyntaxTree(std::shared_ptr<LuaFile> file);
+    friend class LuaTreeBuilder;
 
-    void BuildTree(LuaParser &p);
+    explicit LuaSyntaxTree(std::shared_ptr<LuaFile> file);
 
     const LuaFile &GetFile() const;
 
@@ -61,32 +61,9 @@ public:
     LuaSyntaxNode GetTokenAtOffset(std::size_t offset) const;
 
     std::string GetDebugView();
-
-    bool HasError() const;
-
-    const std::vector<LuaSyntaxError>& GetErrors() const;
 private:
-    void StartNode(LuaSyntaxNodeKind kind, LuaParser &p);
-
-    void EatComments(LuaParser &p);
-
-    void EatInlineComment(LuaParser &p);
-
-    void EatToken(LuaParser &p);
-
-    bool IsEatAllComment(LuaSyntaxNodeKind kind) const;
-
-    void FinishNode(LuaParser &p);
-
-    void BuildNode(LuaSyntaxNodeKind kind);
-
-    void BuildToken(LuaToken &token);
-
     std::shared_ptr<LuaFile> _file;
     std::vector<NodeOrToken> _nodeOrTokens;
     std::vector<IncrementalToken> _tokens;
     std::vector<LuaSyntaxNode> _syntaxNodes;
-    std::stack<std::size_t> _nodePosStack;
-    std::size_t _tokenIndex;
-    std::vector<LuaSyntaxError> _errors;
 };

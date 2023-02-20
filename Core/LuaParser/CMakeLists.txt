@@ -22,6 +22,8 @@ target_sources(Core
         Ast/LuaSyntaxNode.cpp
         Ast/LuaSyntaxTree.cpp
         Ast/LuaSyntaxMultiKind.cpp
+        Ast/LuaTreeBuilder.cpp
+        Ast/LuaDocTreeBuilder.cpp
 
         # file
         File/LuaFile.cpp

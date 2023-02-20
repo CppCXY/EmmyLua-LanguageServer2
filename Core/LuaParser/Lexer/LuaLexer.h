@@ -11,6 +11,7 @@
 #include "LuaParser/Define/LuaToken.h"
 #include "LuaParser/Kind/LuaTokenKind.h"
 #include "LuaParser/Util/TextReader.h"
+#include "LuaParser/File/LuaFile.h"
 
 /*
  * token 解析来自于lua 源代码,实现上非常接近但细节处并不相同
@@ -18,13 +19,9 @@
 class LuaLexer
 {
 public:
-	explicit LuaLexer(std::string_view source);
+	explicit LuaLexer(std::shared_ptr<LuaFile> file);
 
     std::vector<LuaToken>& Tokenize();
-
-	std::vector<LuaSyntaxError>& GetErrors();
-
-	bool HasError() const;
 private:
 	static std::map<std::string, LuaTokenKind, std::less<>> LuaReserved;
 
@@ -48,8 +45,8 @@ private:
 
     void TokenError(std::string_view message, std::size_t offset);
 
+    std::shared_ptr<LuaFile> _file;
 	int _linenumber;
     TextReader _reader;
 	std::vector<LuaToken> _tokens;
-	std::vector<LuaSyntaxError> _errors;
 };
