@@ -2,22 +2,26 @@ target_sources(Core
         # src
         PRIVATE
 
-        # parse
-        Parser/LuaParser.cpp
-        Util/Mark.cpp
-
         # lexer
         Lexer/LuaLexer.cpp
-        Define/LuaIdentify.cpp
+
+        # parse
+        Parser/LuaParser.cpp
+
+        # util
         Util/TextReader.cpp
+
+        # parseState
+        ParseState/Mark.cpp
+        ParseState/ParseState.cpp
+
+        # define
+        Define/LuaIdentify.cpp
 
         # ast
         Ast/LuaSyntaxNode.cpp
         Ast/LuaSyntaxTree.cpp
         Ast/LuaSyntaxMultiKind.cpp
-
-        # define
-        Define/TextRange.cpp
 
         # file
         File/LuaFile.cpp

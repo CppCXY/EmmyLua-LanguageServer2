@@ -1,22 +1,16 @@
 ﻿#include "LuaParser.h"
-#include "Core/LuaParser/Define/LuaDefine.h"
-#include "Core/LuaParser/Define/LuaOperatorType.h"
+#include "LuaParser/Define/LuaDefine.h"
 #include "LuaParser/exception/LuaParseException.h"
 #include <fmt/format.h>
 
 using enum LuaTokenKind;
 
-LuaParser::LuaParser(std::shared_ptr<LuaFile> luaFile, std::vector<LuaToken> &&tokens)
-    : _tokens(tokens),
+LuaParser::LuaParser(std::shared_ptr<LuaFile> file, std::vector<LuaToken> &&tokens)
+    : _file(file),
+      _tokens(tokens),
       _tokenIndex(0),
-      _file(luaFile),
-      _events(),
       _invalid(true),
-      _current(TK_EOF) {
-}
-
-std::vector<MarkEvent> &LuaParser::GetEvents() {
-    return _events;
+      _current(LuaTokenKind::TK_EOF) {
 }
 
 std::vector<LuaSyntaxError> &LuaParser::GetErrors() {
@@ -25,10 +19,6 @@ std::vector<LuaSyntaxError> &LuaParser::GetErrors() {
 
 bool LuaParser::HasError() const {
     return !_errors.empty();
-}
-
-std::shared_ptr<LuaFile> LuaParser::GetLuaFile() {
-    return _file;
 }
 
 bool LuaParser::Parse() {
@@ -47,18 +37,12 @@ bool LuaParser::Parse() {
     return true;
 }
 
-Marker LuaParser::Mark() {
-    auto pos = _events.size();
-    _events.emplace_back();
-    return Marker(pos);
-}
-
 void LuaParser::Next() {
     auto tk = Current();
     auto me = MarkEvent(MarkEventType::EatToken);
     me.U.Token.Kind = tk;
     me.U.Token.Index = _tokenIndex;
-    _events.push_back(me);
+    _p.GetEvents().push_back(me);
     _tokenIndex++;
     _invalid = true;
 }
@@ -145,9 +129,9 @@ void LuaParser::StatementList() {
 CompleteMarker LuaParser::Statement() {
     switch (Current()) {
         case TK_SEMI: {
-            auto m = Mark();
+            auto m = _p.Mark();
             Next();
-            return m.Complete(*this, LuaSyntaxNodeKind::EmptyStatement);
+            return m.Complete(_p, LuaSyntaxNodeKind::EmptyStatement);
         }
         case TK_IF: {
             return IfStatement();
@@ -193,22 +177,18 @@ CompleteMarker LuaParser::Statement() {
 }
 
 CompleteMarker LuaParser::ErrorStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     LuaError("the statement could not be parsed");
 
     Next();
 
-    //    while (Current() != EOZ) {
-    //        Next();
-    //    }
-
-    return m.Complete(*this, LuaSyntaxNodeKind::Error);
+    return m.Complete(_p, LuaSyntaxNodeKind::Error);
 }
 
 /* ifstat -> IF cond THEN block {ELSEIF cond THEN block} [ELSE block] END */
 CompleteMarker LuaParser::IfStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     TestThenBlock();
     while (Current() == TK_ELSEIF) {
@@ -219,12 +199,12 @@ CompleteMarker LuaParser::IfStatement() {
     }
     CheckAndNext(TK_END);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::IfStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::IfStatement);
 }
 
 /* whilestat -> WHILE cond DO block END */
 CompleteMarker LuaParser::WhileStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_WHILE);
 
@@ -236,11 +216,11 @@ CompleteMarker LuaParser::WhileStatement() {
 
     CheckAndNext(TK_END);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::WhileStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::WhileStatement);
 }
 
 CompleteMarker LuaParser::DoStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_DO);
 
@@ -248,13 +228,13 @@ CompleteMarker LuaParser::DoStatement() {
 
     CheckAndNext(TK_END);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::DoStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::DoStatement);
 }
 
 /* forstat -> FOR (fornum | forlist) END */
 CompleteMarker LuaParser::ForStatement() {
     // forstatement 只有一个 for 的token 节点 加上 forNumber或者forList 节点
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_FOR);
 
@@ -275,11 +255,11 @@ CompleteMarker LuaParser::ForStatement() {
         }
     }
 
-    return m.Complete(*this, LuaSyntaxNodeKind::ForStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::ForStatement);
 }
 
 CompleteMarker LuaParser::ForNumber() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckName();
 
@@ -298,12 +278,12 @@ CompleteMarker LuaParser::ForNumber() {
 
     ForBody();
 
-    return m.Complete(*this, LuaSyntaxNodeKind::ForNumber);
+    return m.Complete(_p, LuaSyntaxNodeKind::ForNumber);
 }
 
 /* forlist -> NAME {,NAME} IN explist forbody */
 CompleteMarker LuaParser::ForList() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     NameDefList();
 
@@ -313,11 +293,11 @@ CompleteMarker LuaParser::ForList() {
 
     ForBody();
 
-    return m.Complete(*this, LuaSyntaxNodeKind::ForList);
+    return m.Complete(_p, LuaSyntaxNodeKind::ForList);
 }
 
 CompleteMarker LuaParser::ForBody() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_DO);
 
@@ -325,12 +305,12 @@ CompleteMarker LuaParser::ForBody() {
 
     CheckAndNext(TK_END);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::ForBody);
+    return m.Complete(_p, LuaSyntaxNodeKind::ForBody);
 }
 
 /* repeatstat -> REPEAT block UNTIL cond */
 CompleteMarker LuaParser::RepeatStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_REPEAT);
 
@@ -340,11 +320,11 @@ CompleteMarker LuaParser::RepeatStatement() {
 
     Expression();
 
-    return m.Complete(*this, LuaSyntaxNodeKind::RepeatStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::RepeatStatement);
 }
 
 CompleteMarker LuaParser::FunctionStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_FUNCTION);
 
@@ -352,11 +332,11 @@ CompleteMarker LuaParser::FunctionStatement() {
 
     FunctionBody();
 
-    return m.Complete(*this, LuaSyntaxNodeKind::FunctionStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::FunctionStatement);
 }
 
 CompleteMarker LuaParser::LocalFunctionStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_LOCAL);
 
@@ -366,21 +346,21 @@ CompleteMarker LuaParser::LocalFunctionStatement() {
 
     FunctionBody();
 
-    return m.Complete(*this, LuaSyntaxNodeKind::LocalFunctionStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::LocalFunctionStatement);
 }
 
 /* stat -> LOCAL ATTRIB NAME {',' ATTRIB NAME} ['=' explist] */
 CompleteMarker LuaParser::LocalStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_LOCAL);
 
-    auto nm = Mark();
+    auto nm = _p.Mark();
     do {
         CheckName();
         LocalAttribute();
     } while (TestAndNext(TK_COMMA));
-    nm.Complete(*this, LuaSyntaxNodeKind::NameDefList);
+    nm.Complete(_p, LuaSyntaxNodeKind::NameDefList);
 
     if (TestAndNext(TK_EQ)) {
         ExpressionList();
@@ -388,11 +368,11 @@ CompleteMarker LuaParser::LocalStatement() {
     // 如果有一个分号则加入到localstatement
     TestAndNext(TK_SEMI);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::LocalStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::LocalStatement);
 }
 
 CompleteMarker LuaParser::LabelStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_DBCOLON);
 
@@ -400,11 +380,11 @@ CompleteMarker LuaParser::LabelStatement() {
 
     CheckAndNext(TK_DBCOLON);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::LabelStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::LabelStatement);
 }
 
 CompleteMarker LuaParser::ReturnStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_RETURN);
 
@@ -414,21 +394,21 @@ CompleteMarker LuaParser::ReturnStatement() {
 
     TestAndNext(TK_SEMI);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::ReturnStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::ReturnStatement);
 }
 
 CompleteMarker LuaParser::BreakStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_BREAK);
 
     TestAndNext(TK_SEMI);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::BreakStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::BreakStatement);
 }
 
 CompleteMarker LuaParser::GotoStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_GOTO);
 
@@ -436,13 +416,13 @@ CompleteMarker LuaParser::GotoStatement() {
 
     TestAndNext(TK_SEMI);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::GotoStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::GotoStatement);
 }
 
 // exprStat -> call | assignment
 // assignment -> varList '=' exprList
 CompleteMarker LuaParser::ExpressionStatement() {
-    auto m = Mark();
+    auto m = _p.Mark();
     auto cm = SuffixedExpression();
     if (cm.IsNone()) {
         return cm;
@@ -452,8 +432,8 @@ CompleteMarker LuaParser::ExpressionStatement() {
         while (TestAndNext(TK_COMMA)) {
             SuffixedExpression();
         }
-        cm = m.Complete(*this, LuaSyntaxNodeKind::VarList);
-        m = cm.Precede(*this);
+        cm = m.Complete(_p, LuaSyntaxNodeKind::VarList);
+        m = cm.Precede(_p);
 
         CheckAndNext(TK_EQ);
 
@@ -461,10 +441,10 @@ CompleteMarker LuaParser::ExpressionStatement() {
 
         // 如果发现一个分号，会认为分号为该语句的结尾
         TestAndNext(TK_SEMI);
-        return m.Complete(*this, LuaSyntaxNodeKind::AssignStatement);
+        return m.Complete(_p, LuaSyntaxNodeKind::AssignStatement);
     } else {
         TestAndNext(TK_SEMI);
-        return m.Complete(*this, LuaSyntaxNodeKind::ExpressionStatement);
+        return m.Complete(_p, LuaSyntaxNodeKind::ExpressionStatement);
     }
 }
 
@@ -480,17 +460,28 @@ void LuaParser::TestThenBlock() {
     Body();
 }
 
+CompleteMarker LuaParser::NameDefList() {
+    auto m = _p.Mark();
+
+    CheckAndNext(TK_NAME);
+    while (TestAndNext(TK_COMMA)) {
+        CheckAndNext(TK_NAME);
+    }
+
+    return m.Complete(_p, LuaSyntaxNodeKind::NameDefList);
+}
+
 CompleteMarker LuaParser::Body() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     StatementList();
 
-    return m.Complete(*this, LuaSyntaxNodeKind::Body);
+    return m.Complete(_p, LuaSyntaxNodeKind::Body);
 }
 
 /* explist -> expr { ',' expr } */
 CompleteMarker LuaParser::ExpressionList(LuaTokenKind stopToken) {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     Expression();
     while (TestAndNext(TK_COMMA)) {
@@ -501,7 +492,7 @@ CompleteMarker LuaParser::ExpressionList(LuaTokenKind stopToken) {
         Expression();
     }
 
-    return m.Complete(*this, LuaSyntaxNodeKind::ExpressionList);
+    return m.Complete(_p, LuaSyntaxNodeKind::ExpressionList);
 }
 
 CompleteMarker LuaParser::Expression() {
@@ -516,10 +507,10 @@ CompleteMarker LuaParser::Subexpression(int limit) {
     UnOpr uop = GetUnaryOperator(Current());
     if (uop != UnOpr::OPR_NOUNOPR) /* prefix (unary) operator? */
     {
-        auto m = Mark();
+        auto m = _p.Mark();
         Next();
         Subexpression(UNARY_PRIORITY);
-        cm = m.Complete(*this, LuaSyntaxNodeKind::UnaryExpression);
+        cm = m.Complete(_p, LuaSyntaxNodeKind::UnaryExpression);
     } else {
         cm = SimpleExpression();
     }
@@ -527,13 +518,13 @@ CompleteMarker LuaParser::Subexpression(int limit) {
     auto op = GetBinaryOperator(Current());
     /* expand while operators have priorities higher than 'limit' */
     while (op != BinOpr::OPR_NOBINOPR && priority[static_cast<int>(op)].left > limit) {
-        auto m = cm.Precede(*this);
+        auto m = cm.Precede(_p);
 
         Next();
 
         Subexpression(priority[static_cast<int>(op)].right);
 
-        cm = m.Complete(*this, LuaSyntaxNodeKind::BinaryExpression);
+        cm = m.Complete(_p, LuaSyntaxNodeKind::BinaryExpression);
         // next op
         op = GetBinaryOperator(Current());
     }
@@ -551,26 +542,26 @@ CompleteMarker LuaParser::SimpleExpression() {
         case TK_TRUE:
         case TK_FALSE:
         case TK_DOTS: {
-            auto m = Mark();
+            auto m = _p.Mark();
             Next();
-            return m.Complete(*this, LuaSyntaxNodeKind::LiteralExpression);
+            return m.Complete(_p, LuaSyntaxNodeKind::LiteralExpression);
         }
         case TK_LONG_STRING:
         case TK_STRING: {
-            auto m = Mark();
+            auto m = _p.Mark();
             Next();
-            return m.Complete(*this, LuaSyntaxNodeKind::StringLiteralExpression);
+            return m.Complete(_p, LuaSyntaxNodeKind::StringLiteralExpression);
         }
         case TK_LCURLY: {
             return TableConstructor();
         }
         case TK_FUNCTION: {
-            auto m = Mark();
+            auto m = _p.Mark();
 
             Next();
             FunctionBody();
 
-            return m.Complete(*this, LuaSyntaxNodeKind::ClosureExpression);
+            return m.Complete(_p, LuaSyntaxNodeKind::ClosureExpression);
         }
         default: {
             return SuffixedExpression();
@@ -582,18 +573,18 @@ CompleteMarker LuaParser::SimpleExpression() {
    sep -> ',' | ';'
 */
 CompleteMarker LuaParser::TableConstructor() {
-    auto m = Mark();
+    auto m = _p.Mark();
     CheckAndNext(TK_LCURLY);
 
     FieldList();
 
     CheckAndNext(TK_RCURLY);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::TableExpression);
+    return m.Complete(_p, LuaSyntaxNodeKind::TableExpression);
 }
 
 CompleteMarker LuaParser::FieldList() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     while (Current() != TK_RCURLY) {
         Field();
@@ -602,12 +593,12 @@ CompleteMarker LuaParser::FieldList() {
         }
     }
 
-    return m.Complete(*this, LuaSyntaxNodeKind::TableFieldList);
+    return m.Complete(_p, LuaSyntaxNodeKind::TableFieldList);
 }
 
 /* field -> listfield | recfield */
 CompleteMarker LuaParser::Field() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     switch (Current()) {
         case TK_NAME: {
@@ -618,7 +609,7 @@ CompleteMarker LuaParser::Field() {
             }
             break;
         }
-        case TK_LBRACKET : {
+        case TK_LBRACKET: {
             RectField();
             break;
         }
@@ -629,12 +620,12 @@ CompleteMarker LuaParser::Field() {
     }
 
     if (Current() == TK_COMMA || Current() == TK_SEMI) {
-        auto m2 = Mark();
+        auto m2 = _p.Mark();
         Next();
-        m2.Complete(*this, LuaSyntaxNodeKind::TableFieldSep);
+        m2.Complete(_p, LuaSyntaxNodeKind::TableFieldSep);
     }
 
-    return m.Complete(*this, LuaSyntaxNodeKind::TableField);
+    return m.Complete(_p, LuaSyntaxNodeKind::TableField);
 }
 
 void LuaParser::ListField() {
@@ -656,7 +647,7 @@ void LuaParser::RectField() {
 
 /* body ->  '(' parlist ')' block END */
 CompleteMarker LuaParser::FunctionBody() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_LPARN);
 
@@ -668,11 +659,11 @@ CompleteMarker LuaParser::FunctionBody() {
 
     CheckAndNext(TK_END);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::FunctionBody);
+    return m.Complete(_p, LuaSyntaxNodeKind::FunctionBody);
 }
 
 CompleteMarker LuaParser::ParamList() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     bool isVararg = false;
     if (Current() != TK_RPARN) {
@@ -701,13 +692,13 @@ CompleteMarker LuaParser::ParamList() {
         void(0);
     }
 
-    return m.Complete(*this, LuaSyntaxNodeKind::ParamList);
+    return m.Complete(_p, LuaSyntaxNodeKind::ParamList);
 }
 
 /* suffixedexp ->
 	 primaryexp { '.' NAME | '[' exp ']' | ':' NAME funcargs | funcargs }+ */
 CompleteMarker LuaParser::SuffixedExpression() {
-    auto m = Mark();
+    auto m = _p.Mark();
     auto cm = PrimaryExpression();
     bool suffix = false;
     for (;;) {
@@ -739,15 +730,15 @@ CompleteMarker LuaParser::SuffixedExpression() {
     }
 endLoop:
     if (suffix) {
-        return m.Complete(*this, LuaSyntaxNodeKind::SuffixedExpression);
+        return m.Complete(_p, LuaSyntaxNodeKind::SuffixedExpression);
     } else {
-        m.Undo(*this);
+        m.Undo(_p);
         return cm;
     }
 }
 
 CompleteMarker LuaParser::CallExpression() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     switch (Current()) {
         case TK_LPARN: {
@@ -766,9 +757,9 @@ CompleteMarker LuaParser::CallExpression() {
         }
         case TK_LONG_STRING:
         case TK_STRING: {
-            auto sm = Mark();
+            auto sm = _p.Mark();
             Next();
-            sm.Complete(*this, LuaSyntaxNodeKind::StringLiteralExpression);
+            sm.Complete(_p, LuaSyntaxNodeKind::StringLiteralExpression);
             break;
         }
         default: {
@@ -776,23 +767,23 @@ CompleteMarker LuaParser::CallExpression() {
         }
     }
 
-    return m.Complete(*this, LuaSyntaxNodeKind::CallExpression);
+    return m.Complete(_p, LuaSyntaxNodeKind::CallExpression);
 }
 
 /* fieldsel -> ['.' | ':'] NAME */
 CompleteMarker LuaParser::FieldSel() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     Next();
 
     CheckAndNext(TK_NAME);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::IndexExpression);
+    return m.Complete(_p, LuaSyntaxNodeKind::IndexExpression);
 }
 
 /* index -> '[' expr ']' */
 CompleteMarker LuaParser::YIndex() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_LBRACKET);
 
@@ -800,11 +791,11 @@ CompleteMarker LuaParser::YIndex() {
 
     CheckAndNext(TK_RBRACKET);
 
-    return m.Complete(*this, LuaSyntaxNodeKind::IndexExpression);
+    return m.Complete(_p, LuaSyntaxNodeKind::IndexExpression);
 }
 
 void LuaParser::FunctionName() {
-    auto m = Mark();
+    auto m = _p.Mark();
 
     CheckAndNext(TK_NAME);
 
@@ -816,7 +807,7 @@ void LuaParser::FunctionName() {
         FieldSel();
     }
 
-    m.Complete(*this, LuaSyntaxNodeKind::FunctionNameExpression);
+    m.Complete(_p, LuaSyntaxNodeKind::FunctionNameExpression);
 }
 
 void LuaParser::CheckName() {
@@ -827,7 +818,7 @@ void LuaParser::CheckName() {
 
 /* ATTRIB -> ['<' Name '>'] */
 CompleteMarker LuaParser::LocalAttribute() {
-    auto m = Mark();
+    auto m = _p.Mark();
     if (TestAndNext(TK_LT)) {
         if (Current() == TK_NAME) {
             auto range = _tokens[_tokenIndex].Range;
@@ -841,10 +832,10 @@ CompleteMarker LuaParser::LocalAttribute() {
         }
 
         CheckAndNext(TK_GT);
-        return m.Complete(*this, LuaSyntaxNodeKind::Attribute);
+        return m.Complete(_p, LuaSyntaxNodeKind::Attribute);
     }
-    m.Undo(*this);
-    return m.Complete(*this, LuaSyntaxNodeKind::None);
+    m.Undo(_p);
+    return m.Complete(_p, LuaSyntaxNodeKind::None);
 }
 
 void LuaParser::Check(LuaTokenKind c) {
@@ -855,23 +846,23 @@ void LuaParser::Check(LuaTokenKind c) {
 
 /* primaryexp -> NAME | '(' expr ')' */
 CompleteMarker LuaParser::PrimaryExpression() {
-    auto m = Mark();
+    auto m = _p.Mark();
     switch (Current()) {
         case TK_LPARN: {
             Next();
             Expression();
             CheckAndNext(TK_RPARN);
-            return m.Complete(*this, LuaSyntaxNodeKind::ParExpression);
+            return m.Complete(_p, LuaSyntaxNodeKind::ParExpression);
         }
         case TK_NAME: {
             Next();
-            return m.Complete(*this, LuaSyntaxNodeKind::NameExpression);
+            return m.Complete(_p, LuaSyntaxNodeKind::NameExpression);
         }
         default:
             LuaExpectedError("unexpected symbol");
     }
-    m.Undo(*this);
-    return m.Complete(*this, LuaSyntaxNodeKind::None);
+    m.Undo(_p);
+    return m.Complete(_p, LuaSyntaxNodeKind::None);
 }
 
 UnOpr LuaParser::GetUnaryOperator(LuaTokenKind op) {
@@ -975,15 +966,8 @@ void LuaParser::LuaError(std::string_view message) {
     _errors.emplace_back(message, _tokens[_tokenIndex].Range);
 }
 
-CompleteMarker LuaParser::NameDefList() {
-    auto m = Mark();
-
-    CheckAndNext(TK_NAME);
-    while (TestAndNext(TK_COMMA)) {
-        CheckAndNext(TK_NAME);
-    }
-
-    return m.Complete(*this, LuaSyntaxNodeKind::NameDefList);
+ParseState &LuaParser::GetParseState() {
+    return _p;
 }
 
 std::vector<LuaToken> &LuaParser::GetTokens() {

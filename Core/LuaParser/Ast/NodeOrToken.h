@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/LuaParser/Define/LuaToken.h"
-#include "Core/LuaParser/Define/LuaTokenKind.h"
-#include "LuaSyntaxNodeKind.h"
+#include "LuaParser/Define/LuaToken.h"
+#include "LuaParser/Kind/LuaSyntaxNodeKind.h"
+#include "LuaParser/Kind/LuaTokenKind.h"
 
 enum class NodeOrTokenType {
     Node,

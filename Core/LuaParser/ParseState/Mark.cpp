@@ -1,5 +1,5 @@
 #include "Mark.h"
-#include "Core/LuaParser/Parser/LuaParser.h"
+#include "ParseState.h"
 #include <cstring>
 
 
@@ -14,7 +14,7 @@ Marker::Marker(std::size_t pos)
 
 }
 
-CompleteMarker Marker::Complete(LuaParser &p, LuaSyntaxNodeKind kind) {
+CompleteMarker Marker::Complete(ParseState &p, LuaSyntaxNodeKind kind) {
     auto &events = p.GetEvents();
     if (Pos < events.size()) {
         events[Pos].U.Start.Kind = kind;
@@ -26,7 +26,7 @@ CompleteMarker Marker::Complete(LuaParser &p, LuaSyntaxNodeKind kind) {
     return CompleteMarker(0, 0, LuaSyntaxNodeKind::None);
 }
 
-void Marker::Undo(LuaParser &p) {
+void Marker::Undo(ParseState &p) {
     auto &events = p.GetEvents();
     if (Pos < events.size()) {
         events[Pos].U.Start.Kind = LuaSyntaxNodeKind::None;
@@ -47,7 +47,7 @@ CompleteMarker::CompleteMarker(std::size_t start, std::size_t finish, LuaSyntaxN
 
 }
 
-Marker CompleteMarker::Precede(LuaParser &p) {
+Marker CompleteMarker::Precede(ParseState &p) {
     auto m = p.Mark();
     auto& event = p.GetEvents().at(Start);
     if (event.Type == MarkEventType::NodeStart) {
@@ -56,6 +56,7 @@ Marker CompleteMarker::Precede(LuaParser &p) {
 
     return m;
 }
+
 bool CompleteMarker::IsNone() const {
     return Kind == LuaSyntaxNodeKind::None;
 }

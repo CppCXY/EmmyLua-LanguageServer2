@@ -1,15 +1,15 @@
 #include "LanguageServer.h"
-#include <iterator>
-#include <fstream>
-#include <fmt/format.h>
-#include "Util/Url.h"
-#include "Util/FileFinder.h"
-#include "asio.hpp"
-#include "Service/Service.h"
 #include "Service/CodeActionService.h"
-#include "Service/DiagnosticService.h"
-#include "Service/ConfigService.h"
 #include "Service/CommandService.h"
+#include "Service/ConfigService.h"
+#include "Service/DiagnosticService.h"
+#include "Service/Service.h"
+#include "Util/File/FileFinder.h"
+#include "Util/File/Url.h"
+#include "asio.hpp"
+#include <fmt/format.h>
+#include <fstream>
+#include <iterator>
 
 LanguageServer::LanguageServer()
         : _idCounter(0),

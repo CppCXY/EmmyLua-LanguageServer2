@@ -1,7 +1,7 @@
 ﻿#include "LuaLexer.h"
-#include "Core/LuaParser/Define/LuaDefine.h"
-#include "Core/LuaParser/Define/LuaIdentify.h"
-#include "Util/Utf8.h"
+#include "LuaParser/Define/LuaDefine.h"
+#include "LuaParser/Define/LuaIdentify.h"
+#include "String/Utf8.h"
 #include <limits>
 
 using enum LuaTokenKind;
@@ -40,11 +40,9 @@ std::map<std::string, LuaTokenKind, std::less<>> LuaLexer::LuaReserved = {
         {">>", TK_SHR},
         {"::", TK_DBCOLON}};
 
-LuaLexer::LuaLexer(std::shared_ptr<LuaFile> file)
+LuaLexer::LuaLexer(std::string_view source)
     : _linenumber(0),
-      _supportNonStandardSymbol(false),
-      _reader(file->GetSource()),
-      _file(file) {
+      _reader(source) {
 }
 
 std::vector<LuaToken> &LuaLexer::Tokenize() {
@@ -66,10 +64,6 @@ std::vector<LuaSyntaxError> &LuaLexer::GetErrors() {
 
 bool LuaLexer::HasError() const {
     return !_errors.empty();
-}
-
-std::shared_ptr<LuaFile> LuaLexer::GetFile() {
-    return _file;
 }
 
 LuaTokenKind LuaLexer::Lex() {
@@ -119,9 +113,6 @@ LuaTokenKind LuaLexer::Lex() {
             }
             case '+': {
                 _reader.SaveAndNext();
-                if (_supportNonStandardSymbol && _reader.CheckNext1('=')) {
-                    return TK_EQ;
-                }
                 return TK_PLUS;
             }
             case '[': {

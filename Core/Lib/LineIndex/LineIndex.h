@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Core/LuaParser/Define/TextRange.h"
+#include "Lib/TextRange/TextRange.h"
 #include "Lib/LSP/LSP.h"
 #include "LineTypes.h"
 

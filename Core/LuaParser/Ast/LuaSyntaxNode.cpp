@@ -1,6 +1,6 @@
 ﻿#include "LuaSyntaxNode.h"
 #include "LuaSyntaxTree.h"
-#include "Util/Utf8.h"
+#include "String/Utf8.h"
 
 LuaSyntaxNode::LuaSyntaxNode(std::size_t index)
         : _index(index) {

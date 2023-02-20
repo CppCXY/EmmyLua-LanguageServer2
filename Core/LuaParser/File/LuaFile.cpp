@@ -1,7 +1,5 @@
 #include "LuaFile.h"
 
-#include "Util/Utf8.h"
-
 LuaFile::LuaFile(std::string &&fileText)
     : _source(fileText) {
 }

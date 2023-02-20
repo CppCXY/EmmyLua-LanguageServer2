@@ -1,6 +1,7 @@
 #pragma once
-#include <string_view>
+
 #include <fmt/format.h>
+#include <string_view>
 
 enum class LuaSyntaxNodeKind {
     None = 0,

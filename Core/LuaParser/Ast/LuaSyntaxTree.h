@@ -1,18 +1,20 @@
 #pragma once
 
-#include "Core/LuaParser/Define/LuaToken.h"
-#include "Core/LuaParser/Util/Mark.h"
-#include "LuaParser/Define/LuaSyntaxError.h"
-#include "LuaParser/File/LuaFile.h"
-#include "LuaSyntaxNode.h"
-#include "NodeOrToken.h"
 #include <memory>
 #include <stack>
 #include <vector>
 
+#include "LuaParser/Define/LuaSyntaxError.h"
+#include "LuaParser/Define/LuaToken.h"
+#include "LuaParser/File/LuaFile.h"
+#include "LuaSyntaxNode.h"
+#include "NodeOrToken.h"
+
+class LuaParser;
+
 class LuaSyntaxTree {
 public:
-    LuaSyntaxTree();
+    explicit LuaSyntaxTree(std::shared_ptr<LuaFile> file);
 
     void BuildTree(LuaParser &p);
 

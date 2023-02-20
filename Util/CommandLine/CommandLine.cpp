@@ -1,6 +1,6 @@
 #include "CommandLine.h"
+#include "fmt/format.h"
 #include <iostream>
-#include <fmt/format.h>
 
 CommandLineTargetOptions::CommandLineTargetOptions()
 	: _enableRestArgs(false)

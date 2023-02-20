@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/LuaParser/Define/LuaTokenKind.h"
-#include "TextRange.h"
+#include "Lib/TextRange/TextRange.h"
+#include "LuaParser/Kind/LuaTokenKind.h"
 #include <string_view>
 
 class LuaToken

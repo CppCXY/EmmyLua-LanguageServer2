@@ -7,7 +7,6 @@ add_library(Core STATIC "")
 target_include_directories(Core
         PUBLIC
         ${EmmyLuaLS_SOURCE_DIR}/3rd/nlohmann_json/include
-        ${EmmyLuaLS_SOURCE_DIR}
         ./
         )
 

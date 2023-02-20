@@ -5,7 +5,7 @@
 #include "Service/CommandService.h"
 #include "Service/ConfigService.h"
 #include "Service/DiagnosticService.h"
-#include "Util/Url.h"
+#include "Util/File/Url.h"
 #include "nlohmann/json.hpp"
 #include <fmt/format.h>
 

@@ -7,4 +7,7 @@ target_sources(Core
         # LineIndex
         LineIndex/LineIndex.cpp
         LineIndex/LineTypes.cpp
+
+        # textRange
+        TextRange/TextRange.cpp
         )

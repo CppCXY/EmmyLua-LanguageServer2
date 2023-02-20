@@ -1,13 +1,15 @@
 ﻿#pragma once
 
-#include "Core/LuaParser/Define/LuaTokenKind.h"
-#include "Core/LuaParser/Define/TextRange.h"
-#include "LuaSyntaxMultiKind.h"
-#include "LuaSyntaxNodeKind.h"
 #include <functional>
 #include <memory>
 #include <string_view>
 #include <vector>
+
+#include "Lib/TextRange/TextRange.h"
+#include "LuaParser/Kind/LuaSyntaxNodeKind.h"
+#include "LuaParser/Kind/LuaTokenKind.h"
+#include "LuaSyntaxMultiKind.h"
+
 
 class LuaSyntaxTree;
 
@@ -86,7 +88,7 @@ public:
     std::size_t CountTokenChild(LuaTokenKind kind, const LuaSyntaxTree &t);
 
     std::size_t CountNodeChild(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t);
+
 private:
     std::size_t _index;
 };
-

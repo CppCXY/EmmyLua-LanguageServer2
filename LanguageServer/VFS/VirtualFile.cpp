@@ -2,7 +2,7 @@
 #include "Lib/LineIndex/LineIndex.h"
 #include "LuaParser/Lexer/LuaLexer.h"
 #include "LuaParser/Parser/LuaParser.h"
-#include "Util/Url.h"
+#include "Util/File/Url.h"
 #include "VirtualFileSystem.h"
 
 VirtualFile::VirtualFile(std::size_t fileId)
@@ -14,13 +14,13 @@ std::optional<LuaSyntaxTree> VirtualFile::GetSyntaxTree(VirtualFileSystem &vfs) 
     auto opFile = db.Query(_fileId);
     if (opFile.has_value()) {
         auto file = opFile.value();
-        LuaLexer luaLexer(file);
+        LuaLexer luaLexer(file->GetSource());
         auto &tokens = luaLexer.Tokenize();
 
         LuaParser p(file, std::move(tokens));
         p.Parse();
 
-        LuaSyntaxTree t;
+        LuaSyntaxTree t(file);
         t.BuildTree(p);
         return t;
     }

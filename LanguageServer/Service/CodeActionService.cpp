@@ -1,9 +1,9 @@
 #include "CodeActionService.h"
 
 #include "CommandService.h"
-#include "Util/Url.h"
-#include "LanguageServer.h"
 #include "DiagnosticService.h"
+#include "LanguageServer.h"
+#include "Util/File/Url.h"
 
 CodeActionService::CodeActionService(LanguageServer *owner)
         : Service(owner) {

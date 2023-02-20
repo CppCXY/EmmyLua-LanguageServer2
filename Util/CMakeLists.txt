@@ -12,18 +12,17 @@ target_include_directories(Util
         PUBLIC
         ${EmmyLuaLS_SOURCE_DIR}/3rd/uriparser/include
         ${EmmyLuaLS_SOURCE_DIR}/3rd/wildcards/include
-
-        PRIVATE
         ./
+
         )
 
 target_sources(Util
         PRIVATE
-        CommandLine.cpp
-        StringUtil.cpp
-        Utf8.cpp
-        Url.cpp
-        FileFinder.cpp
+        CommandLine/CommandLine.cpp
+        String/StringUtil.cpp
+        String/Utf8.cpp
+        File/Url.cpp
+        File/FileFinder.cpp
         )
 
 

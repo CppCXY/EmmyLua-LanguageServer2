@@ -1,9 +1,9 @@
 #include "ConfigService.h"
+#include "DiagnosticService.h"
+#include "LanguageServer.h"
+#include "Util/File/Url.h"
 #include <fstream>
 #include <sstream>
-#include "LanguageServer.h"
-#include "DiagnosticService.h"
-#include "Util/Url.h"
 
 ConfigService::ConfigService(LanguageServer *owner)
         : Service(owner) {

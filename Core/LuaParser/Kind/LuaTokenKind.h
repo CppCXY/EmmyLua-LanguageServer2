@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cstdint>
 #include <fmt/format.h>
+#include <cstdint>
 
 enum class LuaTokenKind {
     TK_AND,

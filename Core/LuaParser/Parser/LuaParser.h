@@ -1,31 +1,30 @@
 ﻿#pragma once
 
-#include "Core/LuaParser/Define/LuaOperatorType.h"
-#include "Core/LuaParser/Util/Mark.h"
-#include "LuaParser/Ast/LuaSyntaxNode.h"
-#include "LuaParser/Ast/LuaSyntaxTree.h"
-#include "LuaParser/Lexer/LuaLexer.h"
 #include <memory>
 #include <vector>
 
-class LuaParser
-{
+#include "LuaParser/Ast/LuaSyntaxNode.h"
+#include "LuaParser/Ast/LuaSyntaxTree.h"
+#include "LuaParser/Define/LuaOperatorType.h"
+#include "LuaParser/Kind/LuaSyntaxNodeKind.h"
+#include "LuaParser/Kind/LuaTokenKind.h"
+#include "LuaParser/Lexer/LuaLexer.h"
+#include "LuaParser/ParseState/ParseState.h"
+#include "LuaParser/File/LuaFile.h"
+
+class LuaParser {
 public:
-	LuaParser(std::shared_ptr<LuaFile> luaFile, std::vector<LuaToken>&& tokens);
+    LuaParser(std::shared_ptr<LuaFile> file, std::vector<LuaToken> &&tokens);
 
     bool Parse();
 
-    std::vector<MarkEvent>& GetEvents();
+    std::vector<LuaSyntaxError> &GetErrors();
 
-    std::vector<LuaToken>& GetTokens();
+    bool HasError() const;
 
-	std::vector<LuaSyntaxError>& GetErrors();
+    std::vector<LuaToken> &GetTokens();
 
-	bool HasError() const;
-
-	std::shared_ptr<LuaFile> GetLuaFile();
-
-    Marker Mark();
+    ParseState &GetParseState();
 
 private:
     void Next();
@@ -36,9 +35,9 @@ private:
 
     void SkipComment();
 
-	bool BlockFollow(bool rightbrace = false);
+    bool BlockFollow(bool rightbrace = false);
 
-	void StatementList();
+    void StatementList();
 
     CompleteMarker Statement();
 
@@ -112,43 +111,43 @@ private:
 
     CompleteMarker YIndex();
 
-	void FunctionName();
+    void FunctionName();
 
-	void CheckName();
+    void CheckName();
 
     CompleteMarker LocalAttribute();
 
-	void Check(LuaTokenKind c);
+    void Check(LuaTokenKind c);
 
     CompleteMarker PrimaryExpression();
 
-	UnOpr GetUnaryOperator(LuaTokenKind op);
+    UnOpr GetUnaryOperator(LuaTokenKind op);
 
-	BinOpr GetBinaryOperator(LuaTokenKind op);
+    BinOpr GetBinaryOperator(LuaTokenKind op);
 
-	/*
+    /*
 	 * 他是检查当前token的type是否与c相同
 	 * 如果是就跳过当前,
 	 * 否则会生成错误
 	 */
-	void CheckAndNext(LuaTokenKind kind);
+    void CheckAndNext(LuaTokenKind kind);
 
-	/*
+    /*
 	 * 他是检查当前token的type是否与c相同
 	 * 如果是就跳过当前，并返回true
 	 * 否则返回false
 	 */
-	bool TestAndNext(LuaTokenKind kind);
+    bool TestAndNext(LuaTokenKind kind);
 
-	void LuaExpectedError(std::string_view message);
+    void LuaExpectedError(std::string_view message);
 
     void LuaError(std::string_view message);
 
+    std::shared_ptr<LuaFile> _file;
+    ParseState _p;
+    std::vector<LuaSyntaxError> _errors;
     std::vector<LuaToken> _tokens;
     std::size_t _tokenIndex;
-	std::vector<LuaSyntaxError> _errors;
-	std::shared_ptr<LuaFile> _file;
-    std::vector<MarkEvent> _events;
     bool _invalid;
     LuaTokenKind _current;
 };

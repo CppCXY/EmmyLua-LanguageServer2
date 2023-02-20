@@ -1,5 +1,5 @@
 #include "FileFinder.h"
-#include "StringUtil.h"
+#include "String/StringUtil.h"
 
 FileFinder::FileFinder(std::filesystem::path root)
 	: _root(root)

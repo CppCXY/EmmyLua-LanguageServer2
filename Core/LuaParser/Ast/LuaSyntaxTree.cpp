@@ -1,22 +1,21 @@
 #include "LuaSyntaxTree.h"
-#include "LuaParser/Parser/LuaParser.h"
 #include <algorithm>
 #include <fmt/format.h>
+#include "LuaParser/Parser/LuaParser.h"
 
 using enum LuaTokenKind;
 
-LuaSyntaxTree::LuaSyntaxTree()
-    : _file(),
+LuaSyntaxTree::LuaSyntaxTree(std::shared_ptr<LuaFile> file)
+    : _file(file),
       _tokenIndex(0) {
 }
 
 void LuaSyntaxTree::BuildTree(LuaParser &p) {
     _errors.swap(p.GetErrors());
 
-    _file = p.GetLuaFile();
     StartNode(LuaSyntaxNodeKind::File, p);
 
-    auto &events = p.GetEvents();
+    auto &events = p.GetParseState().GetEvents();
     std::vector<LuaSyntaxNodeKind> parents;
     for (std::size_t i = 0; i != events.size(); i++) {
         switch (events[i].Type) {
