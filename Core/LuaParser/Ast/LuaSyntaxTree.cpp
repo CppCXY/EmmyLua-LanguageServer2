@@ -1,6 +1,7 @@
 #include "LuaSyntaxTree.h"
 #include <algorithm>
 #include <fmt/format.h>
+#include <ranges>
 
 
 using enum LuaTokenKind;
@@ -326,8 +327,8 @@ std::string LuaSyntaxTree::GetDebugView() {
         if (node.IsNode(*this)) {
             traverseStack.top() = LuaSyntaxNode(0);
             auto children = node.GetChildren(*this);
-            for (auto rIt = children.rbegin(); rIt != children.rend(); rIt++) {
-                traverseStack.push(*rIt);
+            for (auto& c: children | std::views::reverse) {
+                traverseStack.push(c);
             }
             debugView.resize(debugView.size() + indent, '\t');
             debugView.append(fmt::format("{{ Node, index: {}, SyntaxKind: {} }}\n",

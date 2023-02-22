@@ -456,7 +456,7 @@ bool LuaLexer::IsReserved(std::string_view text) {
 }
 
 void LuaLexer::TokenError(std::string_view message, TextRange range) {
-    _file->PushError(LuaSyntaxError(message, range));
+    _file->PushSyntaxError(LuaSyntaxError(message, range));
 }
 
 void LuaLexer::TokenError(std::string_view message, std::size_t offset) {

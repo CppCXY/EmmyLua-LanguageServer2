@@ -1,7 +1,7 @@
 #pragma once
 
-#include <fmt/format.h>
 #include <cstdint>
+#include <fmt/format.h>
 
 enum class LuaTokenKind {
     TK_AND,
@@ -71,6 +71,13 @@ enum class LuaTokenKind {
     TK_SHEBANG,      //shebang
     TK_EOF,          // end of file
     TK_ERR,          // 错误Token
+
+    // lua doc special
+    TK_AT,            // '@'
+    TK_DASH_DASH_DASH,// '---'
+    TK_DASHES,        // '--'
+    TK_ARR,           // '[]'
+    TK_NULLABLE,      // '?'
 
     TK_UNKNOWN,
 };

@@ -4,7 +4,7 @@
 
 class TextReader {
 public:
-    explicit TextReader(std::string_view text);
+    explicit TextReader(std::string_view text, std::size_t offset = 0);
 
     int NextChar();
 
@@ -24,9 +24,11 @@ public:
 
     std::string_view GetSaveText() const;
 
-    void ResetBuffer();
+    std::size_t EatWhen(int ch);
 
     bool IsEof() const;
+
+    void ResetBuffer();
 private:
     std::string_view _text;
 
@@ -36,4 +38,5 @@ private:
 
     bool _isEof;
     std::size_t _currentIndex;
+    std::size_t _offset;
 };

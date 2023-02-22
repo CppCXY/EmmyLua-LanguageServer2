@@ -24,7 +24,7 @@ DiagnosticService::Diagnostic(std::size_t fileId) {
     auto &lineIndex = luaFile->GetLineIndex();
 
 //    auto &syntaxTree = opSyntaxTree.value();
-    auto &errors = luaFile->GetErrors();
+    auto &errors = luaFile->GetSyntaxErrors();
     if (!errors.empty()) {
         for (auto &err: errors) {
             auto &d = diagnostics.emplace_back();

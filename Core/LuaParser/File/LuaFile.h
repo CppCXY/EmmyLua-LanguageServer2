@@ -21,13 +21,15 @@ public:
 
     const LineIndex &GetLineIndex() const;
 
-    const std::vector<LuaSyntaxError> &GetErrors() const;
+    const std::vector<LuaSyntaxError> &GetSyntaxErrors() const;
 
-    void PushError(const LuaSyntaxError &luaSyntaxError);
+    void PushSyntaxError(const LuaSyntaxError &luaSyntaxError);
 
+    void PushDocError(const LuaSyntaxError &luaSyntaxError);
 protected:
     std::string _source;
     LineIndex _lineIndex;
 
     std::vector<LuaSyntaxError> _errors;
+    std::vector<LuaSyntaxError> _docErrors;
 };

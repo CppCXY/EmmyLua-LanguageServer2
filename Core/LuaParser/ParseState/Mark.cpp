@@ -26,11 +26,12 @@ CompleteMarker Marker::Complete(ParseState &p, LuaSyntaxNodeKind kind) {
     return CompleteMarker(0, 0, LuaSyntaxNodeKind::None);
 }
 
-void Marker::Undo(ParseState &p) {
+CompleteMarker Marker::Undo(ParseState &p) {
     auto &events = p.GetEvents();
     if (Pos < events.size()) {
         events[Pos].U.Start.Kind = LuaSyntaxNodeKind::None;
     }
+    return CompleteMarker(0, 0, LuaSyntaxNodeKind::None);
 }
 
 CompleteMarker::CompleteMarker()

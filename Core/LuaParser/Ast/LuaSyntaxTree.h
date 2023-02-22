@@ -62,6 +62,7 @@ public:
 
     std::string GetDebugView();
 private:
+
     std::shared_ptr<LuaFile> _file;
     std::vector<NodeOrToken> _nodeOrTokens;
     std::vector<IncrementalToken> _tokens;

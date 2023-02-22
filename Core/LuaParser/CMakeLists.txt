@@ -8,6 +8,11 @@ target_sources(Core
         # parse
         Parser/LuaParser.cpp
 
+        # docLexer
+        DocLexer/LuaDocLexer.cpp
+        # docParser
+        DocParser/LuaDocParser.cpp
+
         # util
         Util/TextReader.cpp
 

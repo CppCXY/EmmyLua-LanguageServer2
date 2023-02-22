@@ -1,4 +1,5 @@
 #include "LuaTreeBuilder.h"
+#include <ranges>
 
 using enum LuaTokenKind;
 
@@ -7,14 +8,14 @@ LuaTreeBuilder::LuaTreeBuilder()
 }
 
 void LuaTreeBuilder::BuildTree(LuaSyntaxTree &t, LuaParser &p) {
+
     StartNode(LuaSyntaxNodeKind::File, t, p);
 
     auto &events = p.GetParseState().GetEvents();
     std::vector<LuaSyntaxNodeKind> parents;
-    for (std::size_t i = 0; i != events.size(); i++) {
-        switch (events[i].Type) {
+    for (auto &e: events) {
+        switch (e.Type) {
             case MarkEventType::NodeStart: {
-                auto e = events[i];
                 if (e.U.Start.Kind == LuaSyntaxNodeKind::None) {
                     continue;
                 }
@@ -31,9 +32,9 @@ void LuaTreeBuilder::BuildTree(LuaSyntaxTree &t, LuaParser &p) {
                         break;
                     }
                 }
-                // When debug here will throw error
-                for (auto rIt = parents.rbegin(); rIt != parents.rend(); rIt++) {
-                    StartNode(*rIt, t, p);
+
+                for (const auto &parent: parents | std::views::reverse) {
+                    StartNode(parent, t, p);
                 }
 
                 parents.clear();
@@ -42,7 +43,6 @@ void LuaTreeBuilder::BuildTree(LuaSyntaxTree &t, LuaParser &p) {
             case MarkEventType::EatToken: {
                 EatComments(t, p);
                 EatToken(t, p);
-                EatInlineComment(t, p);
                 break;
             }
             case MarkEventType::NodeEnd: {
@@ -67,50 +67,141 @@ void LuaTreeBuilder::BuildTree(LuaSyntaxTree &t, LuaParser &p) {
 
 void LuaTreeBuilder::StartNode(LuaSyntaxNodeKind kind, LuaSyntaxTree &t, LuaParser &p) {
     if (!IsEatAllComment(kind, t)) {
-        EatComments(t, p);
-        BuildNode(kind, t);
-    } else {
-        BuildNode(kind, t);
+        auto commentCount = CalculateCommentCount(t, p);
+        if (commentCount != 0) {
+            auto edge = BindLeftComment(_tokenIndex + commentCount, t, p);
+            assert(edge <= commentCount);
+            EatCommentByCount(commentCount - edge, t, p);
+            BuildNode(kind, t);
+            EatCommentByCount(edge, t, p);
+            return;
+        }
     }
+    BuildNode(kind, t);
 }
 
-void LuaTreeBuilder::EatComments(LuaSyntaxTree &t, LuaParser &p) {
+std::size_t LuaTreeBuilder::CalculateCommentCount(LuaSyntaxTree &t, LuaParser &p) {
     auto &tokens = p.GetTokens();
+    std::size_t count = 0;
     for (auto index = _tokenIndex; index < tokens.size(); index++) {
         switch (tokens[index].TokenType) {
             case TK_SHORT_COMMENT:
             case TK_LONG_COMMENT:
             case TK_SHEBANG: {
-                EatToken(t, p);
+                count++;
                 break;
             }
             default: {
-                return;
+                return count;
             }
         }
     }
+    return count;
 }
 
-void LuaTreeBuilder::EatInlineComment(LuaSyntaxTree &t, LuaParser &p) {
+std::size_t LuaTreeBuilder::BindLeftComment(std::size_t startPos, LuaSyntaxTree &t, LuaParser &p) {
     auto &tokens = p.GetTokens();
-    if (_tokenIndex > 0 && _tokenIndex < tokens.size()) {
-        auto index = _tokenIndex;
-        switch (tokens[index].TokenType) {
+    if (startPos >= tokens.size() || startPos <= _tokenIndex) {
+        return 0;
+    }
+    auto &file = t.GetFile();
+    auto &lineIndex = file.GetLineIndex();
+
+    std::size_t line = lineIndex.GetLine(tokens[startPos].Range.StartOffset);
+    std::size_t count = 0;
+    std::size_t total = startPos - _tokenIndex;
+    for (; count < total; count++) {
+        auto index = startPos - count - 1;
+        auto &token = tokens[index];
+        switch (token.TokenType) {
             case TK_SHORT_COMMENT:
             case TK_LONG_COMMENT:
             case TK_SHEBANG: {
-                auto prevToken = tokens[index - 1];
-                auto &file = t.GetFile();
-                if (file.GetLineIndex().GetLine(prevToken.Range.EndOffset) == file.GetLineIndex().GetLine(tokens[index].Range.StartOffset)) {
-                    EatToken(t, p);
+                auto commentLine = lineIndex.GetLine(token.Range.EndOffset);
+                if (commentLine + 1 != line) {
+                    return count;
                 }
+                line = lineIndex.GetLine(token.Range.StartOffset);
                 break;
             }
             default: {
-                return;
+                return count;
             }
         }
     }
+    return count;
+}
+
+std::size_t LuaTreeBuilder::BindRightComment(LuaSyntaxNodeKind kind, LuaSyntaxTree &t, LuaParser &p) {
+    switch (kind) {
+        case LuaSyntaxNodeKind::LocalStatement:
+        case LuaSyntaxNodeKind::AssignStatement: {
+            auto &tokens = p.GetTokens();
+            if (_tokenIndex > 0 && _tokenIndex < tokens.size()) {
+                auto index = _tokenIndex;
+                switch (tokens[index].TokenType) {
+                    case TK_SHORT_COMMENT:
+                    case TK_LONG_COMMENT:
+                    case TK_SHEBANG: {
+                        auto prevToken = tokens[index - 1];
+                        auto &file = t.GetFile();
+                        if (file.GetLineIndex().GetLine(prevToken.Range.EndOffset) == file.GetLineIndex().GetLine(tokens[index].Range.StartOffset)) {
+                            return 1;
+                        }
+                        break;
+                    }
+                    default: {
+                        return 0;
+                    }
+                }
+            }
+            break;
+        }
+        case LuaSyntaxNodeKind::Body:
+        case LuaSyntaxNodeKind::TableFieldList:
+        case LuaSyntaxNodeKind::File: {
+            return CalculateCommentCount(t, p);
+        }
+        default: {
+            return 0;
+        }
+    }
+    return 0;
+}
+
+void LuaTreeBuilder::EatCommentByCount(std::size_t count, LuaSyntaxTree &t, LuaParser &p) {
+    if (count == 0) {
+        return;
+    }
+
+    auto &file = t.GetFile();
+    auto &lineIndex = file.GetLineIndex();
+
+    auto &tokens = p.GetTokens();
+    std::vector<std::vector<std::size_t>> comments;
+    comments.emplace_back();
+    std::size_t line = 0;
+    for (std::size_t i = 0; i < count; i++) {
+        auto index = _tokenIndex + i;
+        auto &token = tokens[index];
+        auto commentLine = lineIndex.GetLine(token.Range.StartOffset);
+        if (comments.back().empty() || (commentLine == line + 1)) {
+            comments.back().emplace_back(index);
+        } else {
+            comments.emplace_back().emplace_back(index);
+        }
+        line = lineIndex.GetLine(token.Range.EndOffset);
+    }
+
+    for (auto &commentGroup: comments) {
+        BuildComments(commentGroup, t, p);
+    }
+    _tokenIndex += count;
+}
+
+void LuaTreeBuilder::EatComments(LuaSyntaxTree &t, LuaParser &p) {
+    auto count = CalculateCommentCount(t, p);
+    EatCommentByCount(count, t, p);
 }
 
 void LuaTreeBuilder::EatToken(LuaSyntaxTree &t, LuaParser &p) {
@@ -123,13 +214,9 @@ void LuaTreeBuilder::FinishNode(LuaSyntaxTree &t, LuaParser &p) {
     if (!_nodePosStack.empty()) {
         auto nodePos = _nodePosStack.top();
         auto &node = t._nodeOrTokens[nodePos];
-        if (node.Type == NodeOrTokenType::Node &&
-            IsEatAllComment(node.Data.NodeKind, t)) {
-            EatComments(t, p);
-        } else {
-            if (_tokenIndex < p.GetTokens().size() && _tokenIndex > 0) {
-                EatInlineComment(t, p);
-            }
+        if (node.Type == NodeOrTokenType::Node) {
+            auto edge = BindRightComment(node.Data.NodeKind, t, p);
+            EatCommentByCount(edge, t, p);
         }
 
         _nodePosStack.pop();
@@ -181,4 +268,14 @@ void LuaTreeBuilder::BuildToken(LuaToken &token, LuaSyntaxTree &t) {
 
 bool LuaTreeBuilder::IsEatAllComment(LuaSyntaxNodeKind kind, LuaSyntaxTree &t) const {
     return kind == LuaSyntaxNodeKind::Body || kind == LuaSyntaxNodeKind::TableFieldList || kind == LuaSyntaxNodeKind::File;
+}
+
+void LuaTreeBuilder::BuildComments(std::vector<std::size_t> group, LuaSyntaxTree &t, LuaParser &p) {
+    BuildNode(LuaSyntaxNodeKind::Comment, t);
+    auto &tokens = p.GetTokens();
+    for (auto i: group) {
+        BuildToken(tokens[i], t);
+    }
+
+    FinishNode(t, p);
 }

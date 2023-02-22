@@ -2,12 +2,13 @@
 #include "LuaParser/Define/LuaDefine.h"
 
 
-TextReader::TextReader(std::string_view text)
-        : _text(text),
-          _hasSaveText(false),
-          _buffStart(0), _buffIndex(0),
-          _isEof(false),
-          _currentIndex(0) {
+TextReader::TextReader(std::string_view text, std::size_t offset)
+    : _text(text),
+      _hasSaveText(false),
+      _buffStart(0), _buffIndex(0),
+      _isEof(false),
+      _currentIndex(0),
+      _offset(0) {
 }
 
 int TextReader::NextChar() {
@@ -64,21 +65,22 @@ bool TextReader::CheckNext2(std::string_view set) {
 }
 
 std::size_t TextReader::GetPos() {
-    return _currentIndex;
+    return _currentIndex + _offset;
 }
 
 TextRange TextReader::GetTokenRange() {
-    return TextRange(_buffStart, _buffIndex);
+    return TextRange(_buffStart + _offset, _buffIndex + _offset);
 }
 
 void TextReader::ResetBuffer() {
     _hasSaveText = false;
     _buffStart = 0;
     _buffIndex = 0;
+    _offset = 0;
 }
 
 std::string_view TextReader::GetSaveText() const {
-    if(_hasSaveText) {
+    if (_hasSaveText) {
         return _text.substr(_buffStart, _buffIndex - _buffStart + 1);
     }
     return _text.substr(_buffStart, 0);
@@ -86,4 +88,13 @@ std::string_view TextReader::GetSaveText() const {
 
 bool TextReader::IsEof() const {
     return _isEof;
+}
+
+std::size_t TextReader::EatWhen(int ch) {
+    std::size_t count = 0;
+    while (!IsEof() && GetCurrentChar() == ch) {
+        SaveAndNext();
+        count++;
+    }
+    return ch;
 }

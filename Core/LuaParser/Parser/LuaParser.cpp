@@ -18,12 +18,12 @@ bool LuaParser::Parse() {
         Body();
     } catch (LuaParseException &e) {
         auto text = _file->GetSource();
-        _file->PushError(LuaSyntaxError(e.what(), TextRange(text.size(), text.size())));
+        _file->PushSyntaxError(LuaSyntaxError(e.what(), TextRange(text.size(), text.size())));
     }
 
     if (_tokenIndex < _tokens.size()) {
-        _file->PushError(LuaSyntaxError("parsing did not complete",
-                                        _tokens[_tokenIndex].Range));
+        _file->PushSyntaxError(LuaSyntaxError("parsing did not complete",
+                                              _tokens[_tokenIndex].Range));
     }
 
     return true;
@@ -71,7 +71,7 @@ LuaTokenKind LuaParser::Current() {
         }
     }
 
-    if (_file->GetErrors().size() > 10) {
+    if (_file->GetSyntaxErrors().size() > 10) {
         std::string_view error = "too many errors, parse fail";
         throw LuaParseException(error);
     }
@@ -826,8 +826,7 @@ CompleteMarker LuaParser::LocalAttribute() {
         CheckAndNext(TK_GT);
         return m.Complete(_p, LuaSyntaxNodeKind::Attribute);
     }
-    m.Undo(_p);
-    return m.Complete(_p, LuaSyntaxNodeKind::None);
+    return m.Undo(_p);
 }
 
 void LuaParser::Check(LuaTokenKind c) {
@@ -853,8 +852,7 @@ CompleteMarker LuaParser::PrimaryExpression() {
         default:
             LuaExpectedError("unexpected symbol");
     }
-    m.Undo(_p);
-    return m.Complete(_p, LuaSyntaxNodeKind::None);
+    return m.Undo(_p);
 }
 
 UnOpr LuaParser::GetUnaryOperator(LuaTokenKind op) {
@@ -945,17 +943,17 @@ bool LuaParser::TestAndNext(LuaTokenKind kind) {
 
 void LuaParser::LuaExpectedError(std::string_view message) {
     if (_tokenIndex < _tokens.size()) {
-        _file->PushError(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
+        _file->PushSyntaxError(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
     } else if (!_tokens.empty()) {
         auto tokenIndex = _tokens.size() - 1;
-        _file->PushError(LuaSyntaxError(message, _tokens[tokenIndex].Range));
+        _file->PushSyntaxError(LuaSyntaxError(message, _tokens[tokenIndex].Range));
     } else {
-        _file->PushError(LuaSyntaxError(message, TextRange(0, 0)));
+        _file->PushSyntaxError(LuaSyntaxError(message, TextRange(0, 0)));
     }
 }
 
 void LuaParser::LuaError(std::string_view message) {
-    _file->PushError(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
+    _file->PushSyntaxError(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
 }
 
 ParseState &LuaParser::GetParseState() {
