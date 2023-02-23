@@ -16,14 +16,14 @@ int TextReader::NextChar() {
         return _text[++_currentIndex];
     } else {
         ++_currentIndex;
-        return EOZ;
+        return EOF_CHAR;
     }
 }
 
 void TextReader::SaveAndNext() {
     Save();
     int ch = NextChar();
-    if (ch == EOZ) {
+    if (ch == EOF_CHAR) {
         _isEof = true;
     }
 }
@@ -41,7 +41,7 @@ int TextReader::GetCurrentChar() {
         unsigned char ch = _text[_currentIndex];
         return ch;
     }
-    return EOZ;
+    return EOF_CHAR;
 }
 
 bool TextReader::CheckNext1(int ch) {
@@ -96,5 +96,14 @@ std::size_t TextReader::EatWhen(int ch) {
         SaveAndNext();
         count++;
     }
-    return ch;
+    return count;
+}
+
+std::size_t TextReader::EatWhile(std::function<bool(int)> fn) {
+    std::size_t count = 0;
+    while (!IsEof() && fn(GetCurrentChar())) {
+        SaveAndNext();
+        count++;
+    }
+    return count;
 }

@@ -98,7 +98,7 @@ LuaTokenKind LuaLexer::Lex() {
                 }
 
                 // is short comment
-                while (!CurrentIsNewLine() && _reader.GetCurrentChar() != EOZ) {
+                while (!CurrentIsNewLine() && _reader.GetCurrentChar() != EOF_CHAR) {
                     _reader.SaveAndNext();
                 }
 
@@ -203,7 +203,7 @@ LuaTokenKind LuaLexer::Lex() {
             case '9': {
                 return ReadNumeral();
             }
-            case EOZ: {
+            case EOF_CHAR: {
                 return TK_EOF;
             }
             case '#': {
@@ -211,7 +211,7 @@ LuaTokenKind LuaLexer::Lex() {
                 // 只认为第一行的才是shebang
                 if (_linenumber == 0 && _tokens.empty()) {
                     // shebang
-                    while (!CurrentIsNewLine() && _reader.GetCurrentChar() != EOZ) {
+                    while (!CurrentIsNewLine() && _reader.GetCurrentChar() != EOF_CHAR) {
                         _reader.SaveAndNext();
                     }
 
@@ -367,7 +367,7 @@ void LuaLexer::ReadLongString(std::size_t sep) {
 
     for (;;) {
         switch (_reader.GetCurrentChar()) {
-            case EOZ: {
+            case EOF_CHAR: {
                 TokenError("unfinished long string starting", _reader.GetPos());
                 return;
             }
@@ -395,7 +395,7 @@ void LuaLexer::ReadString(int del) {
     _reader.SaveAndNext();
     while (_reader.GetCurrentChar() != del) {
         switch (_reader.GetCurrentChar()) {
-            case EOZ:
+            case EOF_CHAR:
             case '\n':
             case '\r': {
                 TokenError("unfinished string", _reader.GetPos());
@@ -405,7 +405,7 @@ void LuaLexer::ReadString(int del) {
                 _reader.SaveAndNext();
 
                 switch (_reader.GetCurrentChar()) {
-                    case EOZ:
+                    case EOF_CHAR:
                         TokenError("unfinished string", _reader.GetPos());
                         return;
                     case 'z': {

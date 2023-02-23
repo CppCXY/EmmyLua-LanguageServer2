@@ -3,7 +3,7 @@
 #include "LuaIdentify.h"
 #include <climits>
 
-const int EOZ = -1;
+const int EOF_CHAR = -1;
 
 //accept UniCode IDentifiers
 const unsigned char NONA = 0x01;

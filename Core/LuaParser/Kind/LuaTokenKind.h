@@ -78,6 +78,30 @@ enum class LuaTokenKind {
     TK_DASHES,        // '--'
     TK_ARR,           // '[]'
     TK_NULLABLE,      // '?'
+    TK_FUN,           // 'fun'
+    TK_RETRY,         // trivial token
+    TK_REST,
+    TK_COMMENT_CONTENT,
+    TK_ACCESS,
+    TK_TAG_CLASS,
+    TK_TAG_ENUM,
+    TK_TAG_INTERFACE,
+    TK_TAG_FIELD,
+    TK_TAG_GENERIC,
+    TK_TAG_TYPE,
+    TK_TAG_PARAM,
+    TK_TAG_ALIAS,
+    TK_TAG_PUBLIC,
+    TK_TAG_PRIVATE,
+    TK_TAG_PROTECTED,
+    TK_TAG_OVERLOAD,
+    TK_TAG_OVERRIDE,
+    TK_TAG_SEE,
+    TK_TAG_LANGUAGE,
+    TK_TAG_SINCE,
+    TK_TAG_VERSION,
+    TK_TAG_DEPRECATED,
+    TK_TAG_DIAGNOSTIC,
 
     TK_UNKNOWN,
 };

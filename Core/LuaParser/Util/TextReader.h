@@ -1,6 +1,7 @@
 #pragma once
 #include "Lib/TextRange/TextRange.h"
 #include <string_view>
+#include <functional>
 
 class TextReader {
 public:
@@ -25,6 +26,8 @@ public:
     std::string_view GetSaveText() const;
 
     std::size_t EatWhen(int ch);
+
+    std::size_t EatWhile(std::function<bool(int ch)> fn);
 
     bool IsEof() const;
 

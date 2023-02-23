@@ -32,3 +32,7 @@ const std::vector<LuaSyntaxError> &LuaFile::GetSyntaxErrors() const {
 void LuaFile::PushSyntaxError(const LuaSyntaxError &luaSyntaxError) {
     _errors.emplace_back(luaSyntaxError);
 }
+
+void LuaFile::PushDocError(const LuaSyntaxError &luaSyntaxError) {
+    _docErrors.emplace_back(luaSyntaxError);
+}
