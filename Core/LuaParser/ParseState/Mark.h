@@ -47,6 +47,8 @@ struct CompleteMarker {
 
     bool IsNone() const;
 
+    bool IsComplete() const;
+
     std::size_t Start;
     std::size_t Finish;
     LuaSyntaxNodeKind Kind;

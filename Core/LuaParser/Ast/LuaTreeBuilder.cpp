@@ -1,4 +1,7 @@
 #include "LuaTreeBuilder.h"
+#include "LuaDocTreeBuilder.h"
+#include "LuaParser/DocLexer/LuaDocLexer.h"
+#include "LuaParser/DocParser/LuaDocParser.h"
 #include "LuaParser/File/LuaFile.h"
 #include <ranges>
 
@@ -273,10 +276,22 @@ bool LuaTreeBuilder::IsEatAllComment(LuaSyntaxNodeKind kind, LuaSyntaxTree &t) c
 
 void LuaTreeBuilder::BuildComments(std::vector<std::size_t> group, LuaSyntaxTree &t, LuaParser &p) {
     BuildNode(LuaSyntaxNodeKind::Comment, t);
+    const auto &file = t.GetFile();
     auto &tokens = p.GetTokens();
+    std::vector<LuaToken> luaDocTokens;
     for (auto i: group) {
-        BuildToken(tokens[i], t);
+        auto &luaToken = tokens[i];
+        LuaDocLexer docLexer(file.Slice(luaToken.Range.StartOffset, luaToken.Range.EndOffset), luaToken.Range.StartOffset);
+        for (auto &docToken: docLexer.Tokenize()) {
+            luaDocTokens.emplace_back(docToken);
+        }
     }
+
+    LuaDocParser docParser(&file, std::move(luaDocTokens));
+    docParser.Parse();
+    LuaDocTreeBuilder docTreeBuilder;
+
+    docTreeBuilder.BuildTree(t, docParser);
 
     FinishNode(t, p);
 }

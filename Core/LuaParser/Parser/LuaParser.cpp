@@ -6,7 +6,7 @@
 
 using enum LuaTokenKind;
 
-LuaParser::LuaParser(LuaFile *file, std::vector<LuaToken> &&tokens)
+LuaParser::LuaParser(const LuaFile *file, std::vector<LuaToken> &&tokens)
     : _file(file),
       _tokens(tokens),
       _tokenIndex(0),

@@ -13,7 +13,7 @@ class LuaFile;
 
 class LuaParser {
 public:
-    LuaParser(LuaFile *file, std::vector<LuaToken> &&tokens);
+    LuaParser(const LuaFile *file, std::vector<LuaToken> &&tokens);
 
     bool Parse();
 

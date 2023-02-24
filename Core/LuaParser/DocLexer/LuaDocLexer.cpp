@@ -25,8 +25,7 @@ std::map<std::string, LuaTokenKind, std::less<>> LuaDocLexer::LuaTag = {
         {"diagnostic", TK_TAG_DIAGNOSTIC}};
 
 LuaDocLexer::LuaDocLexer(std::string_view source, std::size_t offset)
-    :
-      _reader(source, offset),
+    : _reader(source, offset),
       _typeLevel(0),
       _typeReq(false) {
 }
@@ -129,6 +128,11 @@ LuaTokenKind LuaDocLexer::ReadInit() {
             _reader.SaveAndNext();
             ChangeState(State::ReadTag);
             return TK_AT;
+        }
+        case '|': {
+            _reader.SaveAndNext();
+            ChangeState(State::Continue);
+            return TK_OR;
         }
         default: {
             if (IsWhitespace(_reader.GetCurrentChar())) {

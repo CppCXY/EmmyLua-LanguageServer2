@@ -98,7 +98,26 @@ enum class LuaSyntaxNodeKind {
 
     ShebangComment,
 
-    DocTagFormat,
+    // emmylua doc
+    DocClass,
+
+    DocInterface,
+
+    DocEnum,
+
+    DocType,
+
+    GenericDefList,
+
+    TypeList,
+
+    Type,
+
+    TableType,
+
+    TableFieldType,
+
+    ParType,
 };
 
 namespace detail::debug {

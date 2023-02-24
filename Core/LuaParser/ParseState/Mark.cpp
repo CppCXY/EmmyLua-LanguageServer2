@@ -61,3 +61,7 @@ Marker CompleteMarker::Precede(ParseState &p) {
 bool CompleteMarker::IsNone() const {
     return Kind == LuaSyntaxNodeKind::None;
 }
+
+bool CompleteMarker::IsComplete() const {
+    return Kind != LuaSyntaxNodeKind::None;
+}

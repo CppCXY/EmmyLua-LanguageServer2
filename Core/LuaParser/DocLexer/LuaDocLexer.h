@@ -27,6 +27,7 @@ public:
         TagExpectedId,
         TagDiagnostic,
 
+        Continue,
         ReadComment,
         ReadRest,
     };
