@@ -2,11 +2,11 @@
 #include <algorithm>
 #include <fmt/format.h>
 #include <ranges>
-
+#include "LuaParser/File/LuaFile.h"
 
 using enum LuaTokenKind;
 
-LuaSyntaxTree::LuaSyntaxTree(std::shared_ptr<LuaFile> file)
+LuaSyntaxTree::LuaSyntaxTree(LuaFile* file)
     : _file(file) {
 }
 
@@ -347,4 +347,10 @@ std::string LuaSyntaxTree::GetDebugView() {
         }
     }
     return debugView;
+}
+
+void LuaSyntaxTree::Reset() {
+    _nodeOrTokens.clear();
+    _tokens.clear();
+    _syntaxNodes.clear();
 }

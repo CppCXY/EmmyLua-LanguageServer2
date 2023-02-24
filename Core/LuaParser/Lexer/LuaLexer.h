@@ -19,9 +19,11 @@
 class LuaLexer
 {
 public:
-	explicit LuaLexer(std::shared_ptr<LuaFile> file);
+	explicit LuaLexer(std::string_view text);
 
     std::vector<LuaToken>& Tokenize();
+
+    std::vector<LuaSyntaxError>& GetErrors();
 private:
 	static std::map<std::string, LuaTokenKind, std::less<>> LuaReserved;
 
@@ -45,8 +47,8 @@ private:
 
     void TokenError(std::string_view message, std::size_t offset);
 
-    std::shared_ptr<LuaFile> _file;
 	int _linenumber;
     TextReader _reader;
 	std::vector<LuaToken> _tokens;
+    std::vector<LuaSyntaxError> _errors;
 };

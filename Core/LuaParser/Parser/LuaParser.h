@@ -4,21 +4,24 @@
 #include <vector>
 
 #include "LuaParser/Define/LuaOperatorType.h"
+#include "LuaParser/Define/LuaSyntaxError.h"
 #include "LuaParser/Kind/LuaSyntaxNodeKind.h"
 #include "LuaParser/Kind/LuaTokenKind.h"
-#include "LuaParser/Lexer/LuaLexer.h"
 #include "LuaParser/ParseState/ParseState.h"
-#include "LuaParser/File/LuaFile.h"
+
+class LuaFile;
 
 class LuaParser {
 public:
-    LuaParser(std::shared_ptr<LuaFile> file, std::vector<LuaToken> &&tokens);
+    LuaParser(LuaFile *file, std::vector<LuaToken> &&tokens);
 
     bool Parse();
 
     std::vector<LuaToken> &GetTokens();
 
     ParseState &GetParseState();
+
+    std::vector<LuaSyntaxError> &GetErrors();
 
 private:
     void Next();
@@ -137,10 +140,11 @@ private:
 
     void LuaError(std::string_view message);
 
-    std::shared_ptr<LuaFile> _file;
+    const LuaFile *_file;
     ParseState _p;
     std::vector<LuaToken> _tokens;
     std::size_t _tokenIndex;
     bool _invalid;
     LuaTokenKind _current;
+    std::vector<LuaSyntaxError> _errors;
 };

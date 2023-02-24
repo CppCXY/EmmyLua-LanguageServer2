@@ -1,12 +1,13 @@
 #pragma once
 
-#include "LuaParser/Define/LuaToken.h"
-#include "LuaParser/File/LuaFile.h"
-#include "LuaParser/Util/TextReader.h"
 #include <map>
 #include <stack>
 #include <string_view>
 #include <vector>
+#include "LuaParser/Define/LuaToken.h"
+#include "LuaParser/Util/TextReader.h"
+#include "LuaParser/Define/LuaSyntaxError.h"
+
 
 class LuaDocLexer {
 public:
@@ -30,10 +31,11 @@ public:
         ReadRest,
     };
 
-    explicit LuaDocLexer(std::shared_ptr<LuaFile> file, std::string_view source, std::size_t offset);
+    explicit LuaDocLexer(std::string_view source, std::size_t offset);
 
     std::vector<LuaToken> &Tokenize();
 
+    std::vector<LuaSyntaxError>& GetErrors();
 private:
     static std::map<std::string, LuaTokenKind, std::less<>> LuaTag;
 
@@ -93,11 +95,12 @@ private:
 
     void ChangeState(State state);
 
-    std::shared_ptr<LuaFile> _file;
     TextReader _reader;
     std::vector<LuaToken> _tokens;
 
     std::stack<State> _stateStack;
     std::size_t _typeLevel;
     bool _typeReq;
+
+    std::vector<LuaSyntaxError> _errors;
 };

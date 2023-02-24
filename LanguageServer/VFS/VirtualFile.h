@@ -14,8 +14,6 @@ public:
 
     bool IsNull() const;
 
-    std::optional<LuaSyntaxTree> GetSyntaxTree(VirtualFileSystem& vfs) const;
-
     std::shared_ptr<LuaFile> GetLuaFile(VirtualFileSystem& vfs) const;
 private:
 	std::size_t _fileId;

@@ -6,17 +6,18 @@
 
 #include "LuaParser/Define/LuaSyntaxError.h"
 #include "LuaParser/Define/LuaToken.h"
-#include "LuaParser/File/LuaFile.h"
 #include "LuaSyntaxNode.h"
 #include "NodeOrToken.h"
-#include "LuaParser/Parser/LuaParser.h"
 
+class LuaFile;
 
 class LuaSyntaxTree {
 public:
     friend class LuaTreeBuilder;
 
-    explicit LuaSyntaxTree(std::shared_ptr<LuaFile> file);
+    explicit LuaSyntaxTree(LuaFile* file);
+
+    void Reset();
 
     const LuaFile &GetFile() const;
 
@@ -62,8 +63,7 @@ public:
 
     std::string GetDebugView();
 private:
-
-    std::shared_ptr<LuaFile> _file;
+    const LuaFile* _file;
     std::vector<NodeOrToken> _nodeOrTokens;
     std::vector<IncrementalToken> _tokens;
     std::vector<LuaSyntaxNode> _syntaxNodes;

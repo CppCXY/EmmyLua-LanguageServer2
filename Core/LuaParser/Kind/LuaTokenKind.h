@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string_view>
 #include <fmt/format.h>
 
 enum class LuaTokenKind {
@@ -242,6 +243,64 @@ constexpr std::string_view GetLuaTokenKindDebugName(LuaTokenKind kind) {
             return "TK_ERR";
         case LuaTokenKind::TK_UNKNOWN:
             return "TK_UNKNOWN";
+        case LuaTokenKind::TK_AT:
+            return "TK_AT";
+        case LuaTokenKind::TK_DASH_DASH_DASH:
+            return "TK_DASH_DASH_DASH";
+        case LuaTokenKind::TK_DASHES:
+            return "TK_DASHES";
+        case LuaTokenKind::TK_ARR:
+            return "TK_ARR";
+        case LuaTokenKind::TK_NULLABLE:
+            return "TK_NULLABLE";
+        case LuaTokenKind::TK_FUN:
+            return "TK_FUN";
+        case LuaTokenKind::TK_RETRY:
+            return "TK_RETRY";
+        case LuaTokenKind::TK_REST:
+            return "TK_REST";
+        case LuaTokenKind::TK_COMMENT_CONTENT:
+            return "TK_COMMENT_CONTENT";
+        case LuaTokenKind::TK_ACCESS:
+            return "TK_ACCESS";
+        case LuaTokenKind::TK_TAG_CLASS:
+            return "TK_TAG_CLASS";
+        case LuaTokenKind::TK_TAG_ENUM:
+            return "TK_TAG_ENUM";
+        case LuaTokenKind::TK_TAG_INTERFACE:
+            return "TK_TAG_INTERFACE";
+        case LuaTokenKind::TK_TAG_FIELD:
+            return "TK_TAG_FIELD";
+        case LuaTokenKind::TK_TAG_GENERIC:
+            return "TK_TAG_GENERIC";
+        case LuaTokenKind::TK_TAG_TYPE:
+            return "TK_TAG_TYPE";
+        case LuaTokenKind::TK_TAG_PARAM:
+            return "TK_TAG_PARAM";
+        case LuaTokenKind::TK_TAG_ALIAS:
+            return "TK_TAG_ALIAS";
+        case LuaTokenKind::TK_TAG_PUBLIC:
+            return "TK_TAG_PUBLIC";
+        case LuaTokenKind::TK_TAG_PRIVATE:
+            return "TK_TAG_PRIVATE";
+        case LuaTokenKind::TK_TAG_PROTECTED:
+            return "TK_TAG_PROTECTED";
+        case LuaTokenKind::TK_TAG_OVERLOAD:
+            return "TK_TAG_OVERLOAD";
+        case LuaTokenKind::TK_TAG_OVERRIDE:
+            return "TK_TAG_OVERRIDE";
+        case LuaTokenKind::TK_TAG_SEE:
+            return "TK_TAG_SEE";
+        case LuaTokenKind::TK_TAG_LANGUAGE:
+            return "TK_TAG_LANGUAGE";
+        case LuaTokenKind::TK_TAG_SINCE:
+            return "TK_TAG_SINCE";
+        case LuaTokenKind::TK_TAG_VERSION:
+            return "TK_TAG_VERSION";
+        case LuaTokenKind::TK_TAG_DEPRECATED:
+            return "TK_TAG_DEPRECATED";
+        case LuaTokenKind::TK_TAG_DIAGNOSTIC:
+            return "TK_TAG_DIAGNOSTIC";
         default:
             return "UNKNOWN";
     }

@@ -24,8 +24,8 @@ std::map<std::string, LuaTokenKind, std::less<>> LuaDocLexer::LuaTag = {
         {"version", TK_TAG_VERSION},
         {"diagnostic", TK_TAG_DIAGNOSTIC}};
 
-LuaDocLexer::LuaDocLexer(std::shared_ptr<LuaFile> file, std::string_view source, std::size_t offset)
-    : _file(file),
+LuaDocLexer::LuaDocLexer(std::string_view source, std::size_t offset)
+    :
       _reader(source, offset),
       _typeLevel(0),
       _typeReq(false) {
@@ -651,9 +651,13 @@ void LuaDocLexer::ChangeState(LuaDocLexer::State state) {
 }
 
 void LuaDocLexer::TokenError(std::string_view message, TextRange range) {
-    _file->PushDocError(LuaSyntaxError(message, range));
+    _errors.emplace_back(message, range);
 }
 
 void LuaDocLexer::TokenError(std::string_view message, std::size_t offset) {
     TokenError(message, TextRange(offset, offset));
+}
+
+std::vector<LuaSyntaxError> &LuaDocLexer::GetErrors() {
+    return _errors;
 }

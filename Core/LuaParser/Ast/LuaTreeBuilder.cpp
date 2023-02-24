@@ -1,4 +1,5 @@
 #include "LuaTreeBuilder.h"
+#include "LuaParser/File/LuaFile.h"
 #include <ranges>
 
 using enum LuaTokenKind;

@@ -41,29 +41,7 @@ void VirtualFileSystem::UpdateFile(std::size_t fileId, const lsp::Range &range, 
         return;
     }
 
-    auto &sourceText = luaFile->GetSource();
-    auto &lineIndex = luaFile->GetLineIndex();
-
-    auto startOffset = lineIndex.GetOffset(LineCol(range.start.line, range.start.character));
-    auto endOffset = lineIndex.GetOffset(LineCol(range.end.line, range.end.character));
-
-    auto oldSize = sourceText.size();
-    auto newSize = oldSize + (text.size() - (endOffset - startOffset));
-    if (newSize > sourceText.capacity()) {
-        auto suitableCapacity = newSize + 4096;
-        sourceText.reserve(suitableCapacity);
-    }
-
-    // for insert
-    if (startOffset == endOffset) {
-        sourceText.insert(startOffset, text);
-    }
-    // for replace
-    else {
-        sourceText.replace(startOffset, endOffset - startOffset, text);
-    }
-
-    luaFile->BuildLineIndex();
+    luaFile->IncrementalUpdateFile(range, std::move(text));
 }
 
 void VirtualFileSystem::UpdateFile(std::string_view uri, std::vector<lsp::TextDocumentContentChangeEvent> &changeEvent) {
@@ -73,12 +51,9 @@ void VirtualFileSystem::UpdateFile(std::string_view uri, std::vector<lsp::TextDo
         return;
     }
     auto fileId = opFileId.value();
-    for(auto& change: changeEvent){
-        auto opRange = change.range;
-        if(opRange.has_value()){
-            auto range = change.range.value();
-            UpdateFile(fileId, range, std::move(change.text));
-        }
+    auto opFile = _fileDB.Query(fileId);
+    if (opFile.has_value()) {
+        opFile.value()->BulkUpdateFile(changeEvent);
     }
 }
 

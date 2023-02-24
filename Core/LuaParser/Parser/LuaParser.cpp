@@ -1,11 +1,12 @@
 ﻿#include "LuaParser.h"
+#include "LuaParser/File/LuaFile.h"
 #include "LuaParser/Define/LuaDefine.h"
 #include "LuaParser/exception/LuaParseException.h"
 #include <fmt/format.h>
 
 using enum LuaTokenKind;
 
-LuaParser::LuaParser(std::shared_ptr<LuaFile> file, std::vector<LuaToken> &&tokens)
+LuaParser::LuaParser(LuaFile *file, std::vector<LuaToken> &&tokens)
     : _file(file),
       _tokens(tokens),
       _tokenIndex(0),
@@ -18,12 +19,11 @@ bool LuaParser::Parse() {
         Body();
     } catch (LuaParseException &e) {
         auto text = _file->GetSource();
-        _file->PushSyntaxError(LuaSyntaxError(e.what(), TextRange(text.size(), text.size())));
+        _errors.emplace_back(e.what(), TextRange(text.size(), text.size()));
     }
 
     if (_tokenIndex < _tokens.size()) {
-        _file->PushSyntaxError(LuaSyntaxError("parsing did not complete",
-                                              _tokens[_tokenIndex].Range));
+        LuaError("parsing did not complete");
     }
 
     return true;
@@ -943,17 +943,17 @@ bool LuaParser::TestAndNext(LuaTokenKind kind) {
 
 void LuaParser::LuaExpectedError(std::string_view message) {
     if (_tokenIndex < _tokens.size()) {
-        _file->PushSyntaxError(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
+        _errors.emplace_back(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
     } else if (!_tokens.empty()) {
         auto tokenIndex = _tokens.size() - 1;
-        _file->PushSyntaxError(LuaSyntaxError(message, _tokens[tokenIndex].Range));
+        _errors.emplace_back(message, _tokens[tokenIndex].Range);
     } else {
-        _file->PushSyntaxError(LuaSyntaxError(message, TextRange(0, 0)));
+        _errors.emplace_back(message, TextRange(0, 0));
     }
 }
 
 void LuaParser::LuaError(std::string_view message) {
-    _file->PushSyntaxError(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
+    _errors.emplace_back(message, _tokens[_tokenIndex].Range);
 }
 
 ParseState &LuaParser::GetParseState() {
@@ -962,4 +962,8 @@ ParseState &LuaParser::GetParseState() {
 
 std::vector<LuaToken> &LuaParser::GetTokens() {
     return _tokens;
+}
+
+std::vector<LuaSyntaxError> &LuaParser::GetErrors() {
+    return _errors;
 }
