@@ -1,13 +1,13 @@
 ﻿#include "LuaParser.h"
-#include "LuaParser/File/LuaFile.h"
+#include "LuaParser/Source/LuaSource.h"
 #include "LuaParser/Define/LuaDefine.h"
 #include "LuaParser/exception/LuaParseException.h"
 #include <fmt/format.h>
 
 using enum LuaTokenKind;
 
-LuaParser::LuaParser(const LuaFile *file, std::vector<LuaToken> &&tokens)
-    : _file(file),
+LuaParser::LuaParser(const LuaSource *file, std::vector<LuaToken> &&tokens)
+    : _source(file),
       _tokens(tokens),
       _tokenIndex(0),
       _invalid(true),
@@ -18,7 +18,7 @@ bool LuaParser::Parse() {
     try {
         Body();
     } catch (LuaParseException &e) {
-        auto text = _file->GetSource();
+        auto text = _source->GetSource();
         _errors.emplace_back(e.what(), TextRange(text.size(), text.size()));
     }
 
@@ -71,7 +71,7 @@ LuaTokenKind LuaParser::Current() {
         }
     }
 
-    if (_file->GetSyntaxErrors().size() > 10) {
+    if (_source->GetSyntaxErrors().size() > 10) {
         std::string_view error = "too many errors, parse fail";
         throw LuaParseException(error);
     }
@@ -814,7 +814,7 @@ CompleteMarker LuaParser::LocalAttribute() {
     if (TestAndNext(TK_LT)) {
         if (Current() == TK_NAME) {
             auto range = _tokens[_tokenIndex].Range;
-            auto attr = _file->Slice(range.StartOffset, range.EndOffset);
+            auto attr = _source->Slice(range.StartOffset, range.EndOffset);
             if (attr != "const" && attr != "close") {
                 LuaExpectedError(fmt::format("unknown attribute '{}'", attr));
             }

@@ -1,30 +1,20 @@
-#include "LuaFile.h"
-#include "LuaParser/Ast/LuaTreeBuilder.h"
+#include "LuaSource.h"
 #include "LuaParser/Lexer/LuaLexer.h"
 
-LuaFile::LuaFile()
-    : _syntaxTree(this) {
+LuaSource LuaSource::From(std::string text) {
+    LuaSource source;
+    source.UpdateFile(std::move(text));
+    return source;
 }
 
-void LuaFile::BuildSyntaxTree() {
-    _syntaxTree.Reset();
-
-    LuaLexer luaLexer(_source);
-    auto &tokens = luaLexer.Tokenize();
-
-    LuaParser p(this, std::move(tokens));
-    p.Parse();
-
-    LuaTreeBuilder treeBuilder;
-    treeBuilder.BuildTree(_syntaxTree, p);
+LuaSource::LuaSource() {
 }
 
-void LuaFile::IncrementalUpdateFile(const lsp::Range &range, std::string &&text) {
+void LuaSource::IncrementalUpdateFile(const lsp::Range &range, std::string &&text) {
     InnerIncrementalUpdateFile(range, std::move(text));
-    BuildSyntaxTree();
 }
 
-void LuaFile::BulkUpdateFile(std::vector<lsp::TextDocumentContentChangeEvent> &changeEvent) {
+void LuaSource::BulkUpdateFile(std::vector<lsp::TextDocumentContentChangeEvent> &changeEvent) {
     for (auto &change: changeEvent) {
         auto opRange = change.range;
         if (opRange.has_value()) {
@@ -32,41 +22,35 @@ void LuaFile::BulkUpdateFile(std::vector<lsp::TextDocumentContentChangeEvent> &c
             InnerIncrementalUpdateFile(range, std::move(change.text));
         }
     }
-    BuildSyntaxTree();
 }
 
-std::string_view LuaFile::GetSource() const {
+std::string_view LuaSource::GetSource() const {
     return _source;
 }
 
-std::string_view LuaFile::Slice(std::size_t startOffset, std::size_t endOffset) const {
+std::string_view LuaSource::Slice(std::size_t startOffset, std::size_t endOffset) const {
     std::string_view source = _source;
     return source.substr(startOffset, endOffset - startOffset + 1);
 }
 
-void LuaFile::UpdateFile(std::string &&fileText) {
+void LuaSource::UpdateFile(std::string &&fileText) {
     _source = std::move(fileText);
     BuildLineIndex();
-    BuildSyntaxTree();
 }
 
-const LineIndex &LuaFile::GetLineIndex() const {
+const LineIndex &LuaSource::GetLineIndex() const {
     return _lineIndex;
 }
 
-void LuaFile::BuildLineIndex() {
+void LuaSource::BuildLineIndex() {
     _lineIndex.Parse(_source);
 }
 
-const LuaSyntaxTree &LuaFile::GetSyntaxTree() {
-    return _syntaxTree;
-}
-
-const std::vector<LuaSyntaxError> &LuaFile::GetSyntaxErrors() const {
+const std::vector<LuaSyntaxError> &LuaSource::GetSyntaxErrors() const {
     return _errors;
 }
 
-void LuaFile::InnerIncrementalUpdateFile(const lsp::Range &range, std::string &&text) {
+void LuaSource::InnerIncrementalUpdateFile(const lsp::Range &range, std::string &&text) {
     auto startOffset = _lineIndex.GetOffset(LineCol(range.start.line, range.start.character));
     auto endOffset = _lineIndex.GetOffset(LineCol(range.end.line, range.end.character));
 

@@ -11,7 +11,6 @@
 #include "LuaParser/Define/LuaToken.h"
 #include "LuaParser/Kind/LuaTokenKind.h"
 #include "LuaParser/Util/TextReader.h"
-#include "LuaParser/File/LuaFile.h"
 
 /*
  * token 解析来自于lua 源代码,实现上非常接近但细节处并不相同

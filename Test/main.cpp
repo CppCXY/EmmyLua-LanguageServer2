@@ -1,8 +1,8 @@
-#include "LuaParser/Ast/LuaSyntaxTree.h"
-#include "LuaParser/Ast/LuaTreeBuilder.h"
+
 #include "LuaParser/DocLexer/LuaDocLexer.h"
 #include "LuaParser/Lexer/LuaLexer.h"
 #include "LuaParser/Parser/LuaParser.h"
+#include "LuaParser/Source/LuaSource.h"
 #include "fmt/printf.h"
 #include <fmt/format.h>
 #include <iostream>
@@ -10,8 +10,8 @@
 int main() {
     std::string s = R"(---@generic k: OK<SSS>, V, Y: DDD)";
 
-    LuaFile luaFile;
-    luaFile.UpdateFile(std::move(s));
+    LuaSource source;
+    source.UpdateFile(std::move(s));
 
     //    LuaLexer luaLexer(file);
     //    auto &tokens = luaLexer.Tokenize();
@@ -27,7 +27,7 @@ int main() {
     ////    fmt::printf("{}", t.GetDebugView());
     //    std::cout << t.GetDebugView() <<std::endl;
 
-    LuaDocLexer l(luaFile.GetSource(), 0);
+    LuaDocLexer l(source.GetSource(), 0);
     auto t = l.Tokenize();
 
     return 0;

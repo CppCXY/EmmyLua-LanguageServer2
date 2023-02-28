@@ -14,7 +14,7 @@ bool VirtualFile::IsNull() const {
     return _fileId == 0;
 }
 
-std::shared_ptr<LuaFile> VirtualFile::GetLuaFile(VirtualFileSystem &vfs) const {
+std::shared_ptr<LuaSource> VirtualFile::GetLuaFile(VirtualFileSystem &vfs) const {
     auto opFile = vfs.GetFileDB().Query(_fileId);
     if (opFile) {
         return opFile.value();

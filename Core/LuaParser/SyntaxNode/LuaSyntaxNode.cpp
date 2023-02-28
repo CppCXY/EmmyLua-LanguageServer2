@@ -1,7 +1,7 @@
 ﻿#include "LuaSyntaxNode.h"
-#include "LuaSyntaxTree.h"
+#include "LuaParser/Source/LuaSource.h"
+#include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
 #include "String/Utf8.h"
-#include "LuaParser/File/LuaFile.h"
 
 LuaSyntaxNode::LuaSyntaxNode(std::size_t index)
         : _index(index) {
@@ -13,23 +13,23 @@ TextRange LuaSyntaxNode::GetTextRange(const LuaSyntaxTree &t) const {
 }
 
 std::size_t LuaSyntaxNode::GetStartLine(const LuaSyntaxTree &t) const {
-    return t.GetFile().GetLineIndex().GetLine(t.GetStartOffset(_index));
+    return t.GetSource().GetLineIndex().GetLine(t.GetStartOffset(_index));
 }
 
 std::size_t LuaSyntaxNode::GetStartCol(const LuaSyntaxTree &t) const {
-    return t.GetFile().GetLineIndex().GetCol(t.GetStartOffset(_index));
+    return t.GetSource().GetLineIndex().GetCol(t.GetStartOffset(_index));
 }
 
 std::size_t LuaSyntaxNode::GetEndLine(const LuaSyntaxTree &t) const {
-    return t.GetFile().GetLineIndex().GetLine(t.GetEndOffset(_index));
+    return t.GetSource().GetLineIndex().GetLine(t.GetEndOffset(_index));
 }
 
 std::size_t LuaSyntaxNode::GetEndCol(const LuaSyntaxTree &t) const {
-    return t.GetFile().GetLineIndex().GetCol(t.GetEndOffset(_index));
+    return t.GetSource().GetLineIndex().GetCol(t.GetEndOffset(_index));
 }
 
 std::string_view LuaSyntaxNode::GetText(const LuaSyntaxTree &t) const {
-    return t.GetFile().Slice(t.GetStartOffset(_index), t.GetEndOffset(_index));
+    return t.GetSource().Slice(t.GetStartOffset(_index), t.GetEndOffset(_index));
 }
 
 bool LuaSyntaxNode::IsNode(const LuaSyntaxTree &t) const {

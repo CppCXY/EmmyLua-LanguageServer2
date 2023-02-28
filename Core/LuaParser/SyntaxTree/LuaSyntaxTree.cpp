@@ -1,17 +1,37 @@
 #include "LuaSyntaxTree.h"
+#include "LuaParser/Lexer/LuaLexer.h"
+#include "LuaParser/Parser/LuaParser.h"
+#include "LuaTreeBuilder.h"
 #include <algorithm>
 #include <fmt/format.h>
 #include <ranges>
-#include "LuaParser/File/LuaFile.h"
 
 using enum LuaTokenKind;
 
-LuaSyntaxTree::LuaSyntaxTree(LuaFile* file)
-    : _file(file) {
+LuaSyntaxTree LuaSyntaxTree::ParseText(std::string &&text) {
+
+    LuaSource source = LuaSource::From(std::move(text));
+
+    LuaLexer luaLexer(source.GetSource());
+    auto &tokens = luaLexer.Tokenize();
+
+    LuaParser p(&source, std::move(tokens));
+    p.Parse();
+
+    LuaTreeBuilder treeBuilder;
+
+    LuaSyntaxTree t(std::move(source));
+    treeBuilder.BuildTree(t, p);
+
+    return t;
 }
 
-const LuaFile &LuaSyntaxTree::GetFile() const {
-    return *_file;
+LuaSyntaxTree::LuaSyntaxTree(LuaSource&& source)
+    : _source(std::move(source)) {
+}
+
+const LuaSource &LuaSyntaxTree::GetSource() const {
+    return _source;
 }
 
 std::size_t LuaSyntaxTree::GetStartOffset(std::size_t index) const {
@@ -354,3 +374,4 @@ void LuaSyntaxTree::Reset() {
     _tokens.clear();
     _syntaxNodes.clear();
 }
+

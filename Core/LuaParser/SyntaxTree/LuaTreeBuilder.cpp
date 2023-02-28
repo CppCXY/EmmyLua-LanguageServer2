@@ -2,7 +2,7 @@
 #include "LuaDocTreeBuilder.h"
 #include "LuaParser/DocLexer/LuaDocLexer.h"
 #include "LuaParser/DocParser/LuaDocParser.h"
-#include "LuaParser/File/LuaFile.h"
+#include "LuaParser/Source/LuaSource.h"
 #include <ranges>
 
 using enum LuaTokenKind;
@@ -108,7 +108,7 @@ std::size_t LuaTreeBuilder::BindLeftComment(std::size_t startPos, LuaSyntaxTree 
     if (startPos >= tokens.size() || startPos <= _tokenIndex) {
         return 0;
     }
-    auto &file = t.GetFile();
+    auto &file = t.GetSource();
     auto &lineIndex = file.GetLineIndex();
 
     std::size_t line = lineIndex.GetLine(tokens[startPos].Range.StartOffset);
@@ -148,7 +148,7 @@ std::size_t LuaTreeBuilder::BindRightComment(LuaSyntaxNodeKind kind, LuaSyntaxTr
                     case TK_LONG_COMMENT:
                     case TK_SHEBANG: {
                         auto prevToken = tokens[index - 1];
-                        auto &file = t.GetFile();
+                        auto &file = t.GetSource();
                         if (file.GetLineIndex().GetLine(prevToken.Range.EndOffset) == file.GetLineIndex().GetLine(tokens[index].Range.StartOffset)) {
                             return 1;
                         }
@@ -178,7 +178,7 @@ void LuaTreeBuilder::EatCommentByCount(std::size_t count, LuaSyntaxTree &t, LuaP
         return;
     }
 
-    auto &file = t.GetFile();
+    auto &file = t.GetSource();
     auto &lineIndex = file.GetLineIndex();
 
     auto &tokens = p.GetTokens();
@@ -276,7 +276,7 @@ bool LuaTreeBuilder::IsEatAllComment(LuaSyntaxNodeKind kind, LuaSyntaxTree &t) c
 
 void LuaTreeBuilder::BuildComments(std::vector<std::size_t> group, LuaSyntaxTree &t, LuaParser &p) {
     BuildNode(LuaSyntaxNodeKind::Comment, t);
-    const auto &file = t.GetFile();
+    const auto &file = t.GetSource();
     auto &tokens = p.GetTokens();
     std::vector<LuaToken> luaDocTokens;
     for (auto i: group) {

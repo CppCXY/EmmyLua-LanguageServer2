@@ -24,14 +24,14 @@ target_sources(Core
         Define/LuaIdentify.cpp
 
         # ast
-        Ast/LuaSyntaxNode.cpp
-        Ast/LuaSyntaxTree.cpp
-        Ast/LuaSyntaxMultiKind.cpp
-        Ast/LuaTreeBuilder.cpp
-        Ast/LuaDocTreeBuilder.cpp
+        SyntaxNode/LuaSyntaxNode.cpp
+        SyntaxTree/LuaSyntaxTree.cpp
+        SyntaxTree/LuaSyntaxMultiKind.cpp
+        SyntaxTree/LuaTreeBuilder.cpp
+        SyntaxTree/LuaDocTreeBuilder.cpp
 
         # file
-        File/LuaFile.cpp
+        Source/LuaSource.cpp
 
         # exception
         exception/LuaParseException.cpp

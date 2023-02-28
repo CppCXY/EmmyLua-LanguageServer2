@@ -8,7 +8,7 @@
 #include "Lib/TextRange/TextRange.h"
 #include "LuaParser/Kind/LuaSyntaxNodeKind.h"
 #include "LuaParser/Kind/LuaTokenKind.h"
-#include "LuaSyntaxMultiKind.h"
+#include "LuaParser/SyntaxTree/LuaSyntaxMultiKind.h"
 
 
 class LuaSyntaxTree;

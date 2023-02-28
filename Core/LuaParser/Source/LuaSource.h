@@ -5,15 +5,14 @@
 #include <vector>
 
 #include "Lib/LineIndex/LineIndex.h"
-#include "LuaParser/Ast/LuaSyntaxTree.h"
 #include "Lib/LSP/LSP.h"
 #include "LuaParser/Define/LuaSyntaxError.h"
 
-class LuaFile {
+class LuaSource {
 public:
-    explicit LuaFile();
+    static LuaSource From(std::string text);
 
-    void BuildSyntaxTree();
+    explicit LuaSource();
 
     void UpdateFile(std::string &&fileText);
 
@@ -26,17 +25,11 @@ public:
     std::string_view Slice(std::size_t startOffset, std::size_t endOffset) const;
 
     const LineIndex &GetLineIndex() const;
-
-    const LuaSyntaxTree &GetSyntaxTree();
-
-    const std::vector<LuaSyntaxError> &GetSyntaxErrors() const;
 protected:
     void BuildLineIndex();
 
     void InnerIncrementalUpdateFile(const lsp::Range &range, std::string &&text);
+
     std::string _source;
     LineIndex _lineIndex;
-    LuaSyntaxTree _syntaxTree;
-
-    std::vector<LuaSyntaxError> _errors;
 };

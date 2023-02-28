@@ -1,12 +1,12 @@
 #include "LuaDocParser.h"
-#include "LuaParser/File/LuaFile.h"
+#include "LuaParser/Source/LuaSource.h"
 #include "LuaParser/exception/LuaParseException.h"
 
 using enum LuaTokenKind;
 
 #define TryElseReturn(call) if(call.IsNone()) { return CompleteMarker(); }
 
-LuaDocParser::LuaDocParser(const LuaFile *file, std::vector<LuaToken> &&tokens)
+LuaDocParser::LuaDocParser(const LuaSource *file, std::vector<LuaToken> &&tokens)
     : _file(file),
       _tokens(tokens),
       _tokenIndex(0),

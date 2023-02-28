@@ -13,6 +13,7 @@ target_include_directories(Core
 
 add_subdirectory(Lib)
 add_subdirectory(LuaParser)
+add_subdirectory(Workspace)
 
 target_link_libraries(
         Core

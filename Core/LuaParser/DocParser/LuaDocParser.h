@@ -9,11 +9,11 @@
 #include "LuaParser/Kind/LuaTokenKind.h"
 #include "LuaParser/ParseState/ParseState.h"
 
-class LuaFile;
+class LuaSource;
 
 class LuaDocParser {
 public:
-    LuaDocParser(const LuaFile *file, std::vector<LuaToken> &&tokens);
+    LuaDocParser(const LuaSource *file, std::vector<LuaToken> &&tokens);
 
     bool Parse();
 
@@ -76,7 +76,7 @@ private:
 
     bool TestAndNext(LuaTokenKind kind);
 
-    const LuaFile *_file;
+    const LuaSource *_file;
     ParseState _p;
     std::vector<LuaToken> _tokens;
     std::size_t _tokenIndex;
