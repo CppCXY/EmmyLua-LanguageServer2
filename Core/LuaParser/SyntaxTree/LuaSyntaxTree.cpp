@@ -333,8 +333,6 @@ LuaSyntaxNode LuaSyntaxTree::GetTokenAtOffset(std::size_t offset) const {
     return LuaSyntaxNode();
 }
 
-
-
 std::string LuaSyntaxTree::GetDebugView() {
     std::string debugView;
     debugView.append("{ Lua Syntax Tree }\n");
@@ -360,9 +358,10 @@ std::string LuaSyntaxTree::GetDebugView() {
         } else if (node.IsToken(*this)) {
             traverseStack.pop();
             debugView.resize(debugView.size() + indent, '\t');
-            debugView.append(fmt::format("{{ Token, index: {}, TokenKind: {} }}\n",
+            debugView.append(fmt::format("{{ Token, index: {}, TokenKind: {} }} {}\n",
                                          node.GetIndex(),
-                                         node.GetTokenKind(*this)));
+                                         node.GetTokenKind(*this),
+                                         node.GetText(*this)));
         } else {
             traverseStack.pop();
             indent--;

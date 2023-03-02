@@ -234,7 +234,7 @@ constexpr std::string_view GetLuaTokenKindDebugName(LuaTokenKind kind) {
         case LuaTokenKind::TK_SHORT_COMMENT:
             return "TK_SHORT_COMMENT";
         case LuaTokenKind::TK_LONG_COMMENT:
-            return "TK_LONG_COMMET";
+            return "TK_LONG_COMMENT";
         case LuaTokenKind::TK_SHEBANG:
             return "TK_SHEBANG";
         case LuaTokenKind::TK_EOF:
