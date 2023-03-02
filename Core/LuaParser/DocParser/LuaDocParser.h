@@ -13,7 +13,7 @@ class LuaSource;
 
 class LuaDocParser {
 public:
-    LuaDocParser(const LuaSource *file, std::vector<LuaToken> &&tokens);
+    LuaDocParser(const LuaSource *source, std::vector<LuaToken> &&tokens);
 
     bool Parse();
 
@@ -32,6 +32,8 @@ private:
 
     void Comments();
 
+    void ParseToLineEnd();
+
     CompleteMarker Comment();
 
     CompleteMarker EmmyLuaDoc();
@@ -39,6 +41,8 @@ private:
     CompleteMarker DocClass();
 
     CompleteMarker DocInterface();
+
+    CompleteMarker DocEnum();
 
     CompleteMarker DocAlias();
 
@@ -48,9 +52,35 @@ private:
 
     CompleteMarker DocParam();
 
-    CompleteMarker DocContinue();
+    CompleteMarker DocOverload();
+
+    CompleteMarker DocGeneric();
+
+    CompleteMarker DocSee();
+
+    CompleteMarker DocSince();
+
+    CompleteMarker DocDeprecated();
+
+    CompleteMarker DocPublic();
+
+    CompleteMarker DocPrivate();
+
+    CompleteMarker DocProtected();
+
+    CompleteMarker DocOverride();
+
+    CompleteMarker DocVersion();
+
+    CompleteMarker DocLanguage();
+
+    CompleteMarker DocDiagnostic();
 
     CompleteMarker NormalComment();
+
+    CompleteMarker EnumField();
+
+    CompleteMarker FieldIndex();
 
     CompleteMarker GenericDefList();
 
@@ -64,19 +94,25 @@ private:
 
     CompleteMarker TableFieldType();
 
+    CompleteMarker IdType();
+
     CompleteMarker StringType();
 
     CompleteMarker FunctionType();
 
+    CompleteMarker FunctionParamList();
+
+    CompleteMarker FunctionParam();
+
     CompleteMarker ParType();
 
-    CompleteMarker ArrayType();
+    CompleteMarker GenericParamTypeList();
 
-    void CheckAndNext(LuaTokenKind kind);
+    CompleteMarker GenericDeclare();
 
     bool TestAndNext(LuaTokenKind kind);
 
-    const LuaSource *_file;
+    const LuaSource *_source;
     ParseState _p;
     std::vector<LuaToken> _tokens;
     std::size_t _tokenIndex;

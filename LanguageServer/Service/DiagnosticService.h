@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Service.h"
-#include "LuaParser/Ast/LuaSyntaxTree.h"
+#include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
 
 class DiagnosticService : public Service {
 public:

@@ -46,10 +46,6 @@ void LuaSource::BuildLineIndex() {
     _lineIndex.Parse(_source);
 }
 
-const std::vector<LuaSyntaxError> &LuaSource::GetSyntaxErrors() const {
-    return _errors;
-}
-
 void LuaSource::InnerIncrementalUpdateFile(const lsp::Range &range, std::string &&text) {
     auto startOffset = _lineIndex.GetOffset(LineCol(range.start.line, range.start.character));
     auto endOffset = _lineIndex.GetOffset(LineCol(range.end.line, range.end.character));

@@ -11,6 +11,7 @@
 #include "LSPHandle/LSPHandle.h"
 #include "VFS/VirtualFileSystem.h"
 #include "Service/Service.h"
+#include "Workspace/LuaWorkspace.h"
 
 template<class Derived>
 concept ServiceClass = requires(Derived d)
@@ -61,6 +62,8 @@ private:
     LSPHandle _lspHandle;
 
     VirtualFileSystem _vfs;
+
+    LuaWorkspace _workspace;
 };
 
 template<ServiceClass Service>

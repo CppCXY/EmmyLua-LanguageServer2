@@ -103,9 +103,37 @@ enum class LuaSyntaxNodeKind {
 
     DocInterface,
 
+    DocAlias,
+
     DocEnum,
 
     DocType,
+
+    DocField,
+
+    DocParam,
+
+    DocGeneric,
+
+    DocOverload,
+
+    DocSee,
+
+    DocOverride,
+
+    DocPublic,
+
+    DocPrivate,
+
+    DocProtected,
+
+    DocDiagnostic,
+
+    DocSince,
+
+    DocVersion,
+
+    DocDeprecated,
 
     GenericDefList,
 
@@ -118,6 +146,32 @@ enum class LuaSyntaxNodeKind {
     TableFieldType,
 
     ParType,
+
+    IdType,
+
+    StringType,
+
+    FunctionType,
+
+    FunctionTypeParamTypeList,
+
+    FunctionParam,
+
+    UnionType,
+
+    ArrayType,
+
+    GenericType,
+
+    GenericParamTypeList,
+
+    GenericDef,
+
+    FieldIndex,
+
+    EnumField,
+
+    NormalComment
 };
 
 namespace detail::debug {
@@ -215,10 +269,82 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "LongComment";
         case LuaSyntaxNodeKind::ShebangComment:
             return "ShebangComment";
-        case LuaSyntaxNodeKind::DocTagFormat:
-            return "DocTagFormat";
         case LuaSyntaxNodeKind::TableFieldSep:
             return "TableFieldSep";
+        case LuaSyntaxNodeKind::DocClass:
+            return "DcoClass";
+        case LuaSyntaxNodeKind::DocInterface:
+            return "DocInterface";
+        case LuaSyntaxNodeKind::DocAlias:
+            return "DocAlias";
+        case LuaSyntaxNodeKind::DocEnum:
+            return "DocEnum";
+        case LuaSyntaxNodeKind::DocType:
+            return "DocType";
+        case LuaSyntaxNodeKind::DocField:
+            return "DocField";
+        case LuaSyntaxNodeKind::DocParam:
+            return "DocParam";
+        case LuaSyntaxNodeKind::DocGeneric:
+            return "DocGeneric";
+        case LuaSyntaxNodeKind::DocOverload:
+            return "DocOverload";
+        case LuaSyntaxNodeKind::DocSee:
+            return "DocSee";
+        case LuaSyntaxNodeKind::DocOverride:
+            return "DocOverride";
+        case LuaSyntaxNodeKind::DocPublic:
+            return "DocPublic";
+        case LuaSyntaxNodeKind::DocPrivate:
+            return "DocPrivate";
+        case LuaSyntaxNodeKind::DocProtected:
+            return "DocProtected";
+        case LuaSyntaxNodeKind::DocDiagnostic:
+            return "DocDiagnostic";
+        case LuaSyntaxNodeKind::DocSince:
+            return "DocSince";
+        case LuaSyntaxNodeKind::DocVersion:
+            return "DocVersion";
+        case LuaSyntaxNodeKind::DocDeprecated:
+            return "DocDeprecated";
+        case LuaSyntaxNodeKind::GenericDefList:
+            return "GenericDefList";
+        case LuaSyntaxNodeKind::TypeList:
+            return "TypeList";
+        case LuaSyntaxNodeKind::Type:
+            return "Type";
+        case LuaSyntaxNodeKind::TableType:
+            return "TableType";
+        case LuaSyntaxNodeKind::TableFieldType:
+            return "TableFieldType";
+        case LuaSyntaxNodeKind::ParType:
+            return "ParType";
+        case LuaSyntaxNodeKind::IdType:
+            return "IdType";
+        case LuaSyntaxNodeKind::StringType:
+            return "StringType";
+        case LuaSyntaxNodeKind::FunctionType:
+            return "FunctionType";
+        case LuaSyntaxNodeKind::FunctionTypeParamTypeList:
+            return "FunctionTypeParamTypeList";
+        case LuaSyntaxNodeKind::FunctionParam:
+            return "FunctionParam";
+        case LuaSyntaxNodeKind::UnionType:
+            return "UnionType";
+        case LuaSyntaxNodeKind::ArrayType:
+            return "ArrayType";
+        case LuaSyntaxNodeKind::GenericType:
+            return "GenericType";
+        case LuaSyntaxNodeKind::GenericParamTypeList:
+            return "GenericParamTypeList";
+        case LuaSyntaxNodeKind::GenericDef:
+            return "GenericDef";
+        case LuaSyntaxNodeKind::FieldIndex:
+            return "FieldIndex";
+        case LuaSyntaxNodeKind::EnumField:
+            return "EnumField";
+        case LuaSyntaxNodeKind::NormalComment:
+            return "NormalComment";
     }
     return "Unknown";
 }

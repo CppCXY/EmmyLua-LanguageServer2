@@ -71,7 +71,7 @@ LuaTokenKind LuaParser::Current() {
         }
     }
 
-    if (_source->GetSyntaxErrors().size() > 10) {
+    if (_errors.size() > 10) {
         std::string_view error = "too many errors, parse fail";
         throw LuaParseException(error);
     }

@@ -34,7 +34,12 @@ struct CompleteMarker;
 
 struct Marker {
     explicit Marker(std::size_t pos);
+
+    void PreComplete(ParseState& p, LuaSyntaxNodeKind kind);
     CompleteMarker Complete(ParseState& p, LuaSyntaxNodeKind kind);
+    CompleteMarker Complete(ParseState& p);
+    CompleteMarker UnComplete(ParseState& p, LuaSyntaxNodeKind kind);
+    CompleteMarker UnComplete(ParseState& p);
     CompleteMarker Undo(ParseState& p);
     std::size_t Pos;
 };

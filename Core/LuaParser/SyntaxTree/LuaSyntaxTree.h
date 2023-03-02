@@ -14,7 +14,9 @@ class LuaSyntaxTree {
 public:
     friend class LuaTreeBuilder;
 
-    LuaSyntaxTree ParseText(std::string&& text);
+    friend class LuaDocTreeBuilder;
+
+    static LuaSyntaxTree ParseText(std::string&& text);
 
     explicit LuaSyntaxTree(LuaSource&& source);
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "LuaParser/Ast/LuaSyntaxNode.h"
-#include "LuaParser/Ast/LuaSyntaxTree.h"
+#include "LuaParser/SyntaxNode/LuaSyntaxNode.h"
+#include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
 
 template<class Psi>
 struct PsiCaster {

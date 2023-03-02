@@ -1,16 +1,21 @@
 #pragma once
 
-#include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
+#include "Document/LuaDocument.h"
 
 class LuaWorkspace {
 public:
-    LuaWorkspace() = default;
+    LuaWorkspace();
 
-    void AddDocument();
+    void AddDocument(LuaDocument::DocumentId id, std::string &&text);
 
-    void RemoveDocument();
+    void RemoveDocument(LuaDocument::DocumentId id);
 
-    void UpdateDocument();
+    void UpdateDocument(LuaDocument::DocumentId id);
 
+    LuaDocument* GetDocument(LuaDocument::DocumentId id);
+
+    LuaDocument::DocumentId AllocDocumentId();
 private:
+    LuaDocument::DocumentId _idCounter;
+    std::unordered_map<LuaDocument::DocumentId, std::unique_ptr<LuaDocument>> _documents;
 };

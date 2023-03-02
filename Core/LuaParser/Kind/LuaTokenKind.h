@@ -301,8 +301,9 @@ constexpr std::string_view GetLuaTokenKindDebugName(LuaTokenKind kind) {
             return "TK_TAG_DEPRECATED";
         case LuaTokenKind::TK_TAG_DIAGNOSTIC:
             return "TK_TAG_DIAGNOSTIC";
-        default:
+        default: {
             return "UNKNOWN";
+        }
     }
 }
 }// namespace detail::debug

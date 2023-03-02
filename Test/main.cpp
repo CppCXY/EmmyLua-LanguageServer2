@@ -3,32 +3,28 @@
 #include "LuaParser/Lexer/LuaLexer.h"
 #include "LuaParser/Parser/LuaParser.h"
 #include "LuaParser/Source/LuaSource.h"
+#include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
 #include "fmt/printf.h"
 #include <fmt/format.h>
 #include <iostream>
 
 int main() {
-    std::string s = R"(---@generic k: OK<SSS>, V, Y: DDD)";
+    std::string s = R"(
+---@generic T: number
+---@class MyClass<T>
+local t = 123
 
-    LuaSource source;
-    source.UpdateFile(std::move(s));
+---@param a T
+---@return T
+function t:f(a)
+end
 
-    //    LuaLexer luaLexer(file);
-    //    auto &tokens = luaLexer.Tokenize();
-    //
-    //    LuaParser p(file, std::move(tokens));
-    //    p.Parse();
-    //
-    //    LuaSyntaxTree t(file);
-    //
-    //    LuaTreeBuilder treeBuilder;
-    //    treeBuilder.BuildTree(t, p);
-    //
+)";
+
+    auto t = LuaSyntaxTree::ParseText(std::move(s));
     ////    fmt::printf("{}", t.GetDebugView());
-    //    std::cout << t.GetDebugView() <<std::endl;
+    std::cout << t.GetDebugView() << std::endl;
 
-    LuaDocLexer l(source.GetSource(), 0);
-    auto t = l.Tokenize();
 
     return 0;
 }
