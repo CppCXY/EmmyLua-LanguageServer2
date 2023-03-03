@@ -1,6 +1,5 @@
 #include "LuaDocParser.h"
 #include "LuaParser/Source/LuaSource.h"
-#include "LuaParser/exception/LuaParseException.h"
 
 using enum LuaTokenKind;
 
@@ -751,7 +750,7 @@ CompleteMarker LuaDocParser::GenericParamTypeList() {
 
 CompleteMarker LuaDocParser::GenericDeclare() {
     auto m = _p.Mark();
-    m.PreComplete(_p, LuaSyntaxNodeKind::GenericDef);
+    m.PreComplete(_p, LuaSyntaxNodeKind::GenericDeclare);
 
     CheckTokenAndNext(TK_NAME);
 

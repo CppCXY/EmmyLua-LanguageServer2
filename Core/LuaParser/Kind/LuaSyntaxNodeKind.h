@@ -165,7 +165,7 @@ enum class LuaSyntaxNodeKind {
 
     GenericParamTypeList,
 
-    GenericDef,
+    GenericDeclare,
 
     FieldIndex,
 
@@ -337,8 +337,8 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "GenericType";
         case LuaSyntaxNodeKind::GenericParamTypeList:
             return "GenericParamTypeList";
-        case LuaSyntaxNodeKind::GenericDef:
-            return "GenericDef";
+        case LuaSyntaxNodeKind::GenericDeclare:
+            return "GenericDeclare";
         case LuaSyntaxNodeKind::FieldIndex:
             return "FieldIndex";
         case LuaSyntaxNodeKind::EnumField:

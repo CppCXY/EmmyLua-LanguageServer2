@@ -23,8 +23,16 @@ target_sources(Core
         # define
         Define/LuaIdentify.cpp
 
-        # ast
+        # node
         SyntaxNode/LuaSyntaxNode.cpp
+        SyntaxNode/BaseSyntax.cpp
+        # node/lua
+        SyntaxNode/Lua/BodySyntax.cpp
+        SyntaxNode/Lua/LuaBaseSyntax.cpp
+        SyntaxNode/Lua/StatementSyntax.cpp
+        SyntaxNode/Lua/LocalStatementSyntax.cpp
+
+        # tree
         SyntaxTree/LuaSyntaxTree.cpp
         SyntaxTree/LuaSyntaxMultiKind.cpp
         SyntaxTree/LuaTreeBuilder.cpp

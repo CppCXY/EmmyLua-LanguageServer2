@@ -10,7 +10,6 @@
 #include "LuaParser/Kind/LuaTokenKind.h"
 #include "LuaParser/SyntaxTree/LuaSyntaxMultiKind.h"
 
-
 class LuaSyntaxTree;
 
 class LuaSyntaxNode {

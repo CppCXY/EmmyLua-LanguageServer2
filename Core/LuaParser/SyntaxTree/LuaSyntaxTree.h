@@ -6,9 +6,10 @@
 
 #include "LuaParser/Define/LuaSyntaxError.h"
 #include "LuaParser/Define/LuaToken.h"
+#include "LuaParser/Source/LuaSource.h"
+#include "LuaParser/SyntaxNode/BaseSyntax.h"
 #include "LuaParser/SyntaxNode/LuaSyntaxNode.h"
 #include "NodeOrToken.h"
-#include "LuaParser/Source/LuaSource.h"
 
 class LuaSyntaxTree {
 public:
@@ -69,5 +70,5 @@ private:
     LuaSource _source;
     std::vector<NodeOrToken> _nodeOrTokens;
     std::vector<IncrementalToken> _tokens;
-    std::vector<LuaSyntaxNode> _syntaxNodes;
+    std::vector<std::unique_ptr<BaseSyntax>> _syntaxNodes;
 };
