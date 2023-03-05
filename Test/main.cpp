@@ -10,6 +10,9 @@
 
 int main() {
     std::string s = R"(
+
+---@class Hello
+
 ---@generic T: number
 ---@class MyClass<T>
 local t = 123

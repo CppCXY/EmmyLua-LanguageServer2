@@ -27,10 +27,10 @@ target_sources(Core
         SyntaxNode/LuaSyntaxNode.cpp
         SyntaxNode/BaseSyntax.cpp
         # node/lua
-        SyntaxNode/Lua/BodySyntax.cpp
-        SyntaxNode/Lua/LuaBaseSyntax.cpp
-        SyntaxNode/Lua/StatementSyntax.cpp
-        SyntaxNode/Lua/LocalStatementSyntax.cpp
+#        SyntaxNode/Lua/BodySyntax.cpp
+#        SyntaxNode/Lua/LuaBaseSyntax.cpp
+#        SyntaxNode/Lua/StatementSyntax.cpp
+#        SyntaxNode/Lua/LocalStatementSyntax.cpp
 
         # tree
         SyntaxTree/LuaSyntaxTree.cpp

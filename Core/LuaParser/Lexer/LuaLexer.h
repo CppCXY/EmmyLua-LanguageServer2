@@ -26,6 +26,8 @@ public:
 private:
 	static std::map<std::string, LuaTokenKind, std::less<>> LuaReserved;
 
+    static bool IsWhitespace(int ch);
+
 	LuaTokenKind Lex();
 
 	LuaTokenKind ReadNumeral();
@@ -36,9 +38,9 @@ private:
 
 	void ReadString(int del);
 
-	void IncLinenumber();
-
 	bool CurrentIsNewLine();
+
+    void ReadNewLine();
 
 	bool IsReserved(std::string_view text);
 
@@ -46,7 +48,6 @@ private:
 
     void TokenError(std::string_view message, std::size_t offset);
 
-	int _linenumber;
     TextReader _reader;
 	std::vector<LuaToken> _tokens;
     std::vector<LuaSyntaxError> _errors;

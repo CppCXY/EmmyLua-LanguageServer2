@@ -1,6 +1,6 @@
 ﻿#include "LuaParser.h"
-#include "LuaParser/Source/LuaSource.h"
 #include "LuaParser/Define/LuaDefine.h"
+#include "LuaParser/Source/LuaSource.h"
 #include "LuaParser/exception/LuaParseException.h"
 #include <fmt/format.h>
 
@@ -15,12 +15,8 @@ LuaParser::LuaParser(const LuaSource *file, std::vector<LuaToken> &&tokens)
 }
 
 bool LuaParser::Parse() {
-    try {
-        Body();
-    } catch (LuaParseException &e) {
-        auto text = _source->GetSource();
-        _errors.emplace_back(e.what(), TextRange(text.size(), text.size()));
-    }
+
+    Body();
 
     if (_tokenIndex < _tokens.size()) {
         LuaError("parsing did not complete");
@@ -47,7 +43,8 @@ LuaTokenKind LuaParser::LookAhead() {
         switch (tk) {
             case TK_SHORT_COMMENT:
             case TK_LONG_COMMENT:
-            case TK_SHEBANG: {
+            case TK_SHEBANG:
+            case TK_WS: {
                 nextIndex++;
                 break;
             }
@@ -63,7 +60,7 @@ LuaTokenKind LuaParser::LookAhead() {
 LuaTokenKind LuaParser::Current() {
     if (_invalid) {
         _invalid = false;
-        SkipComment();
+        SkipTrivia();
         if (_tokenIndex < _tokens.size()) {
             _current = _tokens[_tokenIndex].TokenType;
         } else {
@@ -71,17 +68,13 @@ LuaTokenKind LuaParser::Current() {
         }
     }
 
-    if (_errors.size() > 10) {
-        std::string_view error = "too many errors, parse fail";
-        throw LuaParseException(error);
-    }
-
     return _current;
 }
 
-void LuaParser::SkipComment() {
+void LuaParser::SkipTrivia() {
     for (; _tokenIndex < _tokens.size(); _tokenIndex++) {
         switch (_tokens[_tokenIndex].TokenType) {
+            case TK_WS:
             case TK_SHORT_COMMENT:
             case TK_LONG_COMMENT:
             case TK_SHEBANG: {

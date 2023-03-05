@@ -30,7 +30,7 @@ private:
 
     LuaTokenKind Current();
 
-    void SkipComment();
+    void SkipTrivia();
 
     bool BlockFollow(bool rightbrace = false);
 

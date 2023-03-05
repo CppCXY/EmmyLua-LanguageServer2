@@ -41,8 +41,7 @@ std::map<std::string, LuaTokenKind, std::less<>> LuaLexer::LuaReserved = {
         {"::", TK_DBCOLON}};
 
 LuaLexer::LuaLexer(std::string_view text)
-    : _linenumber(0),
-      _reader(text) {
+    : _reader(text) {
 }
 
 std::vector<LuaToken> &LuaLexer::Tokenize() {
@@ -58,232 +57,223 @@ std::vector<LuaToken> &LuaLexer::Tokenize() {
     return _tokens;
 }
 
+bool LuaLexer::IsWhitespace(int ch) {
+    return ch > 0 && std::isspace(ch);
+}
+
 LuaTokenKind LuaLexer::Lex() {
     _reader.ResetBuffer();
 
-    while (true) {
-        int ch = _reader.GetCurrentChar();
-        switch (ch) {
-            case '\n':
-            case '\r': {
-                IncLinenumber();
-                break;
+    int ch = _reader.GetCurrentChar();
+    switch (ch) {
+        case '-': {
+            _reader.SaveAndNext();
+            if (_reader.GetCurrentChar() != '-') {
+                return TK_MINUS;
             }
-            case ' ':
-            case '\f':
-            case '\t':
-            case '\v': {
-                _reader.NextChar();
-                break;
+            // is comment
+            _reader.SaveAndNext();
+
+            LuaTokenKind type = TK_SHORT_COMMENT;
+            if (_reader.GetCurrentChar() == '[') {
+                std::size_t sep = SkipSep();
+                if (sep >= 2) {
+                    ReadLongString(sep);
+                    return TK_LONG_COMMENT;
+                }
+            } else if (_reader.GetCurrentChar() == '-') {
+                _reader.SaveAndNext();
+                //                    type = TK_DOC_COMMENT;
             }
-            case '-': {
-                _reader.SaveAndNext();
-                if (_reader.GetCurrentChar() != '-') {
-                    return TK_MINUS;
-                }
-                // is comment
-                _reader.SaveAndNext();
 
-                LuaTokenKind type = TK_SHORT_COMMENT;
-                if (_reader.GetCurrentChar() == '[') {
-                    std::size_t sep = SkipSep();
-                    if (sep >= 2) {
-                        ReadLongString(sep);
-                        return TK_LONG_COMMENT;
-                    }
-                } else if (_reader.GetCurrentChar() == '-') {
-                    _reader.SaveAndNext();
-                    //                    type = TK_DOC_COMMENT;
-                }
+            // is short comment
+            while (!CurrentIsNewLine() && _reader.GetCurrentChar() != EOF_CHAR) {
+                _reader.SaveAndNext();
+            }
 
-                // is short comment
+            return type;
+        }
+        case '+': {
+            _reader.SaveAndNext();
+            return TK_PLUS;
+        }
+        case '[': {
+            std::size_t sep = SkipSep();
+            if (sep >= 2) {
+                ReadLongString(sep);
+                return TK_LONG_STRING;
+            } else if (sep == 0) {
+                TokenError("invalid long string delimiter", _reader.GetPos());
+                return TK_LONG_STRING;
+            }
+            return TK_LBRACKET;
+        }
+        case '=': {
+            _reader.SaveAndNext();
+            if (_reader.CheckNext1('=')) {
+                return TK_EQEQ;
+            } else {
+                return TK_EQ;
+            }
+        }
+        case '<': {
+            _reader.SaveAndNext();
+            if (_reader.CheckNext1('=')) {
+                return TK_LE;
+            } else if (_reader.CheckNext1('<')) {
+                return TK_SHL;
+            } else {
+                return TK_LT;
+            }
+        }
+        case '>': {
+            _reader.SaveAndNext();
+            if (_reader.CheckNext1('=')) {
+                return TK_GE;
+            } else if (_reader.CheckNext1('>')) {
+                return TK_SHR;
+            } else {
+                return TK_GT;
+            }
+        }
+        case '/': {
+            _reader.SaveAndNext();
+            if (_reader.CheckNext1('/')) {
+                return TK_IDIV;
+            } else {
+                return TK_DIV;
+            }
+        }
+        case '~': {
+            _reader.SaveAndNext();
+            if (_reader.CheckNext1('=')) {
+                return TK_NE;
+            } else {
+                return TK_TILDE;
+            }
+        }
+        case ':': {
+            _reader.SaveAndNext();
+            if (_reader.CheckNext1(':')) {
+                return TK_DBCOLON;
+            } else {
+                return TK_COLON;
+            }
+        }
+        case '"':
+        case '\'': {
+            ReadString(ch);
+            return TK_STRING;
+        }
+        case '.': {
+            _reader.SaveAndNext();
+            if (_reader.CheckNext1('.')) {
+                if (_reader.CheckNext1('.')) {
+                    return TK_DOTS; /* '...' */
+                } else {
+                    return TK_CONCAT;
+                }
+            } else if (!lisdigit(_reader.GetCurrentChar())) {
+                return TK_DOT;
+            } else {
+                return ReadNumeral();
+            }
+        }
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9': {
+            return ReadNumeral();
+        }
+        case EOF_CHAR: {
+            return TK_EOF;
+        }
+        case '#': {
+            _reader.SaveAndNext();
+            if (_tokens.empty()) {
+                // shebang
                 while (!CurrentIsNewLine() && _reader.GetCurrentChar() != EOF_CHAR) {
                     _reader.SaveAndNext();
                 }
 
-                return type;
+                return TK_SHEBANG;
             }
-            case '+': {
-                _reader.SaveAndNext();
-                return TK_PLUS;
+            return TK_GETN;
+        }
+        case ']': {
+            _reader.SaveAndNext();
+            return TK_RBRACKET;
+        }
+        case '*': {
+            _reader.SaveAndNext();
+            return TK_MULT;
+        }
+        case '%': {
+            _reader.SaveAndNext();
+            return TK_MOD;
+        }
+        case '(': {
+            _reader.SaveAndNext();
+            return TK_LPARN;
+        }
+        case ')': {
+            _reader.SaveAndNext();
+            return TK_RPARN;
+        }
+        case '{': {
+            _reader.SaveAndNext();
+            return TK_LCURLY;
+        }
+        case '}': {
+            _reader.SaveAndNext();
+            return TK_RCURLY;
+        }
+        case ',': {
+            _reader.SaveAndNext();
+            return TK_COMMA;
+        }
+        case ';': {
+            _reader.SaveAndNext();
+            return TK_SEMI;
+        }
+        case '^': {
+            _reader.SaveAndNext();
+            return TK_EXP;
+        }
+        case '&': {
+            _reader.SaveAndNext();
+            return TK_BIT_AND;
+        }
+        case '|': {
+            _reader.SaveAndNext();
+            return TK_BIT_OR;
+        }
+        default: {
+            if (IsWhitespace(_reader.GetCurrentChar())) {
+                _reader.EatWhile(IsWhitespace);
+                return TK_WS;
             }
-            case '[': {
-                std::size_t sep = SkipSep();
-                if (sep >= 2) {
-                    ReadLongString(sep);
-                    return TK_LONG_STRING;
-                } else if (sep == 0) {
-                    TokenError("invalid long string delimiter",
-                               TextRange(_reader.GetPos(), _reader.GetPos()));
-                    return TK_LONG_STRING;
-                }
-                return TK_LBRACKET;
-            }
-            case '=': {
-                _reader.SaveAndNext();
-                if (_reader.CheckNext1('=')) {
-                    return TK_EQEQ;
-                } else {
-                    return TK_EQ;
-                }
-            }
-            case '<': {
-                _reader.SaveAndNext();
-                if (_reader.CheckNext1('=')) {
-                    return TK_LE;
-                } else if (_reader.CheckNext1('<')) {
-                    return TK_SHL;
-                } else {
-                    return TK_LT;
-                }
-            }
-            case '>': {
-                _reader.SaveAndNext();
-                if (_reader.CheckNext1('=')) {
-                    return TK_GE;
-                } else if (_reader.CheckNext1('>')) {
-                    return TK_SHR;
-                } else {
-                    return TK_GT;
-                }
-            }
-            case '/': {
-                _reader.SaveAndNext();
-                if (_reader.CheckNext1('/')) {
-                    return TK_IDIV;
-                } else {
-                    return TK_DIV;
-                }
-            }
-            case '~': {
-                _reader.SaveAndNext();
-                if (_reader.CheckNext1('=')) {
-                    return TK_NE;
-                } else {
-                    return TK_TILDE;
-                }
-            }
-            case ':': {
-                _reader.SaveAndNext();
-                if (_reader.CheckNext1(':')) {
-                    return TK_DBCOLON;
-                } else {
-                    return TK_COLON;
-                }
-            }
-            case '"':
-            case '\'': {
-                ReadString(ch);
-                return TK_STRING;
-            }
-            case '.': {
-                _reader.SaveAndNext();
-                if (_reader.CheckNext1('.')) {
-                    if (_reader.CheckNext1('.')) {
-                        return TK_DOTS; /* '...' */
-                    } else {
-                        return TK_CONCAT;
-                    }
-                } else if (!lisdigit(_reader.GetCurrentChar())) {
-                    return TK_DOT;
-                } else {
-                    return ReadNumeral();
-                }
-            }
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9': {
-                return ReadNumeral();
-            }
-            case EOF_CHAR: {
-                return TK_EOF;
-            }
-            case '#': {
-                _reader.SaveAndNext();
-                // 只认为第一行的才是shebang
-                if (_linenumber == 0 && _tokens.empty()) {
-                    // shebang
-                    while (!CurrentIsNewLine() && _reader.GetCurrentChar() != EOF_CHAR) {
-                        _reader.SaveAndNext();
-                    }
 
-                    return TK_SHEBANG;
-                }
-                return TK_GETN;
-            }
-            case ']': {
-                _reader.SaveAndNext();
-                return TK_RBRACKET;
-            }
-            case '*': {
-                _reader.SaveAndNext();
-                return TK_MULT;
-            }
-            case '%': {
-                _reader.SaveAndNext();
-                return TK_MOD;
-            }
-            case '(': {
-                _reader.SaveAndNext();
-                return TK_LPARN;
-            }
-            case ')': {
-                _reader.SaveAndNext();
-                return TK_RPARN;
-            }
-            case '{': {
-                _reader.SaveAndNext();
-                return TK_LCURLY;
-            }
-            case '}': {
-                _reader.SaveAndNext();
-                return TK_RCURLY;
-            }
-            case ',': {
-                _reader.SaveAndNext();
-                return TK_COMMA;
-            }
-            case ';': {
-                _reader.SaveAndNext();
-                return TK_SEMI;
-            }
-            case '^': {
-                _reader.SaveAndNext();
-                return TK_EXP;
-            }
-            case '&': {
-                _reader.SaveAndNext();
-                return TK_BIT_AND;
-            }
-            case '|': {
-                _reader.SaveAndNext();
-                return TK_BIT_OR;
-            }
-            default: {
-                if (lislalpha(_reader.GetCurrentChar())) /* identifier or reserved word? */
-                {
-                    do {
-                        _reader.SaveAndNext();
-                    } while (lislalnum(_reader.GetCurrentChar()));
+            if (lislalpha(_reader.GetCurrentChar())) /* identifier or reserved word? */
+            {
+                _reader.EatWhile([](auto ch) -> bool { return lislalnum(ch); });
 
-                    auto text = _reader.GetSaveText();
+                auto text = _reader.GetSaveText();
 
-                    if (IsReserved(text)) {
-                        return LuaReserved.find(text)->second;
-                    } else {
-                        return TK_NAME;
-                    }
+                if (IsReserved(text)) {
+                    return LuaReserved.find(text)->second;
                 } else {
-                    _reader.SaveAndNext();
-                    return TK_ERR;
+                    return TK_NAME;
                 }
+            } else {
+                _reader.SaveAndNext();
+                return TK_ERR;
             }
         }
     }
@@ -360,11 +350,7 @@ std::size_t LuaLexer::SkipSep() {
 void LuaLexer::ReadLongString(std::size_t sep) {
     _reader.SaveAndNext();
 
-    if (CurrentIsNewLine()) {
-        IncLinenumber();
-    }
-
-    for (;;) {
+    while (true) {
         switch (_reader.GetCurrentChar()) {
             case EOF_CHAR: {
                 TokenError("unfinished long string starting", _reader.GetPos());
@@ -375,12 +361,6 @@ void LuaLexer::ReadLongString(std::size_t sep) {
                     _reader.SaveAndNext();
                     return;
                 }
-                break;
-            }
-            case '\n':
-            case '\r': {
-                _reader.Save();
-                IncLinenumber();
                 break;
             }
             default: {
@@ -411,19 +391,19 @@ void LuaLexer::ReadString(int del) {
                         _reader.SaveAndNext();
                         while (lisspace(_reader.GetCurrentChar())) {
                             if (CurrentIsNewLine()) {
-                                IncLinenumber();
+                                ReadNewLine();
                             } else {
                                 _reader.SaveAndNext();
                             }
                         }
-                        goto no_save;
+                        goto endLoop;
                     }
                     case '\r':
                     case '\n': {
                         if (CurrentIsNewLine()) {
-                            IncLinenumber();
+                            ReadNewLine();
                         }
-                        goto no_save;
+                        goto endLoop;
                     }
                 }
                 break;
@@ -431,23 +411,24 @@ void LuaLexer::ReadString(int del) {
         }
         _reader.SaveAndNext();
     // 空语句
-    no_save:;
+    endLoop:;
     }
     _reader.SaveAndNext();
-}
-
-void LuaLexer::IncLinenumber() {
-    int old = _reader.GetCurrentChar();
-
-    _reader.NextChar();
-    if (CurrentIsNewLine() && _reader.GetCurrentChar() != old) {
-        _reader.NextChar(); /* skip '\n\r' or '\r\n' */
-    }
 }
 
 bool LuaLexer::CurrentIsNewLine() {
     int ch = _reader.GetCurrentChar();
     return ch == '\n' || ch == '\r';
+}
+
+void LuaLexer::ReadNewLine() {
+    int old = _reader.GetCurrentChar();
+
+    _reader.NextChar();
+
+    if (CurrentIsNewLine() && _reader.GetCurrentChar() != old) {
+        _reader.NextChar();
+    }
 }
 
 bool LuaLexer::IsReserved(std::string_view text) {

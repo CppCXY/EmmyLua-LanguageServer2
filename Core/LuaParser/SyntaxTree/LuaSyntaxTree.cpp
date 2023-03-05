@@ -26,7 +26,7 @@ LuaSyntaxTree LuaSyntaxTree::ParseText(std::string &&text) {
     return t;
 }
 
-LuaSyntaxTree::LuaSyntaxTree(LuaSource&& source)
+LuaSyntaxTree::LuaSyntaxTree(LuaSource &&source)
     : _source(std::move(source)) {
 }
 
@@ -257,9 +257,9 @@ bool LuaSyntaxTree::IsToken(std::size_t index) const {
     return _nodeOrTokens[index].Type == NodeOrTokenType::Token;
 }
 
-const std::vector<LuaSyntaxNode> &LuaSyntaxTree::GetSyntaxNodes() const {
-    return _syntaxNodes;
-}
+//const std::vector<LuaSyntaxNode> &LuaSyntaxTree::GetSyntaxNodes() const {
+//    return _syntaxNodes;
+//}
 
 std::vector<LuaSyntaxNode> LuaSyntaxTree::GetTokens() const {
     std::vector<LuaSyntaxNode> results;
@@ -347,7 +347,7 @@ std::string LuaSyntaxTree::GetDebugView() {
         if (node.IsNode(*this)) {
             traverseStack.top() = LuaSyntaxNode(0);
             auto children = node.GetChildren(*this);
-            for (auto& c: children | std::views::reverse) {
+            for (auto &c: children | std::views::reverse) {
                 traverseStack.push(c);
             }
             debugView.resize(debugView.size() + indent, '\t');
@@ -358,10 +358,13 @@ std::string LuaSyntaxTree::GetDebugView() {
         } else if (node.IsToken(*this)) {
             traverseStack.pop();
             debugView.resize(debugView.size() + indent, '\t');
-            debugView.append(fmt::format("{{ Token, index: {}, TokenKind: {} }} {}\n",
+            auto range = node.GetTextRange(*this);
+            debugView.append(fmt::format("{{ Token, index: {}, TokenKind: {} }}@{} .. {} \n",
                                          node.GetIndex(),
                                          node.GetTokenKind(*this),
-                                         node.GetText(*this)));
+                                         range.StartOffset, range.EndOffset));
+
+
         } else {
             traverseStack.pop();
             indent--;
@@ -375,4 +378,3 @@ void LuaSyntaxTree::Reset() {
     _tokens.clear();
     _syntaxNodes.clear();
 }
-
