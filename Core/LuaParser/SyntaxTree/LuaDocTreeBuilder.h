@@ -21,6 +21,8 @@ private:
 
     void BuildToken(LuaToken &token, LuaSyntaxTree &t);
 
+    void BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree& t);
+
     std::stack<std::size_t> _nodePosStack;
     std::size_t _tokenIndex;
 };

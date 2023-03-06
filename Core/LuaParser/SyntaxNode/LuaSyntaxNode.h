@@ -88,6 +88,8 @@ public:
 
     std::size_t CountNodeChild(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t);
 
+    LuaSyntaxNode Ancestor(const LuaSyntaxTree &t, std::function<bool(LuaSyntaxNodeKind kind, bool &conitnueFlag)> predicate);
+
 private:
     std::size_t _index;
 };

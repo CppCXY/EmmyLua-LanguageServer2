@@ -1,6 +1,26 @@
 #include "LuaTreeBuilder.h"
 #include "LuaDocTreeBuilder.h"
 #include "LuaParser/DocLexer/LuaDocLexer.h"
+#include "LuaParser/SyntaxNode/Doc/CommentSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/BodySyntax.h"
+#include "LuaParser/SyntaxNode/Lua/BreakStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/DoStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/ExprSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/ExprSyntaxList.h"
+#include "LuaParser/SyntaxNode/Lua/ForStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/FunctionNameExprSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/FunctionStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/IfStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/LabelStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/LocalFunctionStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/LocalStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/NameDefSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/NameDefSyntaxList.h"
+#include "LuaParser/SyntaxNode/Lua/ParamSyntaxList.h"
+#include "LuaParser/SyntaxNode/Lua/RepeatStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/ReturnStatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/StatementSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/WhileStatementSyntax.h"
 #include <ranges>
 
 using enum LuaTokenKind;
@@ -254,8 +274,10 @@ void LuaTreeBuilder::FinishNode(LuaSyntaxTree &t, LuaParser &p) {
         auto nodePos = _nodePosStack.top();
         auto &node = t._nodeOrTokens[nodePos];
         if (node.Type == NodeOrTokenType::Node) {
-            auto edge = BindRightComment(node.Data.NodeKind, t, p);
+            auto edge = BindRightComment(node.Data.Node.Kind, t, p);
             EatTriviaByCount(edge, t, p);
+
+            BuildSyntax(LuaSyntaxNode(nodePos), t);
         }
 
         _nodePosStack.pop();
@@ -330,4 +352,197 @@ void LuaTreeBuilder::BuildComments(std::vector<std::size_t> &group, LuaSyntaxTre
     LuaDocTreeBuilder docTreeBuilder;
 
     docTreeBuilder.BuildTree(t, docParser, _nodePosStack.top());
+}
+
+void LuaTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
+    switch (n.GetSyntaxKind(t)) {
+        case LuaSyntaxNodeKind::Body: {
+            auto bodySyntax = t.CreateSyntax<BodySyntax>(n);
+            bodySyntax->Statements = t.GetMembers<StatementSyntax>(LuaSyntaxMultiKind::Statement, n);
+            break;
+        }
+        case LuaSyntaxNodeKind::EmptyStatement: {
+            break;
+        }
+        case LuaSyntaxNodeKind::LocalStatement: {
+            auto localSyntax = t.CreateSyntax<LocalStatementSyntax>(n);
+            localSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            localSyntax->NameDefList = t.GetMember<NameDefSyntaxList>(LuaSyntaxNodeKind::NameDefList, n);
+            localSyntax->ExprList = t.GetMember<ExprSyntaxList>(LuaSyntaxNodeKind::ExpressionList, n);
+            break;
+        }
+        case LuaSyntaxNodeKind::LocalFunctionStatement: {
+            auto localFuncSyntax = t.CreateSyntax<LocalFunctionStatementSyntax>(n);
+            localFuncSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            localFuncSyntax->Name = n.GetChildToken(TK_NAME, t).GetText(t);
+            auto funcBody = n.GetChildSyntaxNode(LuaSyntaxNodeKind::FunctionBody, t);
+            if (funcBody.IsNode(t)) {
+                localFuncSyntax->ParamSyntaxList = t.GetMember<ParamSyntaxList>(LuaSyntaxNodeKind::ParamList, funcBody);
+                localFuncSyntax->Body = t.GetMember<BodySyntax>(LuaSyntaxNodeKind::Body, funcBody);
+            }
+            break;
+        }
+        case LuaSyntaxNodeKind::IfStatement: {
+            auto ifSyntax = t.CreateSyntax<IfStatementSyntax>(n);
+            ifSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            ifSyntax->IfExprs = t.GetMembers<ExprSyntax>(LuaSyntaxMultiKind::Expression, n);
+            ifSyntax->Bodys = t.GetMembers<BodySyntax>(LuaSyntaxNodeKind::Body, n);
+            if (ifSyntax->IfExprs.size() < ifSyntax->Bodys.size()) {
+                ifSyntax->ElseBody = ifSyntax->Bodys.back();
+            }
+
+            break;
+        }
+        case LuaSyntaxNodeKind::WhileStatement: {
+            auto whileSyntax = t.CreateSyntax<WhileStatementSyntax>(n);
+            whileSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            whileSyntax->ConditionExpr = t.GetMember<ExprSyntax>(LuaSyntaxMultiKind::Expression, n);
+            whileSyntax->Body = t.GetMember<BodySyntax>(LuaSyntaxNodeKind::Body, n);
+            break;
+        }
+        case LuaSyntaxNodeKind::DoStatement: {
+            auto doSyntax = t.CreateSyntax<DoStatementSyntax>(n);
+            doSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            doSyntax->Body = t.GetMember<BodySyntax>(LuaSyntaxNodeKind::Body, n);
+            break;
+        }
+        case LuaSyntaxNodeKind::ForStatement: {
+            auto forSyntax = t.CreateSyntax<ForStatementSyntax>(n);
+            forSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            auto fori = n.GetChildSyntaxNode(LuaSyntaxNodeKind::ForNumber, t);
+            if (fori.IsNode(t)) {
+                forSyntax->IsForNumber = true;
+                forSyntax->Exprs = t.GetMembers<ExprSyntax>(LuaSyntaxMultiKind::Expression, fori);
+                forSyntax->Names.emplace_back(fori.GetChildToken(TK_NAME, t).GetText(t));
+                break;
+            }
+            auto forList = n.GetChildSyntaxNode(LuaSyntaxNodeKind::ForList, t);
+            if (fori.IsNode(t)) {
+                forSyntax->IsForList = true;
+                auto nameDefList = forList.GetChildSyntaxNode(LuaSyntaxNodeKind::NameDefList, t);
+                for (auto nameDef: nameDefList.GetChildSyntaxNodes(LuaSyntaxNodeKind::NameDef, t)) {
+                    forSyntax->Names.emplace_back(nameDef.GetChildToken(TK_NAME, t).GetText(t));
+                }
+
+                auto exprList = forList.GetChildSyntaxNode(LuaSyntaxNodeKind::ExpressionList, t);
+                for (auto expr: exprList.GetChildSyntaxNodes(LuaSyntaxMultiKind::Expression, t)) {
+                    forSyntax->Exprs.emplace_back(t.GetSyntax<ExprSyntax>(expr));
+                }
+            }
+
+            break;
+        }
+        case LuaSyntaxNodeKind::RepeatStatement: {
+            auto repeatSyntax = t.CreateSyntax<RepeatStatementSyntax>(n);
+            repeatSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            repeatSyntax->Body = t.GetMember<BodySyntax>(LuaSyntaxNodeKind::Body, n);
+            repeatSyntax->ConditionExpr = t.GetMember<ExprSyntax>(LuaSyntaxMultiKind::Expression, n);
+            break;
+        }
+        case LuaSyntaxNodeKind::FunctionStatement: {
+            auto funcSyntax = t.CreateSyntax<FunctionStatementSyntax>(n);
+            funcSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            funcSyntax->FunctionName = t.GetMember<FunctionNameExprSyntax>(LuaSyntaxNodeKind::FunctionNameExpression, n);
+            auto funcBody = n.GetChildSyntaxNode(LuaSyntaxNodeKind::FunctionBody, t);
+            if (funcBody.IsNode(t)) {
+                funcSyntax->ParamSyntaxList = t.GetMember<ParamSyntaxList>(LuaSyntaxNodeKind::ParamList, funcBody);
+                funcSyntax->Body = t.GetMember<BodySyntax>(LuaSyntaxNodeKind::Body, funcBody);
+            }
+            break;
+        }
+        case LuaSyntaxNodeKind::LabelStatement: {
+            auto labelSyntax = t.CreateSyntax<LabelStatementSyntax>(n);
+            labelSyntax->LabelName = n.GetChildToken(TK_NAME, t).GetText(t);
+            break;
+        }
+        case LuaSyntaxNodeKind::BreakStatement: {
+            auto breakSyntax = t.CreateSyntax<BreakStatementSyntax>(n);
+            auto p = n.Ancestor(t, [](LuaSyntaxNodeKind kind, bool &ct) -> bool {
+                switch (kind) {
+                    case LuaSyntaxNodeKind::ForStatement:
+                    case LuaSyntaxNodeKind::WhileStatement:
+                    case LuaSyntaxNodeKind::RepeatStatement: {
+                        return true;
+                    }
+                    case LuaSyntaxNodeKind::FunctionBody: {
+                        ct = false;
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
+                return false;
+            });
+            breakSyntax->LoopStatement = t.GetSyntax<StatementSyntax>(p);
+            break;
+        }
+        case LuaSyntaxNodeKind::ReturnStatement: {
+            auto returnSyntax = t.CreateSyntax<ReturnStatementSyntax>(n);
+            returnSyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
+            returnSyntax->ReturnExprList = t.GetMember<ExprSyntaxList>(LuaSyntaxNodeKind::ExpressionList, n);
+            break;
+        }
+        case LuaSyntaxNodeKind::GotoStatement:
+        {
+            auto gotoSyntax = t.CreateSyntax<GotoStatementSyntax>(n);
+//            gotoSyntax->LabelName =
+
+            break;
+        }
+        case LuaSyntaxNodeKind::ExpressionStatement:
+            break;
+        case LuaSyntaxNodeKind::AssignStatement:
+            break;
+        case LuaSyntaxNodeKind::SuffixedExpression:
+            break;
+        case LuaSyntaxNodeKind::ParExpression:
+            break;
+        case LuaSyntaxNodeKind::LiteralExpression:
+            break;
+        case LuaSyntaxNodeKind::StringLiteralExpression:
+            break;
+        case LuaSyntaxNodeKind::ClosureExpression:
+            break;
+        case LuaSyntaxNodeKind::UnaryExpression:
+            break;
+        case LuaSyntaxNodeKind::BinaryExpression:
+            break;
+        case LuaSyntaxNodeKind::TableExpression:
+            break;
+        case LuaSyntaxNodeKind::CallExpression:
+            break;
+        case LuaSyntaxNodeKind::IndexExpression:
+            break;
+        case LuaSyntaxNodeKind::NameExpression:
+            break;
+        case LuaSyntaxNodeKind::FunctionNameExpression:
+            break;
+        case LuaSyntaxNodeKind::VarList:
+            break;
+        case LuaSyntaxNodeKind::TableFieldList:
+            break;
+        case LuaSyntaxNodeKind::TableField:
+            break;
+        case LuaSyntaxNodeKind::TableFieldSep:
+            break;
+        case LuaSyntaxNodeKind::FunctionBody:
+            break;
+        case LuaSyntaxNodeKind::ParamList:
+            break;
+        case LuaSyntaxNodeKind::NameDefList:
+            break;
+        case LuaSyntaxNodeKind::Attribute:
+            break;
+        case LuaSyntaxNodeKind::ExpressionList:
+            break;
+        case LuaSyntaxNodeKind::ForNumber:
+            break;
+        case LuaSyntaxNodeKind::ForList:
+            break;
+        case LuaSyntaxNodeKind::Error:
+            break;
+        default: {
+        }
+    }
 }

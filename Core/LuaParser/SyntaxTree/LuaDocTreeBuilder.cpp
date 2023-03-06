@@ -114,3 +114,85 @@ void LuaDocTreeBuilder::BuildToken(LuaToken &token, LuaSyntaxTree &t) {
         currentToken.Parent = parentIndex;
     }
 }
+
+void LuaDocTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
+    switch(n.GetSyntaxKind(t)){
+        case LuaSyntaxNodeKind::DocClass:
+            break;
+        case LuaSyntaxNodeKind::DocInterface:
+            break;
+        case LuaSyntaxNodeKind::DocAlias:
+            break;
+        case LuaSyntaxNodeKind::DocEnum:
+            break;
+        case LuaSyntaxNodeKind::DocType:
+            break;
+        case LuaSyntaxNodeKind::DocField:
+            break;
+        case LuaSyntaxNodeKind::DocParam:
+            break;
+        case LuaSyntaxNodeKind::DocGeneric:
+            break;
+        case LuaSyntaxNodeKind::DocOverload:
+            break;
+        case LuaSyntaxNodeKind::DocSee:
+            break;
+        case LuaSyntaxNodeKind::DocOverride:
+            break;
+        case LuaSyntaxNodeKind::DocPublic:
+            break;
+        case LuaSyntaxNodeKind::DocPrivate:
+            break;
+        case LuaSyntaxNodeKind::DocProtected:
+            break;
+        case LuaSyntaxNodeKind::DocDiagnostic:
+            break;
+        case LuaSyntaxNodeKind::DocSince:
+            break;
+        case LuaSyntaxNodeKind::DocVersion:
+            break;
+        case LuaSyntaxNodeKind::DocDeprecated:
+            break;
+        case LuaSyntaxNodeKind::GenericDefList:
+            break;
+        case LuaSyntaxNodeKind::TypeList:
+            break;
+        case LuaSyntaxNodeKind::Type:
+            break;
+        case LuaSyntaxNodeKind::TableType:
+            break;
+        case LuaSyntaxNodeKind::TableFieldType:
+            break;
+        case LuaSyntaxNodeKind::ParType:
+            break;
+        case LuaSyntaxNodeKind::IdType:
+            break;
+        case LuaSyntaxNodeKind::StringType:
+            break;
+        case LuaSyntaxNodeKind::FunctionType:
+            break;
+        case LuaSyntaxNodeKind::FunctionTypeParamTypeList:
+            break;
+        case LuaSyntaxNodeKind::FunctionParam:
+            break;
+        case LuaSyntaxNodeKind::UnionType:
+            break;
+        case LuaSyntaxNodeKind::ArrayType:
+            break;
+        case LuaSyntaxNodeKind::GenericType:
+            break;
+        case LuaSyntaxNodeKind::GenericParamTypeList:
+            break;
+        case LuaSyntaxNodeKind::GenericDeclare:
+            break;
+        case LuaSyntaxNodeKind::FieldIndex:
+            break;
+        case LuaSyntaxNodeKind::EnumField:
+            break;
+        case LuaSyntaxNodeKind::NormalComment:
+            break;
+        default:{
+            return;
+        }
+    }
+}

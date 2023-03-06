@@ -4,8 +4,7 @@
 #include "String/Utf8.h"
 
 LuaSyntaxNode::LuaSyntaxNode(std::size_t index)
-        : _index(index) {
-
+    : _index(index) {
 }
 
 TextRange LuaSyntaxNode::GetTextRange(const LuaSyntaxTree &t) const {
@@ -242,4 +241,15 @@ std::size_t LuaSyntaxNode::CountNodeChild(LuaSyntaxNodeKind kind, const LuaSynta
 
 bool LuaSyntaxNode::IsEmpty(const LuaSyntaxTree &t) const {
     return t.GetFirstChild(_index) == 0;
+}
+
+LuaSyntaxNode LuaSyntaxNode::Ancestor(const LuaSyntaxTree &t, std::function<bool(LuaSyntaxNodeKind, bool &)> predicate) {
+    LuaSyntaxNode parent = GetParent(t);
+    bool ct = true;
+    while (parent.IsNode(t) && ct) {
+        if (predicate(parent.GetSyntaxKind(t), ct)) {
+            return parent;
+        }
+    }
+    return LuaSyntaxNode();
 }

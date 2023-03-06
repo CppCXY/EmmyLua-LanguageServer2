@@ -78,6 +78,8 @@ enum class LuaSyntaxNodeKind {
 
     NameDefList,
 
+    NameDef,
+
     Attribute,
 
     ExpressionList,
@@ -91,12 +93,6 @@ enum class LuaSyntaxNodeKind {
     Error,
 
     Comment,
-
-    ShortComment,
-
-    LongComment,
-
-    ShebangComment,
 
     // emmylua doc
     DocClass,
@@ -263,12 +259,6 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "Error";
         case LuaSyntaxNodeKind::Comment:
             return "Comment";
-        case LuaSyntaxNodeKind::ShortComment:
-            return "ShortComment";
-        case LuaSyntaxNodeKind::LongComment:
-            return "LongComment";
-        case LuaSyntaxNodeKind::ShebangComment:
-            return "ShebangComment";
         case LuaSyntaxNodeKind::TableFieldSep:
             return "TableFieldSep";
         case LuaSyntaxNodeKind::DocClass:

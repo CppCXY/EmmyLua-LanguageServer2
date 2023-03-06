@@ -13,12 +13,12 @@ public:
 
     template<class SyntaxClass>
     bool Is() {
-        return dynamic_cast<SyntaxClass>(this) != nullptr;
+        return dynamic_cast<SyntaxClass *>(this) != nullptr;
     }
 
     template<class SyntaxClass>
     SyntaxClass *As() {
-        return dynamic_cast<SyntaxClass>(this);
+        return dynamic_cast<SyntaxClass *>(this);
     }
 
 protected:

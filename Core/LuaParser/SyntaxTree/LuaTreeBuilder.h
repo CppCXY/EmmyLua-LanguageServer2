@@ -34,6 +34,8 @@ private:
 
     void BuildComments(std::vector<std::size_t>& group, LuaSyntaxTree &t, LuaParser &p);
 
+    void BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree& t);
+
     std::stack<std::size_t> _nodePosStack;
     std::size_t _tokenIndex;
 };

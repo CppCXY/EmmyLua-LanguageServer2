@@ -233,7 +233,7 @@ LuaSyntaxNodeKind LuaSyntaxTree::GetNodeKind(std::size_t index) const {
     if (!IsNode(index)) {
         return LuaSyntaxNodeKind::None;
     }
-    return _nodeOrTokens[index].Data.NodeKind;
+    return _nodeOrTokens[index].Data.Node.Kind;
 }
 
 LuaTokenKind LuaSyntaxTree::GetTokenKind(std::size_t index) const {

@@ -11,10 +11,10 @@ enum class NodeOrTokenType {
 
 struct IncrementalToken {
     IncrementalToken(LuaToken &token, std::size_t nodeIndex)
-            : Kind(token.TokenType),
-              Start(token.Range.StartOffset),
-              Length(token.Range.EndOffset - token.Range.StartOffset + 1),
-              NodeIndex(nodeIndex) {
+        : Kind(token.TokenType),
+          Start(token.Range.StartOffset),
+          Length(token.Range.EndOffset - token.Range.StartOffset + 1),
+          NodeIndex(nodeIndex) {
     }
 
     LuaTokenKind Kind;
@@ -25,22 +25,23 @@ struct IncrementalToken {
 
 struct NodeOrToken {
     explicit NodeOrToken(LuaSyntaxNodeKind nodeKind)
-            : Type(NodeOrTokenType::Node),
-              Parent(0),
-              NextSibling(0),
-              PrevSibling(0),
-              FirstChild(0),
-              LastChild(0) {
-        Data.NodeKind = nodeKind;
+        : Type(NodeOrTokenType::Node),
+          Parent(0),
+          NextSibling(0),
+          PrevSibling(0),
+          FirstChild(0),
+          LastChild(0) {
+        Data.Node.Kind = nodeKind;
+        Data.Node.SyntaxIndex = 0;
     }
 
     explicit NodeOrToken(std::size_t tokenIndex)
-            : Type(NodeOrTokenType::Token),
-              Parent(0),
-              NextSibling(0),
-              PrevSibling(0),
-              FirstChild(0),
-              LastChild(0) {
+        : Type(NodeOrTokenType::Token),
+          Parent(0),
+          NextSibling(0),
+          PrevSibling(0),
+          FirstChild(0),
+          LastChild(0) {
         Data.TokenIndex = tokenIndex;
     }
 
@@ -51,8 +52,10 @@ struct NodeOrToken {
     std::size_t FirstChild;
     std::size_t LastChild;
     union {
-        LuaSyntaxNodeKind NodeKind;
+        struct {
+            LuaSyntaxNodeKind Kind;
+            std::size_t SyntaxIndex;
+        } Node;
         std::size_t TokenIndex;
     } Data;
 };
-

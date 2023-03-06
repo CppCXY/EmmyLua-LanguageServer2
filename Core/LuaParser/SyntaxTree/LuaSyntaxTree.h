@@ -17,9 +17,9 @@ public:
 
     friend class LuaDocTreeBuilder;
 
-    static LuaSyntaxTree ParseText(std::string&& text);
+    static LuaSyntaxTree ParseText(std::string &&text);
 
-    explicit LuaSyntaxTree(LuaSource&& source);
+    explicit LuaSyntaxTree(LuaSource &&source);
 
     void Reset();
 
@@ -55,7 +55,7 @@ public:
 
     bool IsToken(std::size_t index) const;
 
-    const std::vector<LuaSyntaxNode>& GetSyntaxNodes() const;
+    const std::vector<LuaSyntaxNode> &GetSyntaxNodes() const;
 
     std::vector<LuaSyntaxNode> GetTokens() const;
 
@@ -65,7 +65,67 @@ public:
 
     LuaSyntaxNode GetTokenAtOffset(std::size_t offset) const;
 
+    template<class NodeSyntax>
+    NodeSyntax *CreateSyntax(LuaSyntaxNode n) {
+        auto pos = _syntaxNodes.size();
+        auto &ptr = _syntaxNodes.emplace_back(std::make_unique<NodeSyntax>(n));
+        _nodeOrTokens[n.GetIndex()].Data.Node.SyntaxIndex = pos;
+        return dynamic_cast<NodeSyntax *>(ptr.get());
+    }
+
+    template<class NodeSyntax>
+    NodeSyntax *GetSyntax(LuaSyntaxNode n) const {
+        if (IsNode(n.GetIndex())) {
+            auto &ptr = _syntaxNodes[_nodeOrTokens[n.GetIndex()].Data.Node.SyntaxIndex];
+            return dynamic_cast<NodeSyntax *>(ptr.get());
+        }
+        return nullptr;
+    }
+
+    template<class SyntaxClass>
+    SyntaxClass *GetMember(LuaSyntaxNodeKind kind, LuaSyntaxNode parent) const {
+        auto n = parent.GetChildSyntaxNode(kind, *this);
+        if (auto ptr = GetSyntax<SyntaxClass>(n); ptr) {
+            return ptr;
+        }
+        return nullptr;
+    }
+
+    template<class SyntaxClass>
+    SyntaxClass *GetMember(LuaSyntaxMultiKind kind, LuaSyntaxNode parent) const {
+        auto n = parent.GetChildSyntaxNode(kind, *this);
+        if (auto ptr = GetSyntax<SyntaxClass>(n); ptr) {
+            return ptr;
+        }
+        return nullptr;
+    }
+
+    template<class SyntaxClass>
+    std::vector<SyntaxClass *> GetMembers(LuaSyntaxMultiKind kind, LuaSyntaxNode parent) const {
+        auto children = parent.GetChildSyntaxNodes(kind, *this);
+        std::vector<SyntaxClass *> results;
+        for (auto child: children) {
+            if (auto ptr = GetSyntax<SyntaxClass>(child); ptr) {
+                results.push_back(ptr);
+            }
+        }
+        return results;
+    }
+
+    template<class SyntaxClass>
+    std::vector<SyntaxClass *> GetMembers(LuaSyntaxNodeKind kind, LuaSyntaxNode parent) const {
+        auto children = parent.GetChildSyntaxNodes(kind, *this);
+        std::vector<SyntaxClass *> results;
+        for (auto child: children) {
+            if (auto ptr = GetSyntax<SyntaxClass>(child); ptr) {
+                results.push_back(ptr);
+            }
+        }
+        return results;
+    }
+
     std::string GetDebugView();
+
 private:
     LuaSource _source;
     std::vector<NodeOrToken> _nodeOrTokens;

@@ -4,9 +4,9 @@
 
 class LocalStatementSyntax : public StatementSyntax {
 public:
-    using StatementSyntax::StatementSyntax;
+    LocalStatementSyntax(LuaSyntaxNode n);
 
-    std::vector<class NameDefSyntax *> NameDefList;
+    class NameDefSyntaxList * NameDefList = nullptr;
 
-    std::vector<class ExprSyntax *> ExprList;
+    class ExprSyntaxList * ExprList = nullptr;
 };

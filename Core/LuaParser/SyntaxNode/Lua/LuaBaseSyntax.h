@@ -6,5 +6,5 @@ class LuaBaseSyntax : public BaseSyntax {
 public:
     LuaBaseSyntax(LuaSyntaxNode node);
 
-    class CommentSyntax * MainComment = nullptr;
+    class CommentSyntax * Comment = nullptr;
 };

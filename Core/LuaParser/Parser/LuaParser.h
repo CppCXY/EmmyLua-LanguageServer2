@@ -74,7 +74,9 @@ private:
 
     void TestThenBlock();
 
-    CompleteMarker NameDefList();
+    CompleteMarker NameDefList(bool supportAttribute);
+
+    CompleteMarker NameDef(bool supportAttribute);
 
     CompleteMarker Body();
 

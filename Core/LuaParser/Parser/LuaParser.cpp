@@ -270,7 +270,7 @@ CompleteMarker LuaParser::ForNumber() {
 CompleteMarker LuaParser::ForList() {
     auto m = _p.Mark();
 
-    NameDefList();
+    NameDefList(false);
 
     CheckAndNext(TK_IN);
 
@@ -340,12 +340,7 @@ CompleteMarker LuaParser::LocalStatement() {
 
     CheckAndNext(TK_LOCAL);
 
-    auto nm = _p.Mark();
-    do {
-        CheckName();
-        LocalAttribute();
-    } while (TestAndNext(TK_COMMA));
-    nm.Complete(_p, LuaSyntaxNodeKind::NameDefList);
+    NameDefList(true);
 
     if (TestAndNext(TK_EQ)) {
         ExpressionList();
@@ -445,15 +440,27 @@ void LuaParser::TestThenBlock() {
     Body();
 }
 
-CompleteMarker LuaParser::NameDefList() {
+CompleteMarker LuaParser::NameDefList(bool supportAttribute) {
+    auto m = _p.Mark();
+
+    do {
+        if (NameDef(supportAttribute).IsNone()) {
+            break;
+        }
+    } while (TestAndNext(TK_COMMA));
+
+    return m.Complete(_p, LuaSyntaxNodeKind::NameDefList);
+}
+
+CompleteMarker LuaParser::NameDef(bool supportAttribute) {
     auto m = _p.Mark();
 
     CheckAndNext(TK_NAME);
-    while (TestAndNext(TK_COMMA)) {
-        CheckAndNext(TK_NAME);
+    if (supportAttribute) {
+        LocalAttribute();
     }
 
-    return m.Complete(_p, LuaSyntaxNodeKind::NameDefList);
+    return m.Complete(_p, LuaSyntaxNodeKind::NameDef);
 }
 
 CompleteMarker LuaParser::Body() {
