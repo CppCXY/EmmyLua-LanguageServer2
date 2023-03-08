@@ -6,9 +6,5 @@ class SuffixedExprSyntax : public ExprSyntax {
 public:
     SuffixedExprSyntax(LuaSyntaxNode n);
 
-    class ExprSyntax *PrimaryExpr = nullptr;
-
-    std::vector<class IndexExprSyntax *> IndexExprs;
-
-    class CallSyntax *CallExpr = nullptr;
+    std::vector<class ExprSyntax *> Exprs;
 };

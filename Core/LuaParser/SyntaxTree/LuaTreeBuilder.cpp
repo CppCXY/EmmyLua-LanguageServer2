@@ -3,9 +3,11 @@
 #include "LuaParser/DocLexer/LuaDocLexer.h"
 #include "LuaParser/SyntaxNode/Doc/CommentSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/AssignStmtSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/BinaryExprSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/BodySyntax.h"
 #include "LuaParser/SyntaxNode/Lua/BreakStmtSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/CallStmtSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/ClosureExprSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/DoStmtSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/ExprSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/ExprSyntaxList.h"
@@ -15,16 +17,23 @@
 #include "LuaParser/SyntaxNode/Lua/GotoStmtSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/IfStmtSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/LabelStmtSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/LiteralExprSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/LocalFuncStmtSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/LocalStmtSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/NameDefSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/NameDefSyntaxList.h"
+#include "LuaParser/SyntaxNode/Lua/ParExprSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/ParamSyntaxList.h"
 #include "LuaParser/SyntaxNode/Lua/RepeatStmtSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/ReturnStmtSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/StmtSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/StringLiteralExprSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/SuffixedExprSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/TableExprSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/UnaryExprSyntax.h"
 #include "LuaParser/SyntaxNode/Lua/VarSyntaxList.h"
 #include "LuaParser/SyntaxNode/Lua/WhileStmtSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/TableFieldSyntax.h"
 #include <ranges>
 
 using enum LuaTokenKind;
@@ -363,7 +372,7 @@ void LuaTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
         case LuaSyntaxNodeKind::Body: {
             auto bodySyntax = t.CreateSyntax<BodySyntax>(n);
             bodySyntax->Comments = t.GetMembers<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
-            bodySyntax->Statements = t.GetMembers<StmtSyntax>(LuaSyntaxMultiKind::Statement, n);
+            bodySyntax->Stmts = t.GetMembers<StmtSyntax>(LuaSyntaxMultiKind::Statement, n);
             break;
         }
         case LuaSyntaxNodeKind::LocalStatement: {
@@ -379,7 +388,7 @@ void LuaTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
             localFuncSyntax->Name = n.GetChildToken(TK_NAME, t).GetText(t);
             auto funcBody = n.GetChildSyntaxNode(LuaSyntaxNodeKind::FunctionBody, t);
             if (funcBody.IsNode(t)) {
-                localFuncSyntax->ParamSyntaxList = t.GetMember<ParamSyntaxList>(LuaSyntaxNodeKind::ParamList, funcBody);
+                localFuncSyntax->ParamList = t.GetMember<ParamSyntaxList>(LuaSyntaxNodeKind::ParamList, funcBody);
                 localFuncSyntax->Body = t.GetMember<BodySyntax>(LuaSyntaxNodeKind::Body, funcBody);
             }
             break;
@@ -444,10 +453,10 @@ void LuaTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
         case LuaSyntaxNodeKind::FunctionStatement: {
             auto funcSyntax = t.CreateSyntax<FuncStmtSyntax>(n);
             funcSyntax->Comment = t.GetMember<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
-            funcSyntax->FunctionName = t.GetMember<FuncNameExprSyntax>(LuaSyntaxNodeKind::FunctionNameExpression, n);
+            funcSyntax->FuncName = t.GetMember<FuncNameExprSyntax>(LuaSyntaxNodeKind::FunctionNameExpression, n);
             auto funcBody = n.GetChildSyntaxNode(LuaSyntaxNodeKind::FunctionBody, t);
             if (funcBody.IsNode(t)) {
-                funcSyntax->ParamSyntaxList = t.GetMember<ParamSyntaxList>(LuaSyntaxNodeKind::ParamList, funcBody);
+                funcSyntax->ParamList = t.GetMember<ParamSyntaxList>(LuaSyntaxNodeKind::ParamList, funcBody);
                 funcSyntax->Body = t.GetMember<BodySyntax>(LuaSyntaxNodeKind::Body, funcBody);
             }
             break;
@@ -493,7 +502,7 @@ void LuaTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
         case LuaSyntaxNodeKind::CallStatement: {
             auto exprStmtSyntax = t.CreateSyntax<CallStmtSyntax>(n);
             exprStmtSyntax->Comment = t.GetMember<CommentSyntax>(LuaSyntaxNodeKind::Comment, n);
-            exprStmtSyntax->Expr = t.GetMember<ExprSyntax>(LuaSyntaxMultiKind::Expression, n);
+            exprStmtSyntax->Expr = t.GetMember<SuffixedExprSyntax>(LuaSyntaxNodeKind::SuffixedExpression, n);
             break;
         }
         case LuaSyntaxNodeKind::AssignStatement: {
@@ -504,25 +513,75 @@ void LuaTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
             break;
         }
         case LuaSyntaxNodeKind::SuffixedExpression: {
-
+            auto suffixedExprSyntax = t.CreateSyntax<SuffixedExprSyntax>(n);
+            suffixedExprSyntax->Exprs = t.GetMembers<ExprSyntax>(LuaSyntaxMultiKind::Expression, n);
             break;
         }
-        case LuaSyntaxNodeKind::ParExpression:
+        case LuaSyntaxNodeKind::ParExpression: {
+            auto parExprSyntax = t.CreateSyntax<ParExprSyntax>(n);
+            parExprSyntax->InnerExpr = t.GetMember<ExprSyntax>(LuaSyntaxMultiKind::Expression, n);
             break;
-        case LuaSyntaxNodeKind::LiteralExpression:
+        }
+        case LuaSyntaxNodeKind::LiteralExpression: {
+            auto literalExprSyntax = t.CreateSyntax<LiteralExprSyntax>(n);
+            auto firstToken = n.GetFirstToken(t);
+            literalExprSyntax->Literal = firstToken.GetText(t);
             break;
-        case LuaSyntaxNodeKind::StringLiteralExpression:
+        }
+        case LuaSyntaxNodeKind::StringLiteralExpression: {
+            auto stringLiteralExprSyntax = t.CreateSyntax<StringLiteralExprSyntax>(n);
+            auto text = n.GetFirstToken(t).GetText(t);
+            if (!text.empty()) {
+                // TODO complete implement
+                stringLiteralExprSyntax->Content = text.substr(1, text.size() - 2);
+            }
             break;
-        case LuaSyntaxNodeKind::ClosureExpression:
+        }
+        case LuaSyntaxNodeKind::ClosureExpression: {
+            auto closureExprSyntax = t.CreateSyntax<ClosureExprSyntax>(n);
+            auto funcBody = n.GetChildSyntaxNode(LuaSyntaxNodeKind::FunctionBody, t);
+            if (funcBody.IsNode(t)) {
+                closureExprSyntax->ParamList = t.GetMember<ParamSyntaxList>(LuaSyntaxNodeKind::ParamList, funcBody);
+                closureExprSyntax->Body = t.GetMember<BodySyntax>(LuaSyntaxNodeKind::Body, funcBody);
+            }
             break;
-        case LuaSyntaxNodeKind::UnaryExpression:
+        }
+        case LuaSyntaxNodeKind::UnaryExpression: {
+            auto unaryExprSyntax = t.CreateSyntax<UnaryExprSyntax>(n);
+            auto op = n.GetFirstToken(t).GetTokenKind(t);
+            unaryExprSyntax->UnaryOp = op;
+            unaryExprSyntax->InnerExpr = t.GetMember<ExprSyntax>(LuaSyntaxMultiKind::Expression, n);
             break;
-        case LuaSyntaxNodeKind::BinaryExpression:
+        }
+        case LuaSyntaxNodeKind::BinaryExpression: {
+            auto binaryExprSyntax = t.CreateSyntax<BinaryExprSyntax>(n);
+            auto op = n.GetChildToken(
+                    [](auto kind) -> bool {
+                        return LuaParser::GetBinaryOperator(kind) != BinOpr::OPR_NOBINOPR;
+                    },
+                    t);
+            binaryExprSyntax->BinaryOp = op.GetTokenKind(t);
+            auto exprs = t.GetMembers<ExprSyntax>(LuaSyntaxMultiKind::Expression, n);
+            if (!exprs.empty()) {
+                binaryExprSyntax->LeftExpr = exprs[0];
+            }
+            if (exprs.size() == 2) {
+                binaryExprSyntax->RightExpr = exprs[1];
+            }
             break;
-        case LuaSyntaxNodeKind::TableExpression:
+        }
+        case LuaSyntaxNodeKind::TableExpression: {
+            auto tableExprSyntax = t.CreateSyntax<TableExprSyntax>(n);
+            auto tableExprList = n.GetChildSyntaxNode(LuaSyntaxNodeKind::TableFieldList, t);
+            if (tableExprList.IsNode(t)) {
+                tableExprSyntax->Fields = t.GetMembers<TableFieldSyntax>(LuaSyntaxNodeKind::TableField, tableExprList);
+            }
             break;
-        case LuaSyntaxNodeKind::CallExpression:
+        }
+        case LuaSyntaxNodeKind::CallExpression:{
+            auto callExprSyntax = t.CreateSyntax<CallExprSyntax>(n);
             break;
+        }
         case LuaSyntaxNodeKind::IndexExpression:
             break;
         case LuaSyntaxNodeKind::NameExpression:
@@ -530,8 +589,6 @@ void LuaTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
         case LuaSyntaxNodeKind::FunctionNameExpression:
             break;
         case LuaSyntaxNodeKind::VarList:
-            break;
-        case LuaSyntaxNodeKind::TableFieldList:
             break;
         case LuaSyntaxNodeKind::TableField:
             break;
@@ -543,13 +600,7 @@ void LuaTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
             break;
         case LuaSyntaxNodeKind::NameDefList:
             break;
-        case LuaSyntaxNodeKind::Attribute:
-            break;
         case LuaSyntaxNodeKind::ExpressionList:
-            break;
-        case LuaSyntaxNodeKind::ForNumber:
-            break;
-        case LuaSyntaxNodeKind::ForList:
             break;
         case LuaSyntaxNodeKind::Error:
             break;

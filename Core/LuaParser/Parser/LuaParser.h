@@ -23,6 +23,10 @@ public:
 
     std::vector<LuaSyntaxError> &GetErrors();
 
+    static UnOpr GetUnaryOperator(LuaTokenKind op);
+
+    static BinOpr GetBinaryOperator(LuaTokenKind op);
+
 private:
     void Next();
 
@@ -119,10 +123,6 @@ private:
     void Check(LuaTokenKind c);
 
     CompleteMarker PrimaryExpression();
-
-    UnOpr GetUnaryOperator(LuaTokenKind op);
-
-    BinOpr GetBinaryOperator(LuaTokenKind op);
 
     /*
 	 * 他是检查当前token的type是否与c相同

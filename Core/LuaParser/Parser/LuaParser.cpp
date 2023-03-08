@@ -687,8 +687,8 @@ CompleteMarker LuaParser::ParamList() {
     return m.Complete(_p, LuaSyntaxNodeKind::ParamList);
 }
 
-/* suffixedexp ->
-	 primaryexp { '.' NAME | '[' exp ']' | ':' NAME funcargs | funcargs }+ */
+/* suffixedexp -> primaryexp { '.' NAME | '[' exp ']' | ':' NAME funcargs | funcargs }+ */
+/* primaryexp -> nameexp | parexp */
 CompleteMarker LuaParser::SuffixedExpression() {
     auto m = _p.Mark();
     auto cm = PrimaryExpression();

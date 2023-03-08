@@ -6,9 +6,9 @@ class FuncStmtSyntax : public StmtSyntax {
 public:
     FuncStmtSyntax(LuaSyntaxNode n);
 
-    class FunctionNameExprSyntax *FunctionName = nullptr;
+    class FuncNameExprSyntax *FuncName = nullptr;
 
-    class ParamSyntaxList *ParamSyntaxList = nullptr;
+    class ParamSyntaxList *ParamList = nullptr;
 
     class BodySyntax *Body = nullptr;
 };

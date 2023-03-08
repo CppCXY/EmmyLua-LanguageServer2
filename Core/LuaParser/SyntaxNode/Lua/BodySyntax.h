@@ -6,7 +6,7 @@ class BodySyntax : public LuaBaseSyntax {
 public:
     BodySyntax(LuaSyntaxNode n);
 
-    std::vector<class StatementSyntax *> Statements;
+    std::vector<class StmtSyntax *> Stmts;
 
     std::vector<class CommentSyntax *> Comments;
 };

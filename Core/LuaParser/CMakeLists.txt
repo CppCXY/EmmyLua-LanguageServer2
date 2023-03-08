@@ -57,6 +57,14 @@ target_sources(Core
         SyntaxNode/Lua/VarSyntaxList.cpp
         SyntaxNode/Lua/SuffixedExprSyntax.cpp
         SyntaxNode/Lua/NameExprSyntax.cpp
+        SyntaxNode/Lua/ParExprSyntax.cpp
+        SyntaxNode/Lua/LiteralExprSyntax.cpp
+        SyntaxNode/Lua/StringLiteralExprSyntax.cpp
+        SyntaxNode/Lua/ClosureExprSyntax.cpp
+        SyntaxNode/Lua/UnaryExprSyntax.cpp
+        SyntaxNode/Lua/BinaryExprSyntax.cpp
+        SyntaxNode/Lua/TableExprSyntax.cpp
+        SyntaxNode/Lua/TableFieldSyntax.cpp
 
         # tree
         SyntaxTree/LuaSyntaxTree.cpp

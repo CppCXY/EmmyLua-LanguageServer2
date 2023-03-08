@@ -1,5 +1,4 @@
-//
-// Created by zc on 2023/3/6.
-//
-
 #include "ExprSyntax.h"
+
+ExprSyntax::ExprSyntax(LuaSyntaxNode n) : LuaBaseSyntax(n) {
+}

@@ -8,7 +8,7 @@ public:
 
     std::string_view Name;
 
-    class ParamSyntaxList *ParamSyntaxList = nullptr;
+    class ParamSyntaxList *ParamList = nullptr;
 
     class BodySyntax *Body = nullptr;
 };
