@@ -1,8 +1,8 @@
 #pragma once
 
-#include "StatementSyntax.h"
+#include "StmtSyntax.h"
 
-class LocalFunctionStatementSyntax : public StatementSyntax {
+class LocalFunctionStatementSyntax : public StmtSyntax {
 public:
     LocalFunctionStatementSyntax(LuaSyntaxNode n);
 

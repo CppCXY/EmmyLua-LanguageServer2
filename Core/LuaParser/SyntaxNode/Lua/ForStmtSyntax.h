@@ -1,8 +1,8 @@
 #pragma once
 
-#include "StatementSyntax.h"
+#include "StmtSyntax.h"
 
-class ForStatementSyntax : public StatementSyntax {
+class ForStatementSyntax : public StmtSyntax {
 public:
     ForStatementSyntax(LuaSyntaxNode n);
 

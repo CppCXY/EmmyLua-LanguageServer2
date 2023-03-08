@@ -1,8 +1,8 @@
 #pragma once
 
-#include "StatementSyntax.h"
+#include "StmtSyntax.h"
 
-class WhileStatementSyntax : public StatementSyntax {
+class WhileStatementSyntax : public StmtSyntax {
 public:
     WhileStatementSyntax(LuaSyntaxNode n);
 

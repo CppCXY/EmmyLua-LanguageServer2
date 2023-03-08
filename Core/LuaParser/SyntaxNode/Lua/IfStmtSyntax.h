@@ -1,8 +1,8 @@
 #pragma once
 
-#include "StatementSyntax.h"
+#include "StmtSyntax.h"
 
-class IfStatementSyntax : public StatementSyntax {
+class IfStatementSyntax : public StmtSyntax {
 public:
     IfStatementSyntax(LuaSyntaxNode n);
 

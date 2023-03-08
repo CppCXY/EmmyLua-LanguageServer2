@@ -1,8 +1,8 @@
 #pragma once
 
-#include "StatementSyntax.h"
+#include "StmtSyntax.h"
 
-class LabelStatementSyntax : public StatementSyntax {
+class LabelStatementSyntax : public StmtSyntax {
 public:
     LabelStatementSyntax(LuaSyntaxNode n);
 
