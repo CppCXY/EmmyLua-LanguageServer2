@@ -1,4 +1,4 @@
 #include "BodySyntax.h"
 
-BodySyntax::BodySyntax(LuaSyntaxNode n) : BaseSyntax(n) {
+BodySyntax::BodySyntax(LuaSyntaxNode n) : LuaBaseSyntax(n) {
 }

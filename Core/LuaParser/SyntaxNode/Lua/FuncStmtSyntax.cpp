@@ -1,4 +1,4 @@
 #include "FuncStmtSyntax.h"
 
-FuncStmtSyntax::FuncStmtSyntax(LuaSyntaxNode n) : LuaBaseSyntax(n) {
+FuncStmtSyntax::FuncStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

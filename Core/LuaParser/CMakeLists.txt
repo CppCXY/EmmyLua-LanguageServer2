@@ -65,6 +65,9 @@ target_sources(Core
         SyntaxNode/Lua/BinaryExprSyntax.cpp
         SyntaxNode/Lua/TableExprSyntax.cpp
         SyntaxNode/Lua/TableFieldSyntax.cpp
+        SyntaxNode/Lua/IndexExprSyntax.cpp
+        SyntaxNode/Lua/CallExprSyntax.cpp
+
 
         # tree
         SyntaxTree/LuaSyntaxTree.cpp
