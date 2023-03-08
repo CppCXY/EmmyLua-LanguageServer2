@@ -33,24 +33,30 @@ target_sources(Core
         # node/lua
         SyntaxNode/Lua/BodySyntax.cpp
         SyntaxNode/Lua/LuaBaseSyntax.cpp
-        SyntaxNode/Lua/StatementSyntax.cpp
-        SyntaxNode/Lua/LocalStatementSyntax.cpp
+        SyntaxNode/Lua/StmtSyntax.cpp
+        SyntaxNode/Lua/LocalStmtSyntax.cpp
         SyntaxNode/Lua/NameDefSyntaxList.cpp
         SyntaxNode/Lua/NameDefSyntax.cpp
         SyntaxNode/Lua/ExprSyntaxList.cpp
         SyntaxNode/Lua/ExprSyntax.cpp
-        SyntaxNode/Lua/LocalFunctionStatementSyntax.cpp
+        SyntaxNode/Lua/LocalFuncStmtSyntax.cpp
         SyntaxNode/Lua/ParamSyntaxList.cpp
-        SyntaxNode/Lua/IfStatementSyntax.cpp
-        SyntaxNode/Lua/WhileStatementSyntax.cpp
-        SyntaxNode/Lua/DoStatementSyntax.cpp
-        SyntaxNode/Lua/ForStatementSyntax.cpp
-        SyntaxNode/Lua/RepeatStatementSyntax.cpp
-        SyntaxNode/Lua/FunctionStatementSyntax.cpp
-        SyntaxNode/Lua/FunctionNameExprSyntax.cpp
-        SyntaxNode/Lua/LabelStatementSyntax.cpp
-        SyntaxNode/Lua/BreakStatementSyntax.cpp
-        SyntaxNode/Lua/ReturnStatementSyntax.cpp
+        SyntaxNode/Lua/IfStmtSyntax.cpp
+        SyntaxNode/Lua/WhileStmtSyntax.cpp
+        SyntaxNode/Lua/DoStmtSyntax.cpp
+        SyntaxNode/Lua/ForStmtSyntax.cpp
+        SyntaxNode/Lua/RepeatStmtSyntax.cpp
+        SyntaxNode/Lua/FuncStmtSyntax.cpp
+        SyntaxNode/Lua/FuncNameExprSyntax.cpp
+        SyntaxNode/Lua/LabelStmtSyntax.cpp
+        SyntaxNode/Lua/BreakStmtSyntax.cpp
+        SyntaxNode/Lua/ReturnStmtSyntax.cpp
+        SyntaxNode/Lua/GotoStmtSyntax.cpp
+        SyntaxNode/Lua/CallStmtSyntax.cpp
+        SyntaxNode/Lua/AssignStmtSyntax.cpp
+        SyntaxNode/Lua/VarSyntaxList.cpp
+        SyntaxNode/Lua/SuffixedExprSyntax.cpp
+        SyntaxNode/Lua/NameExprSyntax.cpp
 
         # tree
         SyntaxTree/LuaSyntaxTree.cpp

@@ -50,7 +50,7 @@ bool detail::multi_match::StatementMatch(LuaSyntaxNodeKind k) {
         case LuaSyntaxNodeKind::BreakStatement:
         case LuaSyntaxNodeKind::ReturnStatement:
         case LuaSyntaxNodeKind::GotoStatement:
-        case LuaSyntaxNodeKind::ExpressionStatement:
+        case LuaSyntaxNodeKind::CallStatement:
         case LuaSyntaxNodeKind::AssignStatement: {
             return true;
         }

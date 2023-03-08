@@ -156,7 +156,7 @@ CompleteMarker LuaParser::Statement() {
             return GotoStatement();
         }
         default: {
-            return ExpressionStatement();
+            return OtherStatement();
         }
     }
 }
@@ -401,7 +401,7 @@ CompleteMarker LuaParser::GotoStatement() {
 
 // exprStat -> call | assignment
 // assignment -> varList '=' exprList
-CompleteMarker LuaParser::ExpressionStatement() {
+CompleteMarker LuaParser::OtherStatement() {
     auto m = _p.Mark();
     auto cm = SuffixedExpression();
     if (cm.IsNone()) {
@@ -424,7 +424,7 @@ CompleteMarker LuaParser::ExpressionStatement() {
         return m.Complete(_p, LuaSyntaxNodeKind::AssignStatement);
     } else {
         TestAndNext(TK_SEMI);
-        return m.Complete(_p, LuaSyntaxNodeKind::ExpressionStatement);
+        return m.Complete(_p, LuaSyntaxNodeKind::CallStatement);
     }
 }
 

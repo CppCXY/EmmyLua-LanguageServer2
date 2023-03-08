@@ -2,9 +2,9 @@
 
 #include "ExprSyntax.h"
 
-class FunctionNameExprSyntax : public ExprSyntax {
+class FuncNameExprSyntax : public ExprSyntax {
 public:
-    FunctionNameExprSyntax(LuaSyntaxNode n);
+    FuncNameExprSyntax(LuaSyntaxNode n);
 
     std::string_view FirstName;
 

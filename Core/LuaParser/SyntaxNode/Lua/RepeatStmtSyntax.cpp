@@ -1,4 +1,4 @@
-#include "RepeatStatementSyntax.h"
+#include "RepeatStmtSyntax.h"
 
-RepeatStatementSyntax::RepeatStatementSyntax(LuaSyntaxNode n) : LuaBaseSyntax(n) {
+RepeatStmtSyntax::RepeatStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

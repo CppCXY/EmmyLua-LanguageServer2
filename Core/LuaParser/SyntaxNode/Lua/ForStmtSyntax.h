@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class ForStatementSyntax : public StmtSyntax {
+class ForStmtSyntax : public StmtSyntax {
 public:
-    ForStatementSyntax(LuaSyntaxNode n);
+    ForStmtSyntax(LuaSyntaxNode n);
 
     bool IsForList = false;
     bool IsForNumber = false;

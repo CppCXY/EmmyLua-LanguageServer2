@@ -1,4 +1,4 @@
-#include "ReturnStatementSyntax.h"
+#include "ReturnStmtSyntax.h"
 
-ReturnStatementSyntax::ReturnStatementSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
+ReturnStmtSyntax::ReturnStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

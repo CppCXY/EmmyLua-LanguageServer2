@@ -2,7 +2,7 @@
 
 #include "LuaBaseSyntax.h"
 
-class StatementSyntax : public LuaBaseSyntax {
+class StmtSyntax : public LuaBaseSyntax {
 public:
-    StatementSyntax(LuaSyntaxNode n);
+    StmtSyntax(LuaSyntaxNode n);
 };

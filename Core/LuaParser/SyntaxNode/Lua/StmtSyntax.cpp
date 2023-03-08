@@ -1,4 +1,4 @@
-#include "StatementSyntax.h"
+#include "StmtSyntax.h"
 
-StatementSyntax::StatementSyntax(LuaSyntaxNode n) : LuaBaseSyntax(n) {
+StmtSyntax::StmtSyntax(LuaSyntaxNode n) : LuaBaseSyntax(n) {
 }

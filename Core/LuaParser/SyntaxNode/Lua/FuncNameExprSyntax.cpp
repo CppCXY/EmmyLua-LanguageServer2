@@ -1,4 +1,4 @@
-#include "FunctionNameExprSyntax.h"
+#include "FuncNameExprSyntax.h"
 
-FunctionNameExprSyntax::FunctionNameExprSyntax(LuaSyntaxNode n) : ExprSyntax(n) {
+FuncNameExprSyntax::FuncNameExprSyntax(LuaSyntaxNode n) : ExprSyntax(n) {
 }

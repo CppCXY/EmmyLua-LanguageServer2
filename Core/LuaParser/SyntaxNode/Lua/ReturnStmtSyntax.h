@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class ReturnStatementSyntax : public StmtSyntax {
+class ReturnStmtSyntax : public StmtSyntax {
 public:
-    ReturnStatementSyntax(LuaSyntaxNode n);
+    ReturnStmtSyntax(LuaSyntaxNode n);
 
     class ExprSyntaxList *ReturnExprList = nullptr;
 };

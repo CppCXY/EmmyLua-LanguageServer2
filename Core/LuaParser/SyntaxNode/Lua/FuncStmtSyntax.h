@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class FunctionStatementSyntax : public StmtSyntax {
+class FuncStmtSyntax : public StmtSyntax {
 public:
-    FunctionStatementSyntax(LuaSyntaxNode n);
+    FuncStmtSyntax(LuaSyntaxNode n);
 
     class FunctionNameExprSyntax *FunctionName = nullptr;
 

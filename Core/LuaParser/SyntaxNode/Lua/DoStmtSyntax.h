@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class DoStatementSyntax : public StmtSyntax {
+class DoStmtSyntax : public StmtSyntax {
 public:
-    DoStatementSyntax(LuaSyntaxNode n);
+    DoStmtSyntax(LuaSyntaxNode n);
 
     class BodySyntax *Body = nullptr;
 };

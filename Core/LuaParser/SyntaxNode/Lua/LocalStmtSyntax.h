@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class LocalStatementSyntax : public StmtSyntax {
+class LocalStmtSyntax : public StmtSyntax {
 public:
-    LocalStatementSyntax(LuaSyntaxNode n);
+    LocalStmtSyntax(LuaSyntaxNode n);
 
     class NameDefSyntaxList * NameDefList = nullptr;
 

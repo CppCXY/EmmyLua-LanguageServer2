@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class BreakStatementSyntax : public StmtSyntax {
+class BreakStmtSyntax : public StmtSyntax {
 public:
-    BreakStatementSyntax(LuaSyntaxNode n);
+    BreakStmtSyntax(LuaSyntaxNode n);
 
     class StmtSyntax * LoopStatement = nullptr;
 };

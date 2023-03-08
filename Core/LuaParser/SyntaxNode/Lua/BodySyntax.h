@@ -7,4 +7,6 @@ public:
     BodySyntax(LuaSyntaxNode n);
 
     std::vector<class StatementSyntax *> Statements;
+
+    std::vector<class CommentSyntax *> Comments;
 };

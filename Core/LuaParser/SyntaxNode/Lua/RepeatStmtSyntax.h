@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class RepeatStatementSyntax : public StmtSyntax {
+class RepeatStmtSyntax : public StmtSyntax {
 public:
-    RepeatStatementSyntax(LuaSyntaxNode n);
+    RepeatStmtSyntax(LuaSyntaxNode n);
 
     class BodySyntax *Body = nullptr;
     class ExprSyntax *ConditionExpr = nullptr;

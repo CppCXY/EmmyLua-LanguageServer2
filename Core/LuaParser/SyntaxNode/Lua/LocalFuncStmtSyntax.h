@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class LocalFunctionStatementSyntax : public StmtSyntax {
+class LocalFuncStmtSyntax : public StmtSyntax {
 public:
-    LocalFunctionStatementSyntax(LuaSyntaxNode n);
+    LocalFuncStmtSyntax(LuaSyntaxNode n);
 
     std::string_view Name;
 

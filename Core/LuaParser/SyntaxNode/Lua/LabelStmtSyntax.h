@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class LabelStatementSyntax : public StmtSyntax {
+class LabelStmtSyntax : public StmtSyntax {
 public:
-    LabelStatementSyntax(LuaSyntaxNode n);
+    LabelStmtSyntax(LuaSyntaxNode n);
 
     std::string_view LabelName;
 };

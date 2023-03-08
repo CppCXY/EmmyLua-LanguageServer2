@@ -36,7 +36,7 @@ enum class LuaSyntaxNodeKind {
 
     GotoStatement,
 
-    ExpressionStatement,
+    CallStatement,
 
     AssignStatement,
 
@@ -205,8 +205,8 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "ReturnStatement";
         case LuaSyntaxNodeKind::GotoStatement:
             return "GotoStatement";
-        case LuaSyntaxNodeKind::ExpressionStatement:
-            return "ExpressionStatement";
+        case LuaSyntaxNodeKind::CallStatement:
+            return "OtherStatement";
         case LuaSyntaxNodeKind::AssignStatement:
             return "AssignStatement";
         case LuaSyntaxNodeKind::SuffixedExpression:

@@ -1,4 +1,4 @@
-#include "WhileStatementSyntax.h"
+#include "WhileStmtSyntax.h"
 
-WhileStatementSyntax::WhileStatementSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
+WhileStmtSyntax::WhileStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

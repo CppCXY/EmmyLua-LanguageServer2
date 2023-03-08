@@ -1,4 +1,4 @@
-#include "ForStatementSyntax.h"
+#include "ForStmtSyntax.h"
 
-ForStatementSyntax::ForStatementSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
+ForStmtSyntax::ForStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

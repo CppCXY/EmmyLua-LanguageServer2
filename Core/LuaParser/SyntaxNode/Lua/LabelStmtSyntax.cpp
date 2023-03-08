@@ -1,4 +1,4 @@
-#include "LabelStatementSyntax.h"
+#include "LabelStmtSyntax.h"
 
-LabelStatementSyntax::LabelStatementSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
+LabelStmtSyntax::LabelStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

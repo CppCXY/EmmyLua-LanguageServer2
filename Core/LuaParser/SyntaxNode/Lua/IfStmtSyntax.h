@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class IfStatementSyntax : public StmtSyntax {
+class IfStmtSyntax : public StmtSyntax {
 public:
-    IfStatementSyntax(LuaSyntaxNode n);
+    IfStmtSyntax(LuaSyntaxNode n);
 
     std::vector<class ExprSyntax *> IfExprs;
 

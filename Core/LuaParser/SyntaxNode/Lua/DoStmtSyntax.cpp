@@ -1,4 +1,4 @@
-#include "DoStatementSyntax.h"
+#include "DoStmtSyntax.h"
 
-DoStatementSyntax::DoStatementSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
+DoStmtSyntax::DoStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

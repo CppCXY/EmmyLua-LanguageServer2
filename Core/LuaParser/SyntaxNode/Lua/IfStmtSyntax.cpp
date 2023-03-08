@@ -1,4 +1,4 @@
-#include "IfStatementSyntax.h"
+#include "IfStmtSyntax.h"
 
-IfStatementSyntax::IfStatementSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
+IfStmtSyntax::IfStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

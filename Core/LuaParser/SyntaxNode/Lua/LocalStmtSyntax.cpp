@@ -1,4 +1,4 @@
-#include "LocalStatementSyntax.h"
+#include "LocalStmtSyntax.h"
 
-LocalStatementSyntax::LocalStatementSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
+LocalStmtSyntax::LocalStmtSyntax(LuaSyntaxNode n) : StmtSyntax(n) {
 }

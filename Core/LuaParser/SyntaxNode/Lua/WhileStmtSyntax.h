@@ -2,9 +2,9 @@
 
 #include "StmtSyntax.h"
 
-class WhileStatementSyntax : public StmtSyntax {
+class WhileStmtSyntax : public StmtSyntax {
 public:
-    WhileStatementSyntax(LuaSyntaxNode n);
+    WhileStmtSyntax(LuaSyntaxNode n);
 
     class ExprSyntax *ConditionExpr = nullptr;
 

@@ -64,7 +64,7 @@ private:
 
     CompleteMarker GotoStatement();
 
-    CompleteMarker ExpressionStatement();
+    CompleteMarker OtherStatement();
 
     CompleteMarker ForNumber();
 
