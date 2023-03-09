@@ -659,7 +659,7 @@ void LuaDocLexer::TokenError(std::string_view message, TextRange range) {
 }
 
 void LuaDocLexer::TokenError(std::string_view message, std::size_t offset) {
-    TokenError(message, TextRange(offset, offset));
+    TokenError(message, TextRange(offset, 0));
 }
 
 std::vector<LuaSyntaxError> &LuaDocLexer::GetErrors() {

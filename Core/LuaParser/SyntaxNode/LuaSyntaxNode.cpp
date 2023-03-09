@@ -8,7 +8,16 @@ LuaSyntaxNode::LuaSyntaxNode(std::size_t index)
 }
 
 TextRange LuaSyntaxNode::GetTextRange(const LuaSyntaxTree &t) const {
-    return TextRange(t.GetStartOffset(_index), t.GetEndOffset(_index));
+    if (IsToken(t)) {
+        return t.GetTokenRange(_index);
+    }
+
+    auto start = t.GetStartOffset(_index);
+    auto end = t.GetEndOffset(_index);
+    if (end >= start) {
+        return TextRange(start, end - start + 1);
+    }
+    return TextRange(start, 0);
 }
 
 std::size_t LuaSyntaxNode::GetStartLine(const LuaSyntaxTree &t) const {
@@ -28,7 +37,7 @@ std::size_t LuaSyntaxNode::GetEndCol(const LuaSyntaxTree &t) const {
 }
 
 std::string_view LuaSyntaxNode::GetText(const LuaSyntaxTree &t) const {
-    return t.GetSource().Slice(t.GetStartOffset(_index), t.GetEndOffset(_index));
+    return t.GetSource().Slice(GetTextRange(t));
 }
 
 bool LuaSyntaxNode::IsNode(const LuaSyntaxTree &t) const {
@@ -177,13 +186,6 @@ std::vector<LuaSyntaxNode> LuaSyntaxNode::GetChildTokens(LuaTokenKind kind, cons
         }
     }
     return results;
-}
-
-bool LuaSyntaxNode::IsSingleLineNode(const LuaSyntaxTree &t) const {
-    if (_index == 0) {
-        return false;
-    }
-    return GetStartLine(t) == GetEndLine(t);
 }
 
 LuaSyntaxNode LuaSyntaxNode::GetNextToken(const LuaSyntaxTree &t) const {

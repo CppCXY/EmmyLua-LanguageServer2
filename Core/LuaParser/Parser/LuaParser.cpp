@@ -814,7 +814,7 @@ CompleteMarker LuaParser::LocalAttribute() {
     if (TestAndNext(TK_LT)) {
         if (Current() == TK_NAME) {
             auto range = _tokens[_tokenIndex].Range;
-            auto attr = _source->Slice(range.StartOffset, range.EndOffset);
+            auto attr = _source->Slice(range);
             if (attr != "const" && attr != "close") {
                 LuaExpectedError(fmt::format("unknown attribute '{}'", attr));
             }

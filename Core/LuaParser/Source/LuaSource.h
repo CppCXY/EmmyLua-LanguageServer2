@@ -22,7 +22,7 @@ public:
 
     std::string_view GetSource() const;
 
-    std::string_view Slice(std::size_t startOffset, std::size_t endOffset) const;
+    std::string_view Slice(TextRange range) const;
 
     const LineIndex &GetLineIndex() const;
 protected:

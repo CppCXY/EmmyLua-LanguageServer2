@@ -65,7 +65,7 @@ std::size_t LineIndex::GetTotalLine() const {
 
 lsp::Range LineIndex::ToLspRange(TextRange range) const {
     auto p1 = ToLspPosition(range.StartOffset);
-    auto p2 = ToLspPosition(range.EndOffset);
+    auto p2 = ToLspPosition(range.GetEndOffset());
     p2.character++;
     return lsp::Range(p1, p2);
 }

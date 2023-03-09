@@ -243,6 +243,17 @@ LuaTokenKind LuaSyntaxTree::GetTokenKind(std::size_t index) const {
     return _tokens[_nodeOrTokens[index].Data.TokenIndex].Kind;
 }
 
+TextRange LuaSyntaxTree::GetTokenRange(std::size_t index) const {
+    if (index < _nodeOrTokens.size()) {
+        auto &n = _nodeOrTokens[index];
+        if(n.Type == NodeOrTokenType::Token) {
+            auto &token = _tokens[n.Data.TokenIndex];
+            return TextRange(token.Start, token.Length);
+        }
+    }
+    return TextRange();
+}
+
 bool LuaSyntaxTree::IsNode(std::size_t index) const {
     if (index == 0 || (_nodeOrTokens.size() <= index)) {
         return false;
@@ -362,7 +373,7 @@ std::string LuaSyntaxTree::GetDebugView() {
             debugView.append(fmt::format("{{ Token, index: {}, TokenKind: {} }}@{} .. {} \n",
                                          node.GetIndex(),
                                          node.GetTokenKind(*this),
-                                         range.StartOffset, range.EndOffset));
+                                         range.StartOffset, range.GetEndOffset()));
 
 
         } else {
@@ -378,3 +389,4 @@ void LuaSyntaxTree::Reset() {
     _tokens.clear();
     _syntaxNodes.clear();
 }
+

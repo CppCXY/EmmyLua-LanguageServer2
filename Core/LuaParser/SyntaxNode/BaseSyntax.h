@@ -21,6 +21,7 @@ public:
         return dynamic_cast<SyntaxClass *>(this);
     }
 
+    void Accept(class LuaVisitor& visitor, const LuaSyntaxTree& t);
 protected:
     LuaSyntaxNode _node;
 };

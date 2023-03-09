@@ -28,9 +28,9 @@ std::string_view LuaSource::GetSource() const {
     return _source;
 }
 
-std::string_view LuaSource::Slice(std::size_t startOffset, std::size_t endOffset) const {
+std::string_view LuaSource::Slice(TextRange range) const {
     std::string_view source = _source;
-    return source.substr(startOffset, endOffset - startOffset + 1);
+    return source.substr(range.StartOffset, range.Length);
 }
 
 void LuaSource::UpdateFile(std::string &&fileText) {

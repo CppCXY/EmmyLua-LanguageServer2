@@ -17,6 +17,8 @@ public:
 
     friend class LuaDocTreeBuilder;
 
+    friend class LuaSyntaxNode;
+
     static LuaSyntaxTree ParseText(std::string &&text);
 
     explicit LuaSyntaxTree(LuaSource &&source);
@@ -24,36 +26,6 @@ public:
     void Reset();
 
     const LuaSource &GetSource() const;
-
-    std::size_t GetStartOffset(std::size_t index) const;
-
-    std::size_t GetEndOffset(std::size_t index) const;
-
-    std::size_t GetNextSibling(std::size_t index) const;
-
-    std::size_t GetPrevSibling(std::size_t index) const;
-
-    std::size_t GetFirstChild(std::size_t index) const;
-
-    std::size_t GetLastChild(std::size_t index) const;
-
-    std::size_t GetFirstToken(std::size_t index) const;
-
-    std::size_t GetLastToken(std::size_t index) const;
-
-    std::size_t GetPrevToken(std::size_t index) const;
-
-    std::size_t GetNextToken(std::size_t index) const;
-
-    std::size_t GetParent(std::size_t index) const;
-
-    LuaSyntaxNodeKind GetNodeKind(std::size_t index) const;
-
-    LuaTokenKind GetTokenKind(std::size_t index) const;
-
-    bool IsNode(std::size_t index) const;
-
-    bool IsToken(std::size_t index) const;
 
     const std::vector<LuaSyntaxNode> &GetSyntaxNodes() const;
 
@@ -127,6 +99,38 @@ public:
     std::string GetDebugView();
 
 private:
+    std::size_t GetStartOffset(std::size_t index) const;
+
+    std::size_t GetEndOffset(std::size_t index) const;
+
+    std::size_t GetNextSibling(std::size_t index) const;
+
+    std::size_t GetPrevSibling(std::size_t index) const;
+
+    std::size_t GetFirstChild(std::size_t index) const;
+
+    std::size_t GetLastChild(std::size_t index) const;
+
+    std::size_t GetFirstToken(std::size_t index) const;
+
+    std::size_t GetLastToken(std::size_t index) const;
+
+    std::size_t GetPrevToken(std::size_t index) const;
+
+    std::size_t GetNextToken(std::size_t index) const;
+
+    std::size_t GetParent(std::size_t index) const;
+
+    LuaSyntaxNodeKind GetNodeKind(std::size_t index) const;
+
+    LuaTokenKind GetTokenKind(std::size_t index) const;
+
+    TextRange GetTokenRange(std::size_t index) const;
+
+    bool IsNode(std::size_t index) const;
+
+    bool IsToken(std::size_t index) const;
+
     LuaSource _source;
     std::vector<NodeOrToken> _nodeOrTokens;
     std::vector<IncrementalToken> _tokens;

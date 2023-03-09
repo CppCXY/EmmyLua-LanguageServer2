@@ -68,6 +68,7 @@ target_sources(Core
         SyntaxNode/Lua/IndexExprSyntax.cpp
         SyntaxNode/Lua/CallExprSyntax.cpp
 
+        SyntaxNode/Visitor/LuaVisitor.cpp
 
         # tree
         SyntaxTree/LuaSyntaxTree.cpp

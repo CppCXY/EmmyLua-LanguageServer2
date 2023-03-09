@@ -72,8 +72,6 @@ public:
 
     std::vector<LuaSyntaxNode> GetChildTokens(LuaTokenKind kind, const LuaSyntaxTree &t) const;
 
-    bool IsSingleLineNode(const LuaSyntaxTree &t) const;
-
     LuaSyntaxNode GetNextToken(const LuaSyntaxTree &t) const;
 
     LuaSyntaxNode GetPrevToken(const LuaSyntaxTree &t) const;

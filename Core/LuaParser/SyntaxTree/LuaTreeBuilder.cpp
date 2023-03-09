@@ -1,42 +1,7 @@
 #include "LuaTreeBuilder.h"
 #include "LuaDocTreeBuilder.h"
 #include "LuaParser/DocLexer/LuaDocLexer.h"
-#include "LuaParser/SyntaxNode/Doc/CommentSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/AssignStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/BinaryExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/BodySyntax.h"
-#include "LuaParser/SyntaxNode/Lua/BreakStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/CallExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/CallStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/ClosureExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/DoStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/ExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/ExprSyntaxList.h"
-#include "LuaParser/SyntaxNode/Lua/ForStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/FuncNameExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/FuncStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/GotoStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/IfStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/IndexExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/LabelStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/LiteralExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/LocalFuncStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/LocalStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/NameDefSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/NameDefSyntaxList.h"
-#include "LuaParser/SyntaxNode/Lua/NameExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/ParExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/ParamSyntaxList.h"
-#include "LuaParser/SyntaxNode/Lua/RepeatStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/ReturnStmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/StmtSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/StringLiteralExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/SuffixedExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/TableExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/TableFieldSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/UnaryExprSyntax.h"
-#include "LuaParser/SyntaxNode/Lua/VarSyntaxList.h"
-#include "LuaParser/SyntaxNode/Lua/WhileStmtSyntax.h"
+#include "LuaParser/SyntaxNode/Lua/LuaSyntaxs.h"
 #include <ranges>
 
 using enum LuaTokenKind;
@@ -158,7 +123,7 @@ std::size_t LuaTreeBuilder::BindLeftComment(std::size_t startPos, LuaSyntaxTree 
                 break;
             }
             case TK_WS: {
-                if (lineIndex.GetLine(token.Range.StartOffset) + 1 < lineIndex.GetLine(token.Range.EndOffset + 1)) {
+                if (lineIndex.GetLine(token.Range.StartOffset) + 1 < lineIndex.GetLine(token.Range.GetEndOffset() + 1)) {
                     return count;
                 }
                 break;
@@ -185,7 +150,7 @@ std::size_t LuaTreeBuilder::BindRightComment(LuaSyntaxNodeKind kind, LuaSyntaxTr
                     case TK_SHEBANG: {
                         auto prevToken = tokens[index - 1];
                         auto &file = t.GetSource();
-                        if (file.GetLineIndex().GetLine(prevToken.Range.EndOffset) == file.GetLineIndex().GetLine(tokens[index].Range.StartOffset)) {
+                        if (file.GetLineIndex().GetLine(prevToken.Range.GetEndOffset()) == file.GetLineIndex().GetLine(tokens[index].Range.StartOffset)) {
                             return 1 + wsCount;
                         }
                         break;
@@ -255,7 +220,7 @@ void LuaTreeBuilder::EatTriviaByCount(std::size_t count, LuaSyntaxTree &t, LuaPa
                 }
 
                 if (token.TokenType == TK_WS) {
-                    if (lineIndex.GetLine(token.Range.StartOffset) + 1 >= lineIndex.GetLine(token.Range.EndOffset + 1)) {
+                    if (lineIndex.GetLine(token.Range.StartOffset) + 1 >= lineIndex.GetLine(token.Range.GetEndOffset() + 1)) {
                         comments.push_back(index);
                     } else {
                         BuildComments(comments, t, p);
@@ -357,7 +322,7 @@ void LuaTreeBuilder::BuildComments(std::vector<std::size_t> &group, LuaSyntaxTre
     std::vector<LuaToken> luaDocTokens;
     for (auto i: group) {
         auto &luaToken = tokens[i];
-        LuaDocLexer docLexer(file.Slice(luaToken.Range.StartOffset, luaToken.Range.EndOffset), luaToken.Range.StartOffset);
+        LuaDocLexer docLexer(file.Slice(luaToken.Range), luaToken.Range.StartOffset);
         for (auto &docToken: docLexer.Tokenize()) {
             luaDocTokens.emplace_back(docToken);
         }
