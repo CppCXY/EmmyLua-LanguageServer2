@@ -11,15 +11,9 @@
 
 int main() {
     std::string s = R"(
-
----@class Hello
-
----@generic T: number
----@class MyClass<T>
+---@class A : B
 local t = 123
 
----@param a T
----@return T
 function t:f(a)
 end
 
@@ -27,8 +21,9 @@ end
 
     auto t = LuaSyntaxTree::ParseText(std::move(s));
 
+    std::cout << t.GetDebugView() << std::endl;
+
     std::cout << t.GetDebugSyntaxView() << std::endl;
-
-
+    
     return 0;
 }

@@ -396,19 +396,21 @@ std::string LuaSyntaxTree::GetDebugSyntaxView() {
     while (!traverseStack.empty()) {
         LuaSyntaxNode node = traverseStack.top();
         if (node.IsNode(*this)) {
-            traverseStack.top() = LuaSyntaxNode(0);
+            traverseStack.top() = LuaSyntaxNode();
             auto children = node.GetChildren(*this);
             for (auto &c: children | std::views::reverse) {
                 traverseStack.push(c);
             }
-            debugView.resize(debugView.size() + indent, '\t');
             auto syntax = GetSyntax<BaseSyntax>(node);
             if (syntax) {
+                debugView.resize(debugView.size() + indent, '\t');
                 debugView.append(fmt::format("{{ {}, index: {} }}\n",
                                              typeid(*syntax).name(),
                                              node.GetIndex()));
             }
             indent++;
+        } else if (node.IsToken(*this)) {
+            traverseStack.pop();
         } else {
             traverseStack.pop();
             indent--;
