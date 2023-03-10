@@ -82,6 +82,4 @@ target_sources(Core
         # exception
         exception/LuaParseException.cpp
 
-        # Psi
-        Psi/PsiElement.cpp
         )

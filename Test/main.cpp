@@ -24,6 +24,6 @@ end
     std::cout << t.GetDebugView() << std::endl;
 
     std::cout << t.GetDebugSyntaxView() << std::endl;
-    
+
     return 0;
 }
