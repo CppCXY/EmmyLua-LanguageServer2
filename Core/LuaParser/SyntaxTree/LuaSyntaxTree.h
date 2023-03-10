@@ -98,6 +98,7 @@ public:
 
     std::string GetDebugView();
 
+    std::string GetDebugSyntaxView();
 private:
     std::size_t GetStartOffset(std::size_t index) const;
 

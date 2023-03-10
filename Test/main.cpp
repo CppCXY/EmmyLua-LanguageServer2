@@ -3,6 +3,7 @@
 #include "LuaParser/Lexer/LuaLexer.h"
 #include "LuaParser/Parser/LuaParser.h"
 #include "LuaParser/Source/LuaSource.h"
+#include "LuaParser/SyntaxNode/Visitor/LuaVisitor.h"
 #include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
 #include "fmt/printf.h"
 #include <fmt/format.h>
@@ -25,8 +26,8 @@ end
 )";
 
     auto t = LuaSyntaxTree::ParseText(std::move(s));
-    ////    fmt::printf("{}", t.GetDebugView());
-    std::cout << t.GetDebugView() << std::endl;
+
+    std::cout << t.GetDebugSyntaxView() << std::endl;
 
 
     return 0;

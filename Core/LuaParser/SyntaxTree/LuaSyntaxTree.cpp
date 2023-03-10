@@ -246,7 +246,7 @@ LuaTokenKind LuaSyntaxTree::GetTokenKind(std::size_t index) const {
 TextRange LuaSyntaxTree::GetTokenRange(std::size_t index) const {
     if (index < _nodeOrTokens.size()) {
         auto &n = _nodeOrTokens[index];
-        if(n.Type == NodeOrTokenType::Token) {
+        if (n.Type == NodeOrTokenType::Token) {
             auto &token = _tokens[n.Data.TokenIndex];
             return TextRange(token.Start, token.Length);
         }
@@ -346,7 +346,7 @@ LuaSyntaxNode LuaSyntaxTree::GetTokenAtOffset(std::size_t offset) const {
 
 std::string LuaSyntaxTree::GetDebugView() {
     std::string debugView;
-    debugView.append("{ Lua Syntax Tree }\n");
+    debugView.append("{ Lua Node Tree }\n");
 
     auto root = GetRootNode();
     std::stack<LuaSyntaxNode> traverseStack;
@@ -384,9 +384,41 @@ std::string LuaSyntaxTree::GetDebugView() {
     return debugView;
 }
 
+std::string LuaSyntaxTree::GetDebugSyntaxView() {
+    std::string debugView;
+    debugView.append("{ Lua Syntax Tree }\n");
+
+    auto root = GetRootNode();
+    std::stack<LuaSyntaxNode> traverseStack;
+    std::size_t indent = 1;
+    traverseStack.push(root);
+    // 非递归深度优先遍历
+    while (!traverseStack.empty()) {
+        LuaSyntaxNode node = traverseStack.top();
+        if (node.IsNode(*this)) {
+            traverseStack.top() = LuaSyntaxNode(0);
+            auto children = node.GetChildren(*this);
+            for (auto &c: children | std::views::reverse) {
+                traverseStack.push(c);
+            }
+            debugView.resize(debugView.size() + indent, '\t');
+            auto syntax = GetSyntax<BaseSyntax>(node);
+            if (syntax) {
+                debugView.append(fmt::format("{{ {}, index: {} }}\n",
+                                             typeid(*syntax).name(),
+                                             node.GetIndex()));
+            }
+            indent++;
+        } else {
+            traverseStack.pop();
+            indent--;
+        }
+    }
+    return debugView;
+}
+
 void LuaSyntaxTree::Reset() {
     _nodeOrTokens.clear();
     _tokens.clear();
     _syntaxNodes.clear();
 }
-
