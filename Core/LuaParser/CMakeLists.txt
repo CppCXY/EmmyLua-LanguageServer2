@@ -57,7 +57,8 @@ target_sources(Core
         SyntaxNode/Doc/DocGenericSyntax.cpp
         SyntaxNode/Doc/DocSeeSyntax.cpp
         SyntaxNode/Doc/DocSinceSyntax.cpp
-
+        SyntaxNode/Doc/DocDeprecatedSyntax.cpp
+        SyntaxNode/Doc/DocAccessSyntax.cpp
 
         # node/lua
         SyntaxNode/Lua/BodySyntax.cpp
