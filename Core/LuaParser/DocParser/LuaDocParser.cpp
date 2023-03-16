@@ -224,7 +224,7 @@ CompleteMarker LuaDocParser::DocEnum() {
     auto m = _p.Mark();
     m.PreComplete(_p, LuaSyntaxNodeKind::DocEnum);
 
-    // interface
+    // enum
     CheckTokenAndNext(TK_TAG_ENUM);
 
     CheckTokenAndNext(TK_NAME);

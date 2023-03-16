@@ -29,6 +29,35 @@ target_sources(Core
 
         # node/doc
         SyntaxNode/Doc/CommentSyntax.cpp
+        SyntaxNode/Doc/DocBaseSyntax.cpp
+        SyntaxNode/Doc/DocClassSyntax.cpp
+        SyntaxNode/Doc/GenericDefListSyntax.cpp
+        SyntaxNode/Doc/TypeSyntax.cpp
+        SyntaxNode/Doc/TypeSyntaxList.cpp
+        SyntaxNode/Doc/IdTypeSyntax.cpp
+        SyntaxNode/Doc/StringTypeSyntax.cpp
+        SyntaxNode/Doc/FuncTypeSyntax.cpp
+        SyntaxNode/Doc/FuncParamSyntaxList.cpp
+        SyntaxNode/Doc/FuncParamSyntax.cpp
+        SyntaxNode/Doc/ParTypeSyntax.cpp
+        SyntaxNode/Doc/GenericTypeSyntax.cpp
+        SyntaxNode/Doc/GenericParamTypeSyntaxList.cpp
+        SyntaxNode/Doc/UnionTypeSyntax.cpp
+        SyntaxNode/Doc/ArrayTypeSyntax.cpp
+        SyntaxNode/Doc/TableTypeSyntax.cpp
+        SyntaxNode/Doc/TableFieldTypeSyntax.cpp
+        SyntaxNode/Doc/DocEnumSyntax.cpp
+        SyntaxNode/Doc/DocInterfaceSyntax.cpp
+        SyntaxNode/Doc/DocAliasSyntax.cpp
+        SyntaxNode/Doc/DocFieldSyntax.cpp
+        SyntaxNode/Doc/DocTypeSyntax.cpp
+        SyntaxNode/Doc/DocParamSyntax.cpp
+        SyntaxNode/Doc/DocOverloadSyntax.cpp
+        SyntaxNode/Doc/DocOverrideSyntax.cpp
+        SyntaxNode/Doc/DocGenericSyntax.cpp
+        SyntaxNode/Doc/DocSeeSyntax.cpp
+        SyntaxNode/Doc/DocSinceSyntax.cpp
+
 
         # node/lua
         SyntaxNode/Lua/BodySyntax.cpp

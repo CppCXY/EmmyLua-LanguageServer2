@@ -68,7 +68,9 @@ void LuaDocTreeBuilder::EatToken(LuaSyntaxTree &t, LuaDocParser &p) {
 
 void LuaDocTreeBuilder::FinishNode(LuaSyntaxTree &t, LuaDocParser &p) {
     if (!_nodePosStack.empty()) {
+        auto nodePos = _nodePosStack.top();
         _nodePosStack.pop();
+        BuildSyntax(LuaSyntaxNode(nodePos), t);
     }
 }
 
@@ -116,9 +118,10 @@ void LuaDocTreeBuilder::BuildToken(LuaToken &token, LuaSyntaxTree &t) {
 }
 
 void LuaDocTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
-    switch(n.GetSyntaxKind(t)){
-        case LuaSyntaxNodeKind::DocClass:
-            break;
+    switch (n.GetSyntaxKind(t)) {
+        case LuaSyntaxNodeKind::DocClass: {
+            auto docClassSyntax = t.CreateSyntax<>()
+        }
         case LuaSyntaxNodeKind::DocInterface:
             break;
         case LuaSyntaxNodeKind::DocAlias:
@@ -191,7 +194,7 @@ void LuaDocTreeBuilder::BuildSyntax(LuaSyntaxNode n, LuaSyntaxTree &t) {
             break;
         case LuaSyntaxNodeKind::NormalComment:
             break;
-        default:{
+        default: {
             return;
         }
     }
