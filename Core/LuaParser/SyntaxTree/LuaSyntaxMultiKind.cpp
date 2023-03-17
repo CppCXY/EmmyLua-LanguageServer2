@@ -2,11 +2,14 @@
 
 bool detail::multi_match::Match(LuaSyntaxMultiKind k, LuaSyntaxNodeKind syntaxNodeKind) {
     switch (k) {
-        case LuaSyntaxMultiKind::Expression:{
+        case LuaSyntaxMultiKind::Expression: {
             return ExpressionMatch(syntaxNodeKind);
         }
         case LuaSyntaxMultiKind::Statement: {
             return StatementMatch(syntaxNodeKind);
+        }
+        case LuaSyntaxMultiKind::Type: {
+            return TypeMatch(syntaxNodeKind);
         }
     }
     return false;
@@ -60,3 +63,20 @@ bool detail::multi_match::StatementMatch(LuaSyntaxNodeKind k) {
     }
 }
 
+bool detail::multi_match::TypeMatch(LuaSyntaxNodeKind k) {
+    switch (k) {
+        case LuaSyntaxNodeKind::FunctionType:
+        case LuaSyntaxNodeKind::IdType:
+        case LuaSyntaxNodeKind::ArrayType:
+        case LuaSyntaxNodeKind::TableType:
+        case LuaSyntaxNodeKind::ParType:
+        case LuaSyntaxNodeKind::StringType:
+        case LuaSyntaxNodeKind::UnionType:
+        case LuaSyntaxNodeKind::GenericType: {
+            return true;
+        }
+        default: {
+            return false;
+        }
+    }
+}

@@ -1,13 +1,8 @@
-//
-// Created by zc on 2023/3/16.
-//
+#pragma once
 
-#ifndef EMMYLUALS_DOCOVERRIDESYNTAX_H
-#define EMMYLUALS_DOCOVERRIDESYNTAX_H
+#include "DocBaseSyntax.h"
 
-
-class DocOverrideSyntax {
+class DocOverrideSyntax : public DocBaseSyntax {
+public:
+    DocOverrideSyntax(LuaSyntaxNode n);
 };
-
-
-#endif//EMMYLUALS_DOCOVERRIDESYNTAX_H

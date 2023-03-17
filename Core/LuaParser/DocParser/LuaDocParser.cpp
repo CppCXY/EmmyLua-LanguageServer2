@@ -253,7 +253,7 @@ CompleteMarker LuaDocParser::DocAlias() {
     auto m = _p.Mark();
     m.PreComplete(_p, LuaSyntaxNodeKind::DocAlias);
 
-    // interface
+    // alias
     CheckTokenAndNext(TK_TAG_ALIAS);
 
     CheckTokenAndNext(TK_NAME);

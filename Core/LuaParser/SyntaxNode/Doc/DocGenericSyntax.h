@@ -6,6 +6,6 @@ class DocGenericSyntax : public DocBaseSyntax {
 public:
     DocGenericSyntax(LuaSyntaxNode n);
 
-    std::vector<class GenericDeclarSyntax *> Declares;
+    std::vector<class GenericDeclareSyntax *> Declares;
 };
 

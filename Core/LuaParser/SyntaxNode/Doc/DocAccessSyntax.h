@@ -1,12 +1,7 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
-
-enum class AccessVisibility {
-    Public,
-    Protected,
-    Private
-};
+#include "LuaParser/Define/AccessVisibility.h"
 
 class DocAccessSyntax: public DocBaseSyntax {
 public:

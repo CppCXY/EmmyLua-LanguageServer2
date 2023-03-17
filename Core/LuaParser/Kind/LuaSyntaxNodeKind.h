@@ -135,8 +135,6 @@ enum class LuaSyntaxNodeKind {
 
     TypeList,
 
-    Type,
-
     TableType,
 
     TableFieldType,

@@ -59,6 +59,9 @@ target_sources(Core
         SyntaxNode/Doc/DocSinceSyntax.cpp
         SyntaxNode/Doc/DocDeprecatedSyntax.cpp
         SyntaxNode/Doc/DocAccessSyntax.cpp
+        SyntaxNode/Doc/EnumFieldSyntax.cpp
+        SyntaxNode/Doc/FieldIndexSyntax.cpp
+        SyntaxNode/Doc/GenericDeclareSyntax.cpp
 
         # node/lua
         SyntaxNode/Lua/BodySyntax.cpp

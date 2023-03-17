@@ -6,5 +6,5 @@ class TableTypeSyntax : public TypeSyntax {
 public:
     TableTypeSyntax(LuaSyntaxNode n);
 
-    std::vector<class TabbleFieldSyntax *> Fields;
+    std::vector<class TableFieldTypeSyntax *> Fields;
 };
