@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
+#include "Lua/SyntaxTree/LuaSyntaxTree.h"
 
 class LuaDocument {
 public:

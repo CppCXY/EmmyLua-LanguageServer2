@@ -1,0 +1,93 @@
+﻿#pragma once
+
+#include <functional>
+#include <memory>
+#include <string_view>
+#include <vector>
+
+#include "Lib/TextRange/TextRange.h"
+#include "Lua/Kind/LuaSyntaxMultiKind.h"
+#include "Lua/Kind/LuaSyntaxNodeKind.h"
+#include "Lua/Kind/LuaTokenKind.h"
+
+class LuaSyntaxTree;
+
+class LuaNodeOrToken {
+public:
+    explicit LuaNodeOrToken(std::size_t index = 0);
+
+    TextRange GetTextRange(const LuaSyntaxTree &t) const;
+
+    std::size_t GetStartLine(const LuaSyntaxTree &t) const;
+
+    std::size_t GetStartCol(const LuaSyntaxTree &t) const;
+
+    std::size_t GetEndLine(const LuaSyntaxTree &t) const;
+
+    std::size_t GetEndCol(const LuaSyntaxTree &t) const;
+
+    std::string_view GetText(const LuaSyntaxTree &t) const;
+
+    bool IsNode(const LuaSyntaxTree &t) const;
+
+    bool IsToken(const LuaSyntaxTree &t) const;
+
+    LuaSyntaxNodeKind GetSyntaxKind(const LuaSyntaxTree &t) const;
+
+    LuaTokenKind GetTokenKind(const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetParent(const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetNextSibling(const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetPrevSibling(const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetFirstChild(const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetLastChild(const LuaSyntaxTree &t) const;
+
+    void ToNext(const LuaSyntaxTree &t);
+
+    bool IsNull(const LuaSyntaxTree &t) const;
+
+    bool IsEmpty(const LuaSyntaxTree &t) const;
+
+    std::vector<LuaNodeOrToken> GetDescendants(const LuaSyntaxTree &t) const;
+
+    std::vector<LuaNodeOrToken> GetChildren(const LuaSyntaxTree &t) const;
+
+    std::size_t GetIndex() const;
+
+    LuaNodeOrToken GetChildSyntaxNode(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetChildSyntaxNode(LuaSyntaxMultiKind kind, const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetChildToken(LuaTokenKind kind, const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetChildToken(std::function<bool(LuaTokenKind)> predicated, const LuaSyntaxTree &t) const;
+
+    std::vector<LuaNodeOrToken> GetChildSyntaxNodes(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t) const;
+
+    std::vector<LuaNodeOrToken> GetChildSyntaxNodes(LuaSyntaxMultiKind kind, const LuaSyntaxTree &t) const;
+
+    std::vector<LuaNodeOrToken> GetChildTokens(LuaTokenKind kind, const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetNextToken(const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetPrevToken(const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetFirstToken(const LuaSyntaxTree &t) const;
+
+    LuaNodeOrToken GetLastToken(const LuaSyntaxTree &t) const;
+
+    std::size_t GetFirstLineWidth(const LuaSyntaxTree &t) const;
+
+    std::size_t CountTokenChild(LuaTokenKind kind, const LuaSyntaxTree &t);
+
+    std::size_t CountNodeChild(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t);
+
+    LuaNodeOrToken Ancestor(const LuaSyntaxTree &t, std::function<bool(LuaSyntaxNodeKind kind, bool &conitnueFlag)> predicate);
+
+private:
+    std::size_t _index;
+};

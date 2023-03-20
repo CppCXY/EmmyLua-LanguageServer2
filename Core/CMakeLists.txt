@@ -12,7 +12,7 @@ target_include_directories(Core
 
 
 add_subdirectory(Lib)
-add_subdirectory(LuaParser)
+add_subdirectory(Lua)
 add_subdirectory(Workspace)
 add_subdirectory(Compilation)
 

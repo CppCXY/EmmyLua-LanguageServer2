@@ -1,10 +1,10 @@
 
-#include "LuaParser/DocLexer/LuaDocLexer.h"
-#include "LuaParser/Lexer/LuaLexer.h"
-#include "LuaParser/Parser/LuaParser.h"
-#include "LuaParser/Source/LuaSource.h"
-#include "LuaParser/SyntaxNode/Visitor/LuaVisitor.h"
-#include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
+#include "Lua/DocLexer/LuaDocLexer.h"
+#include "Lua/LuaLexer/LuaLexer.h"
+#include "Lua/LuaParser/LuaParser.h"
+#include "Lua/Source/LuaSource.h"
+#include "Lua/SyntaxNode/Visitor/LuaVisitor.h"
+#include "Lua/SyntaxTree/LuaSyntaxTree.h"
 #include "fmt/printf.h"
 #include <fmt/format.h>
 #include <iostream>
