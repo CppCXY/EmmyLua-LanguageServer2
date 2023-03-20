@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Lua/SyntaxTree/LuaSyntaxTree.h"
+#include <memory>
 
 class LuaDocument {
 public:
@@ -8,9 +9,11 @@ public:
 
     explicit LuaDocument(DocumentId id = 0);
 
-    LuaSyntaxTree & GetSyntaxTree();
+    void Initialize(std::string&& text);
+
+    LuaSyntaxTree* GetSyntaxTree();
 
 private:
     DocumentId _id;
+    std::unique_ptr<LuaSyntaxTree> _tree;
 };
-

@@ -54,3 +54,7 @@ std::size_t LineOffset::GetOffset(std::size_t colNum) const {
     }
     return Start + colOffset;
 }
+
+void LineOffset::Reset() {
+    CharsOffsets.clear();
+}

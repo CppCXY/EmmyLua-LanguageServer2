@@ -3,7 +3,7 @@
 #include "CommandService.h"
 #include "DiagnosticService.h"
 #include "LanguageServer.h"
-#include "Util/File/Url.h"
+#include "File/Url.h"
 
 CodeActionService::CodeActionService(LanguageServer *owner)
         : Service(owner) {

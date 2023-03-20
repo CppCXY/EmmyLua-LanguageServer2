@@ -23,6 +23,8 @@ public:
     std::vector<LuaToken>& Tokenize();
 
     std::vector<LuaSyntaxError>& GetErrors();
+
+    static bool IsReserved(std::string_view text);
 private:
 	static std::map<std::string, LuaTokenKind, std::less<>> LuaReserved;
 
@@ -42,7 +44,7 @@ private:
 
     void ReadNewLine();
 
-	bool IsReserved(std::string_view text);
+
 
 	void TokenError(std::string_view message, TextRange range);
 

@@ -1,7 +1,7 @@
 #include "CommandService.h"
 #include "ConfigService.h"
 #include "LanguageServer.h"
-#include "Util/File/Url.h"
+#include "File/Url.h"
 
 CommandService::CommandService(LanguageServer *owner)
         : Service(owner) {

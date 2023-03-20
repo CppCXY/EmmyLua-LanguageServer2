@@ -24,7 +24,6 @@ target_sources(Core
         Define/LuaIdentify.cpp
 
         # node
-        SyntaxTree/LuaNodeOrToken.cpp
         SyntaxNode/BaseSyntax.cpp
 
         # node/doc
@@ -106,12 +105,15 @@ target_sources(Core
         # kind
         Kind/LuaSyntaxMultiKind.cpp
         # tree
+        SyntaxTree/LuaNodeOrToken.cpp
         SyntaxTree/LuaSyntaxTree.cpp
         SyntaxTree/LuaTreeBuilder.cpp
         SyntaxTree/LuaDocTreeBuilder.cpp
+        SyntaxTree/TreeUpdateEvent.cpp
 
-        # file
+        # source
         Source/LuaSource.cpp
+        Source/SourceUpdateEvent.cpp
 
         # exception
         exception/LuaParseException.cpp

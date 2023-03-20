@@ -10,7 +10,7 @@ public:
 
     void RemoveDocument(LuaDocument::DocumentId id);
 
-    void UpdateDocument(LuaDocument::DocumentId id);
+    void UpdateDocument(LuaDocument::DocumentId id, const lsp::Range &range, std::string &&text);
 
     LuaDocument* GetDocument(LuaDocument::DocumentId id);
 

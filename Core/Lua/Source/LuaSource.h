@@ -5,8 +5,9 @@
 #include <vector>
 
 #include "Lib/LineIndex/LineIndex.h"
-#include "Lib/LSP/LSP.h"
 #include "Lua/Define/LuaSyntaxError.h"
+#include "SourceUpdateEvent.h"
+
 
 class LuaSource {
 public:
@@ -16,19 +17,15 @@ public:
 
     void UpdateFile(std::string &&fileText);
 
-    void IncrementalUpdateFile(const lsp::Range &range, std::string &&text);
-
-    void BulkUpdateFile(std::vector<lsp::TextDocumentContentChangeEvent> &changeEvent);
+    void ApplyUpdate(SourceUpdateEvent & event);
 
     std::string_view GetSource() const;
 
     std::string_view Slice(TextRange range) const;
 
     const LineIndex &GetLineIndex() const;
-protected:
-    void BuildLineIndex();
 
-    void InnerIncrementalUpdateFile(const lsp::Range &range, std::string &&text);
+protected:
 
     std::string _source;
     LineIndex _lineIndex;

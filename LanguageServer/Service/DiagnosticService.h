@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Service.h"
-#include "LuaParser/SyntaxTree/LuaSyntaxTree.h"
+#include "Lua/SyntaxTree/LuaSyntaxTree.h"
 
 class DiagnosticService : public Service {
 public:
@@ -9,7 +9,7 @@ public:
 
     explicit DiagnosticService(LanguageServer *owner);
 
-    std::vector<lsp::Diagnostic> Diagnostic(std::size_t fileId);
+    std::vector<lsp::Diagnostic> Diagnostic(std::string_view uri);
 private:
 };
 

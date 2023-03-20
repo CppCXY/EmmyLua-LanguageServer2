@@ -8,21 +8,28 @@
 
 using enum LuaTokenKind;
 
-LuaSyntaxTree LuaSyntaxTree::ParseText(std::string &&text) {
+std::unique_ptr<LuaSyntaxTree> LuaSyntaxTree::ParseText(std::string &&text) {
+    std::vector<LuaSyntaxError> errors;
 
     LuaSource source = LuaSource::From(std::move(text));
 
     LuaLexer luaLexer(source.GetSource());
     auto &tokens = luaLexer.Tokenize();
+    for (auto &e: luaLexer.GetErrors()) {
+        errors.emplace_back(e);
+    }
 
     LuaParser p(&source, std::move(tokens));
     p.Parse();
+    for (auto &e: p.GetErrors()) {
+        errors.emplace_back(e);
+    }
 
     LuaTreeBuilder treeBuilder;
 
-    LuaSyntaxTree t(std::move(source));
-    treeBuilder.BuildTree(t, p);
-
+    auto t = std::make_unique<LuaSyntaxTree>(std::move(source));
+    treeBuilder.BuildTree(*t, p);
+    t->_errors = std::move(errors);
     return t;
 }
 
@@ -31,6 +38,10 @@ LuaSyntaxTree::LuaSyntaxTree(LuaSource &&source)
 }
 
 const LuaSource &LuaSyntaxTree::GetSource() const {
+    return _source;
+}
+
+LuaSource &LuaSyntaxTree::GetSource() {
     return _source;
 }
 
@@ -423,4 +434,62 @@ void LuaSyntaxTree::Reset() {
     _nodeOrTokens.clear();
     _tokens.clear();
     _syntaxNodes.clear();
+    _errors.clear();
+}
+
+void LuaSyntaxTree::ApplyUpdate(TreeUpdateEvent &treeUpdateEvent) {
+    switch (treeUpdateEvent.UpdateAction) {
+        case TreeUpdateEvent::Action::OnlyUpdateTokenOffset: {
+            auto range = treeUpdateEvent.SourceEvent.Range;
+            auto offset = range.StartOffset;
+            auto tokenIt = std::partition_point(
+                    _tokens.begin(), _tokens.end(),
+                    [offset](const IncrementalToken &token) {
+                        return token.Start <= offset;
+                    });
+
+            if (tokenIt != _tokens.begin()) {
+                tokenIt--;
+            }
+
+            if (tokenIt != _tokens.end()) {
+                tokenIt->Length += range.Length;
+                tokenIt++;
+            }
+            for (; tokenIt != _tokens.end(); tokenIt++) {
+                tokenIt->Start += range.Length;
+            }
+
+            _source.ApplyUpdate(treeUpdateEvent.SourceEvent);
+            break;
+        }
+        case TreeUpdateEvent::Action::UpdateTree: {
+            Reset();
+
+            _source.ApplyUpdate(treeUpdateEvent.SourceEvent);
+
+            LuaLexer luaLexer(_source.GetSource());
+            auto &tokens = luaLexer.Tokenize();
+            for (auto &e: luaLexer.GetErrors()) {
+                _errors.emplace_back(e);
+            }
+
+            LuaParser p(&_source, std::move(tokens));
+            p.Parse();
+            for (auto &e: p.GetErrors()) {
+                _errors.emplace_back(e);
+            }
+
+            LuaTreeBuilder treeBuilder;
+            treeBuilder.BuildTree(*this, p);
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+
+std::vector<LuaSyntaxError> &LuaSyntaxTree::GetSyntaxErrors() {
+    return _errors;
 }

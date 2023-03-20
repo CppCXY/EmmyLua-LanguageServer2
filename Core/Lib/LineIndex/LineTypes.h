@@ -23,13 +23,15 @@ struct UnitChars {
 
 class LineOffset {
 public:
-    explicit LineOffset(std::size_t start);
+    explicit LineOffset(std::size_t start = 0);
 
     void Push(std::size_t cLen);
 
     std::size_t GetCol(std::size_t colOffset) const;
 
     std::size_t GetOffset(std::size_t colNum) const;
+
+    void Reset();
 
     std::size_t Start;
     std::vector<UnitChars> CharsOffsets;

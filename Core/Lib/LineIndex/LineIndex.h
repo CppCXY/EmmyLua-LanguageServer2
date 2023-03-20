@@ -10,7 +10,7 @@ class LineIndex {
 public:
     LineIndex();
 
-    void Parse(std::string &text);
+    void Parse(std::string &text, std::size_t startOffset = 0);
 
     LineCol GetLineCol(std::size_t offset) const;
 

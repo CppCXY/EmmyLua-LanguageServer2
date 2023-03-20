@@ -8,6 +8,7 @@ enum class ServiceType
 	CodeActionService,
 
     ConfigService,
+    VirtualFileSystem,
 
 	ServiceCount 
 };

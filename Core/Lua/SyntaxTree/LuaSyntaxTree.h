@@ -10,6 +10,7 @@
 #include "Lua/Define/LuaToken.h"
 #include "Lua/Source/LuaSource.h"
 #include "Lua/SyntaxNode/BaseSyntax.h"
+#include "TreeUpdateEvent.h"
 
 class LuaSyntaxTree {
 public:
@@ -19,13 +20,17 @@ public:
 
     friend class LuaNodeOrToken;
 
-    static LuaSyntaxTree ParseText(std::string &&text);
+    friend class TreeUpdateEvent;
+
+    static std::unique_ptr<LuaSyntaxTree> ParseText(std::string &&text);
 
     explicit LuaSyntaxTree(LuaSource &&source);
 
     void Reset();
 
     const LuaSource &GetSource() const;
+
+    LuaSource &GetSource();
 
     const std::vector<LuaNodeOrToken> &GetSyntaxNodes() const;
 
@@ -36,6 +41,8 @@ public:
     LuaNodeOrToken GetTokenBeforeOffset(std::size_t offset) const;
 
     LuaNodeOrToken GetTokenAtOffset(std::size_t offset) const;
+
+    void ApplyUpdate(TreeUpdateEvent& treeUpdateEvent);
 
     template<class NodeSyntax>
     NodeSyntax *CreateSyntax(LuaNodeOrToken n) {
@@ -99,6 +106,8 @@ public:
     std::string GetDebugView();
 
     std::string GetDebugSyntaxView();
+
+    std::vector<LuaSyntaxError>& GetSyntaxErrors();
 private:
     std::size_t GetStartOffset(std::size_t index) const;
 
@@ -136,4 +145,5 @@ private:
     std::vector<InnerNodeOrToken> _nodeOrTokens;
     std::vector<IncrementalToken> _tokens;
     std::vector<std::unique_ptr<BaseSyntax>> _syntaxNodes;
+    std::vector<LuaSyntaxError> _errors;
 };

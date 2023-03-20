@@ -1,7 +1,7 @@
 #include "ConfigService.h"
 #include "DiagnosticService.h"
 #include "LanguageServer.h"
-#include "Util/File/Url.h"
+#include "File/Url.h"
 #include <fstream>
 #include <sstream>
 

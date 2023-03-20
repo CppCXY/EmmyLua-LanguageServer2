@@ -4,10 +4,22 @@
 LineIndex::LineIndex() {
 }
 
-void LineIndex::Parse(std::string &text) {
-    _newLines.clear();
-    _newLines.resize(1, LineOffset(0));
-    for (std::size_t i = 0; i < text.size();) {
+void LineIndex::Parse(std::string &text, std::size_t startOffset) {
+    std::size_t parseStart = 0;
+    if (startOffset == 0) {
+        _newLines.clear();
+        _newLines.resize(1, LineOffset(0));
+    } else {
+        auto line = GetLine(startOffset);
+        if (line == 0) {
+            line = 1;
+        }
+        _newLines.resize(line);
+        _newLines.back().Reset();
+        parseStart = _newLines.back().Start;
+    }
+
+    for (std::size_t i = parseStart; i < text.size();) {
         char c = text[i];
         if (c > 0) {
             std::size_t cLen = sizeof(char);

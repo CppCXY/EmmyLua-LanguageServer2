@@ -9,7 +9,7 @@ add_dependencies(LanguageServer Core)
 target_include_directories(LanguageServer PRIVATE
         ${EmmyLuaLS_SOURCE_DIR}/3rd/asio-1.24.0/include
         ./
-        ${EmmyLuaLS_SOURCE_DIR}
+        ${EmmyLuaLS_SOURCE_DIR}/3rd/mimalloc-2.0.3/include
         )
 
 target_compile_options(LanguageServer PUBLIC -DASIO_STANDALONE)
@@ -35,12 +35,7 @@ target_sources(LanguageServer
         Session/Protocol/ProtocolBuffer.cpp
 
         # vfs
-        VFS/VirtualFile.cpp
-        VFS/VirtualFileSystem.cpp
-
-        # DB
-        DB/FileDB.cpp
-        DB/UriDB.cpp
+        Service/VirtualFileSystem.cpp
 
         # service
         Service/Service.cpp
@@ -50,7 +45,7 @@ target_sources(LanguageServer
         Service/ConfigService.cpp
 
         # mimalloc
-        # ${EmmyLuaLS_SOURCE_DIR}/3rd/mimalloc-2.0.3/static.c
+        ${EmmyLuaLS_SOURCE_DIR}/3rd/mimalloc-2.0.3/src/static.c
         )
 
 target_link_libraries(LanguageServer PUBLIC Core)

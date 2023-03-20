@@ -4,24 +4,26 @@
 #include "Service/ConfigService.h"
 #include "Service/DiagnosticService.h"
 #include "Service/Service.h"
-#include "Util/File/FileFinder.h"
-#include "Util/File/Url.h"
+#include "Service/VirtualFileSystem.h"
+#include "File/FileFinder.h"
+#include "File/Url.h"
 #include "asio.hpp"
 #include <fmt/format.h>
 #include <fstream>
 #include <iterator>
 
 LanguageServer::LanguageServer()
-        : _idCounter(0),
-          _ioc(1),
-          _lspHandle(this) {
+    : _idCounter(0),
+      _ioc(1),
+      _lspHandle(this) {
 }
 
 void LanguageServer::InitializeService() {
     AddService<DiagnosticService>();
-	AddService<CommandService>();
-	AddService<CodeActionService>();
+    AddService<CommandService>();
+    AddService<CodeActionService>();
     AddService<ConfigService>();
+    AddService<VirtualFileSystem>();
 
     for (auto &service: _services) {
         service->Initialize();
@@ -91,15 +93,14 @@ asio::io_context &LanguageServer::GetIOContext() {
     return _ioc;
 }
 
-uint64_t LanguageServer::GetRequestId()
-{
-	return ++_idCounter;
+uint64_t LanguageServer::GetRequestId() {
+    return ++_idCounter;
 }
 
 LSPHandle &LanguageServer::GetLSPHandle() {
     return _lspHandle;
 }
 
-VirtualFileSystem &LanguageServer::GetVFS() {
-    return _vfs;
+LuaWorkspace &LanguageServer::GetWorkspace() {
+    return _workspace;
 }

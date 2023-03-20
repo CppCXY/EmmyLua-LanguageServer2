@@ -5,7 +5,8 @@
 #include "Service/CommandService.h"
 #include "Service/ConfigService.h"
 #include "Service/DiagnosticService.h"
-#include "Util/File/Url.h"
+#include "Service/VirtualFileSystem.h"
+#include "File/Url.h"
 #include "nlohmann/json.hpp"
 #include <fmt/format.h>
 
@@ -51,29 +52,29 @@ std::shared_ptr<lsp::InitializeResult> LSPHandle::OnInitialize(std::shared_ptr<l
     result->capabilities.textDocumentSync.change = lsp::TextDocumentSyncKind::Incremental;
     result->capabilities.textDocumentSync.openClose = true;
 
-//    result->capabilities.codeActionProvider = true;
-//    result->capabilities.executeCommandProvider.commands =
-//            _server->GetService<CommandService>()->GetCommands();
+    //    result->capabilities.codeActionProvider = true;
+    //    result->capabilities.executeCommandProvider.commands =
+    //            _server->GetService<CommandService>()->GetCommands();
 
     result->capabilities.diagnosticProvider.identifier = "EmmyLua";
     result->capabilities.diagnosticProvider.workspaceDiagnostics = false;
     result->capabilities.diagnosticProvider.interFileDependencies = false;
 
-//    auto &editorConfigFiles = params->initializationOptions.editorConfigFiles;
-//    for (auto &configFile: editorConfigFiles) {
-//        _server->GetService<ConfigService>()->LoadEditorconfig(configFile.workspace, configFile.path);
-//    }
+    //    auto &editorConfigFiles = params->initializationOptions.editorConfigFiles;
+    //    for (auto &configFile: editorConfigFiles) {
+    //        _server->GetService<ConfigService>()->LoadEditorconfig(configFile.workspace, configFile.path);
+    //    }
 
-//    std::filesystem::path localePath = params->initializationOptions.localeRoot;
-//    localePath /= params->locale + ".json";
+    //    std::filesystem::path localePath = params->initializationOptions.localeRoot;
+    //    localePath /= params->locale + ".json";
 
-//    if (std::filesystem::exists(localePath) && std::filesystem::is_regular_file(localePath)) {
-//        _server->GetService<ConfigService>()->LoadLanguageTranslator(localePath.string());
-//    }
+    //    if (std::filesystem::exists(localePath) && std::filesystem::is_regular_file(localePath)) {
+    //        _server->GetService<ConfigService>()->LoadLanguageTranslator(localePath.string());
+    //    }
 
-//    ClientConfig clientConfig;
-//    clientConfig.Deserialize(params->initializationOptions.vscodeConfig);
-//    _server->GetService<ConfigService>()->UpdateClientConfig(clientConfig);
+    //    ClientConfig clientConfig;
+    //    clientConfig.Deserialize(params->initializationOptions.vscodeConfig);
+    //    _server->GetService<ConfigService>()->UpdateClientConfig(clientConfig);
 
     return result;
 }
@@ -87,25 +88,25 @@ void LSPHandle::OnDidChange(
     if (params->contentChanges.size() == 1) {
         auto &content = params->contentChanges.front();
         if (content.range.has_value()) {
-            _server->GetVFS().UpdateFile(params->textDocument.uri, content.range.value(),
-                                         std::move(content.text));
+            _server->GetService<VirtualFileSystem>()->UpdateFile(params->textDocument.uri, content.range.value(),
+                                                                 std::move(content.text));
         } else {
-            _server->GetVFS().UpdateFile(params->textDocument.uri,
+            _server->GetService<VirtualFileSystem>()->UpdateFile(params->textDocument.uri,
                                          std::move(content.text));
         }
     } else {
-        _server->GetVFS().UpdateFile(params->textDocument.uri, params->contentChanges);
+        _server->GetService<VirtualFileSystem>()->UpdateFile(params->textDocument.uri, params->contentChanges);
     }
 }
 
 void LSPHandle::OnDidOpen(
         std::shared_ptr<lsp::DidOpenTextDocumentParams> params) {
-    _server->GetVFS().UpdateFile(params->textDocument.uri, std::move(params->textDocument.text));
+    _server->GetService<VirtualFileSystem>()->UpdateFile(params->textDocument.uri, std::move(params->textDocument.text));
 }
 
 void LSPHandle::OnClose(
         std::shared_ptr<lsp::DidCloseTextDocumentParams> params) {
-    _server->GetVFS().ClearFile(params->textDocument.uri);
+    _server->GetService<VirtualFileSystem>()->CloseFile(params->textDocument.uri);
 }
 
 std::shared_ptr<lsp::CodeActionResult> LSPHandle::OnCodeAction(std::shared_ptr<lsp::CodeActionParams> param) {
@@ -134,16 +135,7 @@ std::shared_ptr<lsp::DocumentDiagnosticReport> LSPHandle::OnTextDocumentDiagnost
         std::shared_ptr<lsp::DocumentDiagnosticParams> params) {
     auto report = std::make_shared<lsp::DocumentDiagnosticReport>();
     report->kind = lsp::DocumentDiagnosticReportKind::Full;
-
-    auto &vfs = _server->GetVFS();
-    auto opFileId = vfs.GetUriDB().Query(params->textDocument.uri);
-    if (!opFileId.has_value()) {
-        return report;
-    }
-
-    auto diagnostics = _server->GetService<DiagnosticService>()->Diagnostic(
-            opFileId.value());
-
+    auto diagnostics = _server->GetService<DiagnosticService>()->Diagnostic(params->textDocument.uri);
     report->items = std::move(diagnostics);
     return report;
 }
