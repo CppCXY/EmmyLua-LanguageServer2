@@ -58,6 +58,8 @@ private:
 
     std::shared_ptr<lsp::CodeActionResult> OnCodeAction(std::shared_ptr<lsp::CodeActionParams> params);
 
+    std::shared_ptr<lsp::SyntaxTreeViewResponse> OnRequestSyntaxTreeNodes(std::shared_ptr<lsp::SyntaxTreeViewParams> params);
+
     void OnExecuteCommand(std::shared_ptr<lsp::ExecuteCommandParams> params);
 
     //	std::shared_ptr<lsp::Serializable> OnDidChangeWatchedFiles(std::shared_ptr<lsp::DidChangeWatchedFilesParams> param);

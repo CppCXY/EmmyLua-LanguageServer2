@@ -7,9 +7,8 @@ class TreeUpdateEvent {
 public:
     enum class Action {
         UpdateTree,
-        OnlyUpdateWS,
-        OnlyUpdateTokenOffset,
-        UpdateFromOffset
+        OnlyUpdateToken,
+//        UpdateFromOffset
     };
 
     static TreeUpdateEvent From(SourceUpdateEvent& sourceUpdateEvent, LuaSyntaxTree& t);
@@ -25,4 +24,8 @@ private:
     static bool OnlySpace(std::string_view source);
 
     void InitByAdd(SourceUpdateEvent &sourceUpdateEvent, LuaSyntaxTree &t);
+
+    void InitByDelete(SourceUpdateEvent &sourceUpdateEvent, LuaSyntaxTree &t);
+
+    void InitByReplace(SourceUpdateEvent &sourceUpdateEvent, LuaSyntaxTree &t);
 };

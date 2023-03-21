@@ -1,7 +1,7 @@
 #include "LuaTreeBuilder.h"
-#include "LuaDocTreeBuilder.h"
 #include "Lua/DocLexer/LuaDocLexer.h"
 #include "Lua/SyntaxNode/Lua/LuaSyntaxs.h"
+#include "LuaDocTreeBuilder.h"
 #include <ranges>
 
 using enum LuaTokenKind;
@@ -208,7 +208,7 @@ void LuaTreeBuilder::EatTriviaByCount(std::size_t count, LuaSyntaxTree &t, LuaPa
                 break;
             }
             case ParseState::Comment: {
-                if (index == count) {
+                if (i + 1 >= count) {
                     if (token.TokenType == TK_WS) {
                         BuildComments(comments, t, p);
                         BuildToken(token, t);
@@ -235,7 +235,6 @@ void LuaTreeBuilder::EatTriviaByCount(std::size_t count, LuaSyntaxTree &t, LuaPa
             }
         }
     }
-
     _tokenIndex += count;
 }
 

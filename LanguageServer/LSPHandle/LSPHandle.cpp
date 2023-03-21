@@ -1,12 +1,12 @@
 ﻿#include "LSPHandle.h"
 #include "Config/ClientConfig.h"
+#include "File/Url.h"
 #include "LanguageServer.h"
 #include "Service/CodeActionService.h"
 #include "Service/CommandService.h"
 #include "Service/ConfigService.h"
 #include "Service/DiagnosticService.h"
 #include "Service/VirtualFileSystem.h"
-#include "File/Url.h"
 #include "nlohmann/json.hpp"
 #include <fmt/format.h>
 
@@ -26,6 +26,7 @@ bool LSPHandle::Initialize() {
     JsonProtocol("textDocument/codeAction", &LSPHandle::OnCodeAction);
     JsonProtocol("textDocument/diagnostic", &LSPHandle::OnTextDocumentDiagnostic);
     JsonProtocol("workspace/diagnostic", &LSPHandle::OnWorkspaceDiagnostic);
+    JsonProtocol("$/syntaxTree/nodes", &LSPHandle::OnRequestSyntaxTreeNodes);
 
     JsonNotification("textDocument/didChange", &LSPHandle::OnDidChange);
     JsonNotification("textDocument/didOpen", &LSPHandle::OnDidOpen);
@@ -92,7 +93,7 @@ void LSPHandle::OnDidChange(
                                                                  std::move(content.text));
         } else {
             _server->GetService<VirtualFileSystem>()->UpdateFile(params->textDocument.uri,
-                                         std::move(content.text));
+                                                                 std::move(content.text));
         }
     } else {
         _server->GetService<VirtualFileSystem>()->UpdateFile(params->textDocument.uri, params->contentChanges);
@@ -116,6 +117,31 @@ std::shared_ptr<lsp::CodeActionResult> LSPHandle::OnCodeAction(std::shared_ptr<l
         _server->GetService<CodeActionService>()->Dispatch(diagnostic, param, codeActionResult);
     }
     return codeActionResult;
+}
+
+std::shared_ptr<lsp::SyntaxTreeViewResponse> LSPHandle::OnRequestSyntaxTreeNodes(std::shared_ptr<lsp::SyntaxTreeViewParams> params) {
+    auto result = std::make_shared<lsp::SyntaxTreeViewResponse>();
+    auto id = _server->GetService<VirtualFileSystem>()->GetOrCreateId(params->uri);
+    auto document = _server->GetWorkspace().GetDocument(id);
+    if (!document) {
+        return result;
+    }
+    auto t = document->GetSyntaxTree();
+    LuaNodeOrToken n(params->index);
+    for (auto child: n.GetChildren(*t)) {
+        auto &info = result->data.emplace_back();
+        info.index = child.GetIndex();
+        info.isNode = child.IsNode(*t);
+        if (info.isNode) {
+            info.label = fmt::format("{}", child.GetSyntaxKind(*t));
+        } else {
+            info.label = fmt::format("{}", child.GetTokenKind(*t));
+        }
+        auto range = child.GetTextRange(*t);
+        info.range = fmt::format("{} .. {}", range.StartOffset, range.GetEndOffset());
+    }
+
+    return result;
 }
 
 void LSPHandle::OnExecuteCommand(

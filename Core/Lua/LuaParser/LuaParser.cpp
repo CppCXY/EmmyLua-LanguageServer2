@@ -905,7 +905,7 @@ BinOpr LuaParser::GetBinaryOperator(LuaTokenKind op) {
             return BinOpr::OPR_CONCAT;
         case TK_NE:
             return BinOpr::OPR_NE;
-        case TK_EQ:
+        case TK_EQEQ:
             return BinOpr::OPR_EQ;
         case TK_LT:
             return BinOpr::OPR_LT;

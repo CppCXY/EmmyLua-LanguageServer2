@@ -29,16 +29,7 @@ std::map<std::string, LuaTokenKind, std::less<>> LuaLexer::LuaReserved = {
         {"true", TK_TRUE},
         {"until", TK_UNTIL},
         {"while", TK_WHILE},
-        {"//", TK_IDIV},
-        {"..", TK_CONCAT},
-        {"...", TK_DOTS},
-        {"==", TK_EQ},
-        {">=", TK_GE},
-        {"<=", TK_LE},
-        {"~=", TK_NE},
-        {"<<", TK_SHL},
-        {">>", TK_SHR},
-        {"::", TK_DBCOLON}};
+};
 
 LuaLexer::LuaLexer(std::string_view text)
     : _reader(text) {

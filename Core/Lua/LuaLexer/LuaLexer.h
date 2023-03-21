@@ -44,8 +44,6 @@ private:
 
     void ReadNewLine();
 
-
-
 	void TokenError(std::string_view message, TextRange range);
 
     void TokenError(std::string_view message, std::size_t offset);

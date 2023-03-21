@@ -439,7 +439,7 @@ void LuaSyntaxTree::Reset() {
 
 void LuaSyntaxTree::ApplyUpdate(TreeUpdateEvent &treeUpdateEvent) {
     switch (treeUpdateEvent.UpdateAction) {
-        case TreeUpdateEvent::Action::OnlyUpdateTokenOffset: {
+        case TreeUpdateEvent::Action::OnlyUpdateToken: {
             auto range = treeUpdateEvent.SourceEvent.Range;
             auto offset = range.StartOffset;
             auto tokenIt = std::partition_point(

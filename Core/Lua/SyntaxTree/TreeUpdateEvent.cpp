@@ -14,9 +14,11 @@ TreeUpdateEvent TreeUpdateEvent::From(SourceUpdateEvent &sourceUpdateEvent, LuaS
             break;
         }
         case SourceUpdateEvent::Action::Delete: {
+            e.InitByDelete(sourceUpdateEvent, t);
             break;
         }
         case SourceUpdateEvent::Action::Replace: {
+            e.InitByReplace(sourceUpdateEvent, t);
             break;
         }
         case SourceUpdateEvent::Action::None: {
@@ -29,44 +31,6 @@ TreeUpdateEvent TreeUpdateEvent::From(SourceUpdateEvent &sourceUpdateEvent, LuaS
 
 TreeUpdateEvent::TreeUpdateEvent()
     : UpdateAction(Action::UpdateTree) {
-}
-
-void TreeUpdateEvent::InitByAdd(SourceUpdateEvent &sourceUpdateEvent, LuaSyntaxTree &t) {
-    auto token = t.GetTokenAtOffset(sourceUpdateEvent.Range.StartOffset);
-    switch (token.GetTokenKind(t)) {
-        case TK_NAME: {
-            if (!ContainSpace(sourceUpdateEvent.Text)) {
-                auto originRange = token.GetTextRange(t);
-                auto start = sourceUpdateEvent.Range.StartOffset - originRange.StartOffset;
-                std::string tokenText(token.GetText(t));
-                tokenText.insert(start, sourceUpdateEvent.Text);
-                if (!LuaLexer::IsReserved(tokenText)) {
-                    UpdateAction = Action::OnlyUpdateTokenOffset;
-                }
-            }
-            break;
-        }
-        case TK_WS: {
-            if (OnlySpace(sourceUpdateEvent.Text)) {
-                UpdateAction = Action::OnlyUpdateTokenOffset;
-            }
-            break;
-        }
-        case TK_STRING: {
-            //            auto text = token.GetText(t);
-            //            if (text.empty()) {
-            //                return;
-            //            }
-            //            auto del = text.front();
-            break;
-        }
-        case TK_LONG_STRING: {
-            break;
-        }
-        default: {
-            break;
-        }
-    }
 }
 
 bool TreeUpdateEvent::ContainSpace(std::string_view source) {
@@ -85,4 +49,78 @@ bool TreeUpdateEvent::OnlySpace(std::string_view source) {
         }
     }
     return true;
+}
+
+void TreeUpdateEvent::InitByAdd(SourceUpdateEvent &sourceUpdateEvent, LuaSyntaxTree &t) {
+    auto token = t.GetTokenAtOffset(sourceUpdateEvent.Range.StartOffset);
+    switch (token.GetTokenKind(t)) {
+        case TK_NAME: {
+            //            if (!ContainSpace(sourceUpdateEvent.Text)) {
+            //                auto originRange = token.GetTextRange(t);
+            //                auto start = sourceUpdateEvent.Range.StartOffset - originRange.StartOffset;
+            //                std::string tokenText(token.GetText(t));
+            //                tokenText.insert(start, sourceUpdateEvent.Text);
+            //                if (!LuaLexer::IsReserved(tokenText)) {
+            //                    UpdateAction = Action::OnlyUpdateTokenOffset;
+            //                }
+            //            }
+            break;
+        }
+        case TK_WS: {
+            if (OnlySpace(sourceUpdateEvent.Text)) {
+                UpdateAction = Action::OnlyUpdateToken;
+            }
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+
+void TreeUpdateEvent::InitByDelete(SourceUpdateEvent &sourceUpdateEvent, LuaSyntaxTree &t) {
+    auto token = t.GetTokenAtOffset(sourceUpdateEvent.Range.StartOffset);
+    switch (token.GetTokenKind(t)) {
+        case TK_WS: {
+            auto originRange = token.GetTextRange(t);
+            auto start = sourceUpdateEvent.Range.StartOffset - originRange.StartOffset;
+            if (start == 0 && sourceUpdateEvent.Range.Length == originRange.Length) {
+                return;
+            }
+
+            if (start + sourceUpdateEvent.Range.Length <= originRange.Length) {
+                UpdateAction = Action::OnlyUpdateToken;
+            }
+
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+
+void TreeUpdateEvent::InitByReplace(SourceUpdateEvent &sourceUpdateEvent, LuaSyntaxTree &t) {
+    auto token = t.GetTokenAtOffset(sourceUpdateEvent.Range.StartOffset);
+    switch (token.GetTokenKind(t)) {
+        case TK_WS: {
+            if (!OnlySpace(sourceUpdateEvent.Text)) {
+                return;
+            }
+            auto originRange = token.GetTextRange(t);
+            auto start = sourceUpdateEvent.Range.StartOffset - originRange.StartOffset;
+            if (start == 0 && sourceUpdateEvent.Range.Length == originRange.Length) {
+                return;
+            }
+
+            if (start + sourceUpdateEvent.Range.Length <= originRange.Length) {
+                UpdateAction = Action::OnlyUpdateToken;
+            }
+
+            break;
+        }
+        default: {
+            break;
+        }
+    }
 }

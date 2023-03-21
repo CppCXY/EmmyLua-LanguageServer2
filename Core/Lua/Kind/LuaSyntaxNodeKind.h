@@ -241,6 +241,8 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "FunctionBody";
         case LuaSyntaxNodeKind::ParamList:
             return "ParamList";
+        case LuaSyntaxNodeKind::NameDef:
+            return "NameDef";
         case LuaSyntaxNodeKind::NameDefList:
             return "NameDefList";
         case LuaSyntaxNodeKind::Attribute:

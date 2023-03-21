@@ -11,19 +11,15 @@
 
 int main() {
     std::string s = R"(
----@class A : B
+---@class A
 local t = 123
-
-function t:f(a)
-end
-
 )";
 
     auto t = LuaSyntaxTree::ParseText(std::move(s));
 
-    std::cout << t.GetDebugView() << std::endl;
+    std::cout << t->GetDebugView() << std::endl;
 
-    std::cout << t.GetDebugSyntaxView() << std::endl;
+    std::cout << t->GetDebugSyntaxView() << std::endl;
 
     return 0;
 }
