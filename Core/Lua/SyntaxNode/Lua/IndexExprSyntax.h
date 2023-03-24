@@ -2,11 +2,19 @@
 
 #include "ExprSyntax.h"
 
-class IndexExprSyntax : public ExprSyntax {
+class IndexExprSyntax : public LuaBaseSyntax {
 public:
-    IndexExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::IndexExpression;
+    }
 
-    LuaTokenKind AccessToken;
+    explicit IndexExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class ExprSyntax *Expr = nullptr;
+    bool IsDot(const LuaSyntaxTree &t) const;
+
+    bool IsColon(const LuaSyntaxTree &t) const;
+
+    bool IsRect(const LuaSyntaxTree &t) const;
+
+    ExprSyntax GetExpr(const LuaSyntaxTree &t) const;
 };

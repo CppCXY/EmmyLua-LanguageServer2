@@ -1,4 +1,4 @@
 #include "StringLiteralExprSyntax.h"
 
-StringLiteralExprSyntax::StringLiteralExprSyntax(LuaNodeOrToken n) : ExprSyntax(n) {
+StringLiteralExprSyntax::StringLiteralExprSyntax(LuaNodeOrToken n) : StringLiteralExprSyntax(n) {
 }

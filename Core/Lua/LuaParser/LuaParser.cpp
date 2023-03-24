@@ -228,19 +228,19 @@ CompleteMarker LuaParser::ForStatement() {
     switch (LookAhead()) {
         case TK_EQ: {
             ForNumber();
-            break;
+            return m.Complete(_p, LuaSyntaxNodeKind::ForNumberStatement);
         }
         case TK_COMMA:
         case TK_IN: {
             ForList();
-            break;
+            return m.Complete(_p, LuaSyntaxNodeKind::ForRangeStatement);
         }
         default: {
             LuaExpectedError("'=' or 'in' expected");
         }
     }
 
-    return m.Complete(_p, LuaSyntaxNodeKind::ForStatement);
+    return m.Complete(_p, LuaSyntaxNodeKind::ForNumberStatement);
 }
 
 CompleteMarker LuaParser::ForNumber() {
@@ -263,7 +263,7 @@ CompleteMarker LuaParser::ForNumber() {
 
     ForBody();
 
-    return m.Complete(_p, LuaSyntaxNodeKind::ForNumber);
+    return m.Complete(_p);
 }
 
 /* forlist -> NAME {,NAME} IN explist forbody */
@@ -278,7 +278,7 @@ CompleteMarker LuaParser::ForList() {
 
     ForBody();
 
-    return m.Complete(_p, LuaSyntaxNodeKind::ForList);
+    return m.Complete(_p);
 }
 
 CompleteMarker LuaParser::ForBody() {
@@ -290,7 +290,7 @@ CompleteMarker LuaParser::ForBody() {
 
     CheckAndNext(TK_END);
 
-    return m.Complete(_p, LuaSyntaxNodeKind::ForBody);
+    return m.Complete(_p);
 }
 
 /* repeatstat -> REPEAT block UNTIL cond */
@@ -943,7 +943,7 @@ bool LuaParser::TestAndNext(LuaTokenKind kind) {
 
 void LuaParser::LuaExpectedError(std::string_view message) {
     if (_tokenIndex < _tokens.size()) {
-        _errors.emplace_back(LuaSyntaxError(message, _tokens[_tokenIndex].Range));
+        _errors.emplace_back(message, _tokens[_tokenIndex].Range);
     } else if (!_tokens.empty()) {
         auto tokenIndex = _tokens.size() - 1;
         _errors.emplace_back(message, _tokens[tokenIndex].Range);

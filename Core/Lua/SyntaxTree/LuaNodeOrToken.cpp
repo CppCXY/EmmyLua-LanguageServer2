@@ -75,6 +75,10 @@ void LuaNodeOrToken::ToNext(const LuaSyntaxTree &t) {
     _index = t.GetNextSibling(_index);
 }
 
+void LuaNodeOrToken::ToPrev(const LuaSyntaxTree &t) {
+    _index = t.GetPrevSibling(_index);
+}
+
 bool LuaNodeOrToken::IsNull(const LuaSyntaxTree &t) const {
     return _index == 0;
 }
@@ -220,7 +224,7 @@ std::size_t LuaNodeOrToken::GetFirstLineWidth(const LuaSyntaxTree &t) const {
     return utf8::Utf8nLenAtFirstLine(text.data(), text.size());
 }
 
-std::size_t LuaNodeOrToken::CountTokenChild(LuaTokenKind kind, const LuaSyntaxTree &t) {
+std::size_t LuaNodeOrToken::CountTokenChild(LuaTokenKind kind, const LuaSyntaxTree &t) const {
     auto count = 0;
     for (auto child = GetFirstChild(t); !child.IsNull(t); child.ToNext(t)) {
         if (child.GetTokenKind(t) == kind) {
@@ -230,7 +234,7 @@ std::size_t LuaNodeOrToken::CountTokenChild(LuaTokenKind kind, const LuaSyntaxTr
     return count;
 }
 
-std::size_t LuaNodeOrToken::CountNodeChild(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t) {
+std::size_t LuaNodeOrToken::CountNodeChild(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t) const {
     auto count = 0;
     for (auto child = GetFirstChild(t); !child.IsNull(t); child.ToNext(t)) {
         if (child.GetSyntaxKind(t) == kind) {
@@ -244,7 +248,7 @@ bool LuaNodeOrToken::IsEmpty(const LuaSyntaxTree &t) const {
     return t.GetFirstChild(_index) == 0;
 }
 
-LuaNodeOrToken LuaNodeOrToken::Ancestor(const LuaSyntaxTree &t, std::function<bool(LuaSyntaxNodeKind, bool &)> predicate) {
+LuaNodeOrToken LuaNodeOrToken::Ancestor(const LuaSyntaxTree &t, const std::function<bool(LuaSyntaxNodeKind, bool &)> &predicate) const {
     LuaNodeOrToken parent = GetParent(t);
     bool ct = true;
     while (parent.IsNode(t) && ct) {
@@ -254,3 +258,23 @@ LuaNodeOrToken LuaNodeOrToken::Ancestor(const LuaSyntaxTree &t, std::function<bo
     }
     return LuaNodeOrToken();
 }
+
+LuaNodeOrToken LuaNodeOrToken::FindChild(const LuaSyntaxTree &t, const std::function<bool(LuaSyntaxNodeKind)> &predicate) const {
+    for (auto child = GetFirstChild(t); !child.IsNull(t); child.ToNext(t)) {
+        if (predicate(child.GetSyntaxKind(t))) {
+            return child;
+        }
+    }
+    return LuaNodeOrToken();
+}
+
+std::vector<LuaNodeOrToken> LuaNodeOrToken::FindChildren(const LuaSyntaxTree &t, const std::function<bool(LuaSyntaxNodeKind)> &predicate) const {
+    std::vector<LuaNodeOrToken> results;
+    for (auto child = GetFirstChild(t); !child.IsNull(t); child.ToNext(t)) {
+        if (predicate(child.GetSyntaxKind(t))) {
+            results.emplace_back(child.GetIndex());
+        }
+    }
+    return results;
+}
+

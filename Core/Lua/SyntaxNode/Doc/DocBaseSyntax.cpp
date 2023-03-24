@@ -1,4 +1,4 @@
 #include "DocBaseSyntax.h"
 
-DocBaseSyntax::DocBaseSyntax(LuaNodeOrToken n) : BaseSyntax(n) {
+DocBaseSyntax::DocBaseSyntax(LuaNodeOrToken n) : LuaSyntaxNode(n) {
 }

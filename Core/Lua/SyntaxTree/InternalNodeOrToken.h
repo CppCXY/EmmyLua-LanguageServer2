@@ -23,8 +23,8 @@ struct IncrementalToken {
     std::size_t NodeIndex;
 };
 
-struct InnerNodeOrToken {
-    explicit InnerNodeOrToken(LuaSyntaxNodeKind nodeKind)
+struct InternalNodeOrToken {
+    explicit InternalNodeOrToken(LuaSyntaxNodeKind nodeKind)
         : Type(NodeOrTokenType::Node),
           Parent(0),
           NextSibling(0),
@@ -35,7 +35,7 @@ struct InnerNodeOrToken {
         Data.Node.SyntaxIndex = 0;
     }
 
-    explicit InnerNodeOrToken(std::size_t tokenIndex)
+    explicit InternalNodeOrToken(std::size_t tokenIndex)
         : Type(NodeOrTokenType::Token),
           Parent(0),
           NextSibling(0),

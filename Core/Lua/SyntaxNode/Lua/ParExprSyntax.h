@@ -2,9 +2,13 @@
 
 #include "ExprSyntax.h"
 
-class ParExprSyntax : public ExprSyntax {
+class ParExprSyntax : public LuaBaseSyntax {
 public:
-    ParExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::ParamList;
+    }
 
-    ExprSyntax *InnerExpr = nullptr;
+    explicit ParExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    ExprSyntax GetInnerExpr(const LuaSyntaxTree& t) const;
 };

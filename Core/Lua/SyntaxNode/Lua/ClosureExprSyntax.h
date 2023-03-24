@@ -1,12 +1,17 @@
 #pragma once
 
-#include "ExprSyntax.h"
+#include "BodySyntax.h"
+#include "ParamSyntaxList.h"
 
-class ClosureExprSyntax : public ExprSyntax {
+class ClosureExprSyntax : public LuaBaseSyntax {
 public:
-    ClosureExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::ClosureExpression;
+    }
 
-    class ParamSyntaxList * ParamList;
+    explicit ClosureExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class BodySyntax *Body = nullptr;
+    ParamSyntaxList GetParamList(const LuaSyntaxTree& t) const;
+
+    BodySyntax GetBody(const LuaSyntaxTree& t) const;
 };

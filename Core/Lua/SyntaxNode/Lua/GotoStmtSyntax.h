@@ -2,10 +2,13 @@
 
 #include "StmtSyntax.h"
 
-class GotoStmtSyntax : public StmtSyntax {
+class GotoStmtSyntax : public LuaBaseSyntax {
 public:
-    GotoStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::GotoStatement;
+    }
 
-    std::string_view Label;
+    explicit GotoStmtSyntax(LuaNodeOrToken n);
+
+    std::string_view GetLabel(const LuaSyntaxTree &t) const;
 };
-

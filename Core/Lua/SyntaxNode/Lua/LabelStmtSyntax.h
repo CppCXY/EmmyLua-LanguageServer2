@@ -2,11 +2,13 @@
 
 #include "StmtSyntax.h"
 
-class LabelStmtSyntax : public StmtSyntax {
+class LabelStmtSyntax : public LuaBaseSyntax {
 public:
-    LabelStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::LabelStatement;
+    }
 
-    std::string_view LabelName;
+    explicit LabelStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetLabelName(const LuaSyntaxTree &t) const;
 };
-
-

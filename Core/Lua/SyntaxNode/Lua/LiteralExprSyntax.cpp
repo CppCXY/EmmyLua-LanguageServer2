@@ -1,4 +1,4 @@
 #include "LiteralExprSyntax.h"
 
-LiteralExprSyntax::LiteralExprSyntax(LuaNodeOrToken n) : ExprSyntax(n) {
+LiteralExprSyntax::LiteralExprSyntax(LuaNodeOrToken n) : LuaBaseSyntax(n) {
 }

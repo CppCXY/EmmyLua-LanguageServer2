@@ -1,12 +1,17 @@
 #pragma once
 
-#include "StmtSyntax.h"
+#include "BodySyntax.h"
+#include "ExprSyntax.h"
 
-class WhileStmtSyntax : public StmtSyntax {
+class WhileStmtSyntax : public LuaBaseSyntax {
 public:
-    WhileStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::WhileStatement;
+    }
 
-    class ExprSyntax *ConditionExpr = nullptr;
+    explicit WhileStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class BodySyntax *Body = nullptr;
+    ExprSyntax GetConditionExpr(const LuaSyntaxTree &t) const;
+
+    BodySyntax GetBody(const LuaSyntaxTree &t) const;
 };

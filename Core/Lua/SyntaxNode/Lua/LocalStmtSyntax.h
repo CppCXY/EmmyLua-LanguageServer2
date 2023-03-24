@@ -1,12 +1,17 @@
 #pragma once
 
-#include "StmtSyntax.h"
+#include "ExprSyntaxList.h"
+#include "NameDefSyntaxList.h"
 
-class LocalStmtSyntax : public StmtSyntax {
+class LocalStmtSyntax : public LuaBaseSyntax {
 public:
-    LocalStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::LocalStatement;
+    }
 
-    class NameDefSyntaxList * NameDefList = nullptr;
+    explicit LocalStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class ExprSyntaxList * ExprList = nullptr;
+    NameDefSyntaxList GetNameDefList(const LuaSyntaxTree &t) const;
+
+    ExprSyntaxList GetExprList(const LuaSyntaxTree &t) const;
 };

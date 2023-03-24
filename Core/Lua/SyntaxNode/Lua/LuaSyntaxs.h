@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Lua/SyntaxNode/Doc/CommentSyntax.h"
 #include "AssignStmtSyntax.h"
 #include "BinaryExprSyntax.h"
 #include "BodySyntax.h"
@@ -11,7 +10,7 @@
 #include "DoStmtSyntax.h"
 #include "ExprSyntax.h"
 #include "ExprSyntaxList.h"
-#include "ForStmtSyntax.h"
+#include "ForNumberStmtSyntax.h"
 #include "FuncNameExprSyntax.h"
 #include "FuncStmtSyntax.h"
 #include "GotoStmtSyntax.h"

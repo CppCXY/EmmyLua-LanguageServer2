@@ -3,12 +3,14 @@
 #include <fmt/format.h>
 #include <string_view>
 
-enum class LuaSyntaxNodeKind {
+enum class LuaSyntaxNodeKind : int {
     None = 0,
 
-    File,
+    Complete = 1,
 
-    Body,
+    File = 2,
+    //
+    Body = 3,
 
     EmptyStatement,
 
@@ -22,7 +24,9 @@ enum class LuaSyntaxNodeKind {
 
     DoStatement,
 
-    ForStatement,
+    ForNumberStatement,
+
+    ForRangeStatement,
 
     RepeatStatement,
 
@@ -83,10 +87,6 @@ enum class LuaSyntaxNodeKind {
     Attribute,
 
     ExpressionList,
-
-    ForNumber,
-
-    ForList,
 
     ForBody,
 
@@ -189,8 +189,10 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "WhileStatement";
         case LuaSyntaxNodeKind::DoStatement:
             return "DoStatement";
-        case LuaSyntaxNodeKind::ForStatement:
-            return "FormatStatement";
+        case LuaSyntaxNodeKind::ForNumberStatement:
+            return "ForNumberStatement";
+        case LuaSyntaxNodeKind::ForRangeStatement:
+            return "ForRangeStatement";
         case LuaSyntaxNodeKind::RepeatStatement:
             return "RepeatStatement";
         case LuaSyntaxNodeKind::FunctionStatement:
@@ -249,10 +251,6 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "Attribute";
         case LuaSyntaxNodeKind::ExpressionList:
             return "ExpressionList";
-        case LuaSyntaxNodeKind::ForNumber:
-            return "ForNumber";
-        case LuaSyntaxNodeKind::ForList:
-            return "ForList";
         case LuaSyntaxNodeKind::ForBody:
             return "ForBody";
         case LuaSyntaxNodeKind::Error:
@@ -336,7 +334,7 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
     }
     return "Unknown";
 }
-}
+}// namespace detail::debug
 
 template<>
 struct fmt::formatter<LuaSyntaxNodeKind> {

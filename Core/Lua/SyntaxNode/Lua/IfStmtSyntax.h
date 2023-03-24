@@ -1,14 +1,24 @@
 #pragma once
 
+#include "BodySyntax.h"
+#include "ExprSyntax.h"
 #include "StmtSyntax.h"
 
-class IfStmtSyntax : public StmtSyntax {
+class IfStmtSyntax : public LuaBaseSyntax {
 public:
-    IfStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::IfStatement;
+    }
 
-    std::vector<class ExprSyntax *> IfExprs;
+    explicit IfStmtSyntax(LuaNodeOrToken n);
 
-    std::vector<class BodySyntax *> Bodys;
+    ExprSyntax GetIfCondition(const LuaSyntaxTree& t) const;
 
-    class BodySyntax * ElseBody = nullptr;
+    BodySyntax GetIfBody(const LuaSyntaxTree& t) const;
+
+    BodySyntax GetElseClauseBody(const LuaSyntaxTree& t) const;
+
+    std::size_t GetElseIfNum(const LuaSyntaxTree& t) const;
+
+    std::vector<std::pair<ExprSyntax, BodySyntax>> GetElseIfPairs(const LuaSyntaxTree& t) const;
 };

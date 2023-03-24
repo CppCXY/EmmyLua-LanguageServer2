@@ -1,10 +1,15 @@
 #pragma once
 
 #include "StmtSyntax.h"
+#include "SuffixedExprSyntax.h"
 
-class CallStmtSyntax : public StmtSyntax {
+class CallStmtSyntax : public LuaBaseSyntax {
 public:
-    CallStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::CallStatement;
+    }
 
-    class SuffixedExprSyntax *Expr = nullptr;
+    explicit CallStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    SuffixedExprSyntax GetExpr(const LuaSyntaxTree& t) const;
 };

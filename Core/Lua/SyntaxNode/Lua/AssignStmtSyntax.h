@@ -1,11 +1,18 @@
 #pragma once
 
+#include "ExprSyntaxList.h"
 #include "StmtSyntax.h"
+#include "VarSyntaxList.h"
 
-class AssignStmtSyntax : public StmtSyntax {
+class AssignStmtSyntax : public LuaBaseSyntax {
 public:
-    AssignStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::AssignStatement;
+    }
 
-    class VarSyntaxList *VarList = nullptr;
-    class ExprSyntaxList *ExprList = nullptr;
+    explicit AssignStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    VarSyntaxList GetVarList(const LuaSyntaxTree &t) const;
+
+    ExprSyntaxList GetExprList(const LuaSyntaxTree &t) const;
 };

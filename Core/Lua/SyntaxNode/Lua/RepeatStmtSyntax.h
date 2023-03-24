@@ -1,11 +1,18 @@
 #pragma once
 
+#include "BodySyntax.h"
+#include "ExprSyntax.h"
 #include "StmtSyntax.h"
 
-class RepeatStmtSyntax : public StmtSyntax {
+class RepeatStmtSyntax : public LuaBaseSyntax {
 public:
-    RepeatStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::RepeatStatement;
+    }
 
-    class BodySyntax *Body = nullptr;
-    class ExprSyntax *ConditionExpr = nullptr;
+    explicit RepeatStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    BodySyntax GetBody(const LuaSyntaxTree &t) const;
+
+    ExprSyntax GetConditionExpr(const LuaSyntaxTree &t) const;
 };

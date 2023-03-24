@@ -1,6 +1,6 @@
-#include "Lua/SyntaxNode/BaseSyntax.h"
+#include "Lua/SyntaxNode/LuaSyntaxNode.h"
 
-class CommentSyntax : public BaseSyntax {
+class CommentSyntax : public LuaSyntaxNode {
 public:
     CommentSyntax(LuaNodeOrToken n);
 

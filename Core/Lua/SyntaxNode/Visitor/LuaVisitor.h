@@ -1,11 +1,11 @@
-#include "Lua/SyntaxNode/BaseSyntax.h"
 #include "Lua/SyntaxNode/Lua/LuaSyntaxs.h"
+#include "Lua/SyntaxNode/LuaSyntaxNode.h"
 
 class LuaVisitor {
 public:
     LuaVisitor();
 
-    void Visit(BaseSyntax *syntax, const LuaSyntaxTree &t);
+    void Visit(LuaSyntaxNode *syntax, const LuaSyntaxTree &t);
 
 protected:
     virtual void VisitBodySyntax(const BodySyntax *body, const LuaSyntaxTree &t);
@@ -33,7 +33,7 @@ protected:
 
     virtual void VisitWhileStmtSyntax(const WhileStmtSyntax *whileStmtSyntax, const LuaSyntaxTree &t);
 
-    virtual void VisitForStmtSyntax(const ForStmtSyntax *forStmtSyntax, const LuaSyntaxTree &t);
+    virtual void VisitForStmtSyntax(const ForNumberStmtSyntax *forStmtSyntax, const LuaSyntaxTree &t);
 
     virtual void VisitGotoStmtSyntax(const GotoStmtSyntax *gotoStmtSyntax, const LuaSyntaxTree &t);
 
@@ -87,5 +87,5 @@ protected:
     virtual void VisitCommentSyntax(const CommentSyntax *commentSyntax, const LuaSyntaxTree &t);
 
     // final access
-    virtual void VisitBaseSyntax(const BaseSyntax *baseSyntax, const LuaSyntaxTree &t);
+    virtual void VisitBaseSyntax(const LuaSyntaxNode *baseSyntax, const LuaSyntaxTree &t);
 };

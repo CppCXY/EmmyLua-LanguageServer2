@@ -1,12 +1,17 @@
 #pragma once
 
 #include "LuaBaseSyntax.h"
+#include "StmtSyntax.h"
 
 class BodySyntax : public LuaBaseSyntax {
 public:
-    BodySyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::Body;
+    }
 
-    std::vector<class StmtSyntax *> Stmts;
+    explicit BodySyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    std::vector<class CommentSyntax *> Comments;
+    std::vector<StmtSyntax> GetStmts(const LuaSyntaxTree& t);
+
+    std::vector<CommentSyntax> GetComments(const LuaSyntaxTree& t);
 };

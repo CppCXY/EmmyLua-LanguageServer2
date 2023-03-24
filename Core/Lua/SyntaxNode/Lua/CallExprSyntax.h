@@ -2,10 +2,13 @@
 
 #include "ExprSyntax.h"
 
-class CallExprSyntax : public ExprSyntax{
+class CallExprSyntax : public LuaBaseSyntax {
 public:
-    CallExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::CallExpression;
+    }
 
-    std::vector<class ExprSyntax *> Args;
+    explicit CallExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<ExprSyntax> GetArgs(const LuaSyntaxTree& t) const;
 };
-

@@ -2,10 +2,14 @@
 
 #include "ExprSyntax.h"
 
-class NameExprSyntax : public ExprSyntax {
+class NameExprSyntax : public LuaBaseSyntax {
 public:
-    NameExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::NameExpression;
+    }
 
-    std::string_view Name;
+    explicit NameExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetName(const LuaSyntaxTree& t) const;
 };
 

@@ -1,10 +1,15 @@
 #pragma once
 
 #include "ExprSyntax.h"
+#include "TableFieldSyntax.h"
 
-class TableExprSyntax : public ExprSyntax {
+class TableExprSyntax : public LuaBaseSyntax {
 public:
-    TableExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::TableExpression;
+    }
 
-    std::vector<class TableFieldSyntax *> Fields;
+    explicit TableExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<TableFieldSyntax> GetFields(const LuaSyntaxTree &t) const;
 };

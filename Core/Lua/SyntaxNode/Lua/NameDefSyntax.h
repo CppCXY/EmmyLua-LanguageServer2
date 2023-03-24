@@ -2,15 +2,13 @@
 
 #include "LuaBaseSyntax.h"
 
-class NameDefSyntax : public  LuaBaseSyntax {
+class NameDefSyntax : public LuaBaseSyntax {
 public:
-    NameDefSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::NameDef;
+    }
 
-    std::string_view Name;
+    explicit NameDefSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    bool IsConst = false;
-
-    bool IsClosed = false;
+    std::string_view GetName(const LuaSyntaxTree &t) const;
 };
-
-

@@ -1,10 +1,13 @@
 #pragma once
 
-#include "Lua/SyntaxNode/BaseSyntax.h"
+#include "Lua/SyntaxNode/Doc/CommentSyntax.h"
+#include "Lua/SyntaxNode/LuaSyntaxNode.h"
 
-class LuaBaseSyntax : public BaseSyntax {
+class LuaBaseSyntax : public LuaSyntaxNode {
 public:
-    LuaBaseSyntax(LuaNodeOrToken node);
+    static bool CanCast(LuaSyntaxNodeKind kind);
 
-    class CommentSyntax * Comment = nullptr;
+    explicit LuaBaseSyntax(LuaNodeOrToken node = LuaNodeOrToken());
+
+    CommentSyntax GetComment(const LuaSyntaxTree &t);
 };

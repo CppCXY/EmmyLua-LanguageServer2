@@ -1,14 +1,21 @@
 #pragma once
 
+#include "BodySyntax.h"
+#include "FuncNameExprSyntax.h"
+#include "ParamSyntaxList.h"
 #include "StmtSyntax.h"
 
-class FuncStmtSyntax : public StmtSyntax {
+class FuncStmtSyntax : public LuaBaseSyntax {
 public:
-    FuncStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::FunctionStatement;
+    }
 
-    class FuncNameExprSyntax *FuncName = nullptr;
+    explicit FuncStmtSyntax(LuaNodeOrToken n);
 
-    class ParamSyntaxList *ParamList = nullptr;
+    FuncNameExprSyntax GetFuncNameExpr(const LuaSyntaxTree& t) const;
 
-    class BodySyntax *Body = nullptr;
+    ParamSyntaxList GetParamList(const LuaSyntaxTree& t) const;
+
+    BodySyntax GetBody(const LuaSyntaxTree& t) const;
 };

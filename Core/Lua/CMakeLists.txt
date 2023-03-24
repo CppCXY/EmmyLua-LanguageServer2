@@ -24,7 +24,8 @@ target_sources(Core
         Define/LuaIdentify.cpp
 
         # node
-        SyntaxNode/BaseSyntax.cpp
+        SyntaxNode/LuaSyntaxNode.cpp
+        SyntaxNode/LuaSyntaxToken.cpp
 
         # node/doc
         SyntaxNode/Doc/CommentSyntax.cpp
@@ -76,7 +77,7 @@ target_sources(Core
         SyntaxNode/Lua/IfStmtSyntax.cpp
         SyntaxNode/Lua/WhileStmtSyntax.cpp
         SyntaxNode/Lua/DoStmtSyntax.cpp
-        SyntaxNode/Lua/ForStmtSyntax.cpp
+        SyntaxNode/Lua/ForNumberStmtSyntax.cpp
         SyntaxNode/Lua/RepeatStmtSyntax.cpp
         SyntaxNode/Lua/FuncStmtSyntax.cpp
         SyntaxNode/Lua/FuncNameExprSyntax.cpp

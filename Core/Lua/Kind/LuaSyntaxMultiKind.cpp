@@ -46,7 +46,8 @@ bool detail::multi_match::StatementMatch(LuaSyntaxNodeKind k) {
         case LuaSyntaxNodeKind::IfStatement:
         case LuaSyntaxNodeKind::WhileStatement:
         case LuaSyntaxNodeKind::DoStatement:
-        case LuaSyntaxNodeKind::ForStatement:
+        case LuaSyntaxNodeKind::ForNumberStatement:
+        case LuaSyntaxNodeKind::ForRangeStatement:
         case LuaSyntaxNodeKind::RepeatStatement:
         case LuaSyntaxNodeKind::FunctionStatement:
         case LuaSyntaxNodeKind::LabelStatement:

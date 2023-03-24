@@ -4,5 +4,9 @@
 
 class StmtSyntax : public LuaBaseSyntax {
 public:
-    StmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return detail::multi_match::StatementMatch(kind);
+    }
+
+    explicit StmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 };

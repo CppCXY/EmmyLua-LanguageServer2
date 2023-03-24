@@ -2,9 +2,13 @@
 
 #include "StmtSyntax.h"
 
-class BreakStmtSyntax : public StmtSyntax {
+class BreakStmtSyntax : public LuaBaseSyntax {
 public:
-    BreakStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::BreakStatement;
+    }
 
-    class StmtSyntax * LoopStatement = nullptr;
+    explicit BreakStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    StmtSyntax GetLoopStmt(const LuaSyntaxTree &t) const;
 };

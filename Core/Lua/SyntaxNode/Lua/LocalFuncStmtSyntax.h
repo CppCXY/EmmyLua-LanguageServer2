@@ -1,14 +1,20 @@
 #pragma once
 
+#include "BodySyntax.h"
+#include "ParamSyntaxList.h"
 #include "StmtSyntax.h"
 
-class LocalFuncStmtSyntax : public StmtSyntax {
+class LocalFuncStmtSyntax : public LuaBaseSyntax {
 public:
-    LocalFuncStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::LocalFunctionStatement;
+    }
 
-    std::string_view Name;
+    explicit LocalFuncStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class ParamSyntaxList *ParamList = nullptr;
+    std::string_view GetName(const LuaSyntaxTree &t) const;
 
-    class BodySyntax *Body = nullptr;
+    ParamSyntaxList GetParamList(const LuaSyntaxTree &t) const;
+
+    BodySyntax GetBody(const LuaSyntaxTree &t) const;
 };

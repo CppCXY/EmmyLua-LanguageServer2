@@ -2,11 +2,19 @@
 
 #include "ExprSyntax.h"
 
-class FuncNameExprSyntax : public ExprSyntax {
+class FuncNameExprSyntax : public LuaBaseSyntax {
 public:
-    FuncNameExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::FunctionNameExpression;
+    }
 
-    std::string_view FirstName;
+    explicit FuncNameExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    std::vector<class IndexExprSyntax *> IndexExprs;
+    std::string_view GetName(const LuaSyntaxTree& t) const;
+
+    ExprSyntax GetParentExpr(const LuaSyntaxTree& t) const;
+
+    bool IsColonDefine(const LuaSyntaxTree& t);
+
+    bool IsSimpleDefine(const LuaSyntaxTree& t);
 };

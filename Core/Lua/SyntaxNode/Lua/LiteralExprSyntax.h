@@ -2,9 +2,13 @@
 
 #include "ExprSyntax.h"
 
-class LiteralExprSyntax : public ExprSyntax {
+class LiteralExprSyntax : public LuaBaseSyntax {
 public:
-    LiteralExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::LiteralExpression;
+    }
 
-    std::string_view Literal;
+    explicit LiteralExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    
 };

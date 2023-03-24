@@ -9,8 +9,7 @@
 #include "Lua/Kind/LuaSyntaxMultiKind.h"
 #include "Lua/Kind/LuaSyntaxNodeKind.h"
 #include "Lua/Kind/LuaTokenKind.h"
-
-class LuaSyntaxTree;
+#include "LuaSyntaxTree.h"
 
 class LuaNodeOrToken {
 public:
@@ -48,6 +47,8 @@ public:
 
     void ToNext(const LuaSyntaxTree &t);
 
+    void ToPrev(const LuaSyntaxTree &t);
+
     bool IsNull(const LuaSyntaxTree &t) const;
 
     bool IsEmpty(const LuaSyntaxTree &t) const;
@@ -82,11 +83,15 @@ public:
 
     std::size_t GetFirstLineWidth(const LuaSyntaxTree &t) const;
 
-    std::size_t CountTokenChild(LuaTokenKind kind, const LuaSyntaxTree &t);
+    std::size_t CountTokenChild(LuaTokenKind kind, const LuaSyntaxTree &t) const;
 
-    std::size_t CountNodeChild(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t);
+    std::size_t CountNodeChild(LuaSyntaxNodeKind kind, const LuaSyntaxTree &t) const;
 
-    LuaNodeOrToken Ancestor(const LuaSyntaxTree &t, std::function<bool(LuaSyntaxNodeKind kind, bool &conitnueFlag)> predicate);
+    LuaNodeOrToken Ancestor(const LuaSyntaxTree &t, const std::function<bool(LuaSyntaxNodeKind kind, bool &conitnueFlag)> &predicate) const;
+
+    LuaNodeOrToken FindChild(const LuaSyntaxTree &t, const std::function<bool(LuaSyntaxNodeKind kind)> &predicate) const;
+
+    std::vector<LuaNodeOrToken> FindChildren(const LuaSyntaxTree &t, const std::function<bool(LuaSyntaxNodeKind kind)> &predicate) const;
 
 private:
     std::size_t _index;

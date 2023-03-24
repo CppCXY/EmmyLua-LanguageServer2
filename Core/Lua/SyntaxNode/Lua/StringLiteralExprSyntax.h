@@ -3,9 +3,13 @@
 #include "ExprSyntax.h"
 
 
-class StringLiteralExprSyntax : public ExprSyntax {
+class StringLiteralExprSyntax : public LuaBaseSyntax {
 public:
-    StringLiteralExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::StringLiteralExpression;
+    }
 
-    std::string_view Content;
+    explicit StringLiteralExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetContent(const LuaSyntaxTree& t) const;
 };

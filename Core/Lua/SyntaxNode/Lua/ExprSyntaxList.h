@@ -1,10 +1,15 @@
 #pragma once
 
+#include "ExprSyntax.h"
 #include "LuaBaseSyntax.h"
 
 class ExprSyntaxList : public LuaBaseSyntax {
 public:
-    ExprSyntaxList(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::ExpressionList;
+    }
 
-    std::vector<class ExprSyntax *> List;
+    explicit ExprSyntaxList(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<ExprSyntax> GetExprList(const LuaSyntaxTree &t) const;
 };

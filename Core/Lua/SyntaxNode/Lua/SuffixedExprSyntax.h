@@ -2,9 +2,13 @@
 
 #include "ExprSyntax.h"
 
-class SuffixedExprSyntax : public ExprSyntax {
+class SuffixedExprSyntax : public LuaBaseSyntax {
 public:
-    SuffixedExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::SuffixedExpression;
+    }
 
-    std::vector<class ExprSyntax *> Exprs;
+    explicit SuffixedExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<ExprSyntax> GetExprs(const LuaSyntaxTree &t) const;
 };

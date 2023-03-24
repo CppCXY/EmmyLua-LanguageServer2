@@ -5,7 +5,7 @@
 LuaVisitor::LuaVisitor() {
 }
 
-void LuaVisitor::Visit(BaseSyntax *syntax, const LuaSyntaxTree &t) {
+void LuaVisitor::Visit(LuaSyntaxNode *syntax, const LuaSyntaxTree &t) {
     if (!syntax) {
         return;
     }
@@ -63,7 +63,7 @@ void LuaVisitor::Visit(BaseSyntax *syntax, const LuaSyntaxTree &t) {
                 break;
             }
             case LuaSyntaxNodeKind::ForStatement: {
-                VisitSyntax(ForStmtSyntax);
+                VisitSyntax(ForNumberStmtSyntax);
                 break;
             }
             case LuaSyntaxNodeKind::GotoStatement: {
@@ -147,7 +147,7 @@ void LuaVisitor::Visit(BaseSyntax *syntax, const LuaSyntaxTree &t) {
                 break;
             }
             default: {
-                VisitSyntax(BaseSyntax);
+                VisitSyntax(LuaSyntaxNode);
                 break;
             }
         }
@@ -209,7 +209,7 @@ void LuaVisitor::VisitWhileStmtSyntax(const WhileStmtSyntax *whileStmtSyntax, co
     return VisitStmtSyntax(whileStmtSyntax, t);
 }
 
-void LuaVisitor::VisitForStmtSyntax(const ForStmtSyntax *forStmtSyntax, const LuaSyntaxTree &t) {
+void LuaVisitor::VisitForStmtSyntax(const ForNumberStmtSyntax *forStmtSyntax, const LuaSyntaxTree &t) {
     return VisitStmtSyntax(forStmtSyntax, t);
 }
 
@@ -305,5 +305,5 @@ void LuaVisitor::VisitCommentSyntax(const CommentSyntax *commentSyntax, const Lu
     return VisitBaseSyntax(commentSyntax, t);
 }
 
-void LuaVisitor::VisitBaseSyntax(const BaseSyntax *baseSyntax, const LuaSyntaxTree &t) {
+void LuaVisitor::VisitBaseSyntax(const LuaSyntaxNode *baseSyntax, const LuaSyntaxTree &t) {
 }

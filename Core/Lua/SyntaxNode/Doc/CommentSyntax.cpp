@@ -1,4 +1,4 @@
 #include "CommentSyntax.h"
 
-CommentSyntax::CommentSyntax(LuaNodeOrToken n) : BaseSyntax(n) {
+CommentSyntax::CommentSyntax(LuaNodeOrToken n) : LuaSyntaxNode(n) {
 }

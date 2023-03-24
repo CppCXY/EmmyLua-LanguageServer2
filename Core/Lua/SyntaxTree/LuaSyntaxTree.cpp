@@ -2,6 +2,7 @@
 #include "Lua/LuaLexer/LuaLexer.h"
 #include "Lua/LuaParser/LuaParser.h"
 #include "LuaTreeBuilder.h"
+#include "Lua/SyntaxNode/LuaSyntaxNode.h"
 #include <algorithm>
 #include <fmt/format.h>
 #include <ranges>
@@ -396,44 +397,44 @@ std::string LuaSyntaxTree::GetDebugView() {
 }
 
 std::string LuaSyntaxTree::GetDebugSyntaxView() {
-    std::string debugView;
-    debugView.append("{ Lua Syntax Tree }\n");
-
-    auto root = GetRootNode();
-    std::stack<LuaNodeOrToken> traverseStack;
-    std::size_t indent = 1;
-    traverseStack.push(root);
-    // 非递归深度优先遍历
-    while (!traverseStack.empty()) {
-        LuaNodeOrToken node = traverseStack.top();
-        if (node.IsNode(*this)) {
-            traverseStack.top() = LuaNodeOrToken();
-            auto children = node.GetChildren(*this);
-            for (auto &c: children | std::views::reverse) {
-                traverseStack.push(c);
-            }
-            auto syntax = GetSyntax<BaseSyntax>(node);
-            if (syntax) {
-                debugView.resize(debugView.size() + indent, '\t');
-                debugView.append(fmt::format("{{ {}, index: {} }}\n",
-                                             typeid(*syntax).name(),
-                                             node.GetIndex()));
-            }
-            indent++;
-        } else if (node.IsToken(*this)) {
-            traverseStack.pop();
-        } else {
-            traverseStack.pop();
-            indent--;
-        }
-    }
-    return debugView;
+//    std::string debugView;
+//    debugView.append("{ Lua Syntax Tree }\n");
+//
+//    auto root = GetRootNode();
+//    std::stack<LuaNodeOrToken> traverseStack;
+//    std::size_t indent = 1;
+//    traverseStack.push(root);
+//    // 非递归深度优先遍历
+//    while (!traverseStack.empty()) {
+//        LuaNodeOrToken node = traverseStack.top();
+//        if (node.IsNode(*this)) {
+//            traverseStack.top() = LuaNodeOrToken();
+//            auto children = node.GetChildren(*this);
+//            for (auto &c: children | std::views::reverse) {
+//                traverseStack.push(c);
+//            }
+//            auto syntax = GetSyntax<LuaSyntaxNode>(node);
+//            if (syntax) {
+//                debugView.resize(debugView.size() + indent, '\t');
+//                debugView.append(fmt::format("{{ {}, index: {} }}\n",
+//                                             typeid(*syntax).name(),
+//                                             node.GetIndex()));
+//            }
+//            indent++;
+//        } else if (node.IsToken(*this)) {
+//            traverseStack.pop();
+//        } else {
+//            traverseStack.pop();
+//            indent--;
+//        }
+//    }
+//    return debugView;
+    return "";
 }
 
 void LuaSyntaxTree::Reset() {
     _nodeOrTokens.clear();
     _tokens.clear();
-    _syntaxNodes.clear();
     _errors.clear();
 }
 

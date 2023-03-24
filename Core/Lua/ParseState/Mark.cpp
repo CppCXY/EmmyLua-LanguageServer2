@@ -54,13 +54,13 @@ CompleteMarker Marker::Undo(ParseState &p) {
 
 CompleteMarker Marker::Complete(ParseState &p) {
     auto &events = p.GetEvents();
-    if (Pos < events.size()) {
+    if (Pos < events.size() && events[Pos].U.Start.Kind != LuaSyntaxNodeKind::None) {
         auto finish = events.size();
         events.emplace_back(MarkEventType::NodeEnd);
 
         return CompleteMarker(Pos, finish, events[Pos].U.Start.Kind);
     }
-    return CompleteMarker(0, 0, LuaSyntaxNodeKind::None);
+    return CompleteMarker(Pos, 0, LuaSyntaxNodeKind::Complete);
 }
 
 CompleteMarker Marker::UnComplete(ParseState &p) {

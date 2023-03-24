@@ -1,13 +1,19 @@
 #pragma once
 
 #include "ExprSyntax.h"
+#include "Lua/Define/LuaOperatorType.h"
 
-class BinaryExprSyntax : public ExprSyntax {
+class BinaryExprSyntax : public LuaBaseSyntax {
 public:
-    BinaryExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::BinaryExpression;
+    }
 
-    LuaTokenKind BinaryOp = LuaTokenKind::TK_PLUS;
+    explicit BinaryExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class ExprSyntax *LeftExpr = nullptr;
-    class ExprSyntax *RightExpr = nullptr;
+    BinOpr GetBinaryOp(const LuaSyntaxTree &t) const;
+
+    ExprSyntax GetLeftExpr(const LuaSyntaxTree &t) const;
+
+    ExprSyntax GetRightExpr(const LuaSyntaxTree &t) const;
 };

@@ -1,10 +1,14 @@
 #pragma once
 
-#include "StmtSyntax.h"
+#include "BodySyntax.h"
 
-class DoStmtSyntax : public StmtSyntax {
+class DoStmtSyntax : public LuaBaseSyntax {
 public:
-    DoStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DoStatement;
+    }
 
-    class BodySyntax *Body = nullptr;
+    explicit DoStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    BodySyntax GetBody(const LuaSyntaxTree &t) const;
 };

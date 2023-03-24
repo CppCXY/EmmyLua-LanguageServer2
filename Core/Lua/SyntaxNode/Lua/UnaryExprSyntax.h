@@ -2,12 +2,15 @@
 
 #include "ExprSyntax.h"
 
-class UnaryExprSyntax : public ExprSyntax {
+class UnaryExprSyntax : public LuaBaseSyntax {
 public:
-    UnaryExprSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::UnaryExpression;
+    }
 
-    LuaTokenKind UnaryOp = LuaTokenKind::TK_NOT;
+    explicit UnaryExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class ExprSyntax * InnerExpr = nullptr;
+    //    LuaTokenKind UnaryOp = LuaTokenKind::TK_NOT;
+
+    ExprSyntax GetInnerExpr(const LuaSyntaxTree &t) const;
 };
-

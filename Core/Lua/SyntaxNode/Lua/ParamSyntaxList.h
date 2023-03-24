@@ -4,8 +4,12 @@
 
 class ParamSyntaxList : public LuaBaseSyntax {
 public:
-    ParamSyntaxList(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::ParamList;
+    }
 
-    std::vector<std::string_view> Params;
+    explicit ParamSyntaxList(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<std::string_view> GetParams(const LuaSyntaxTree& t) const;
 };
 

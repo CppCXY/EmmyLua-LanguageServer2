@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Lua/SyntaxNode/BaseSyntax.h"
+#include "Lua/SyntaxNode/LuaSyntaxNode.h"
 
 
-class DocBaseSyntax : public BaseSyntax {
+class DocBaseSyntax : public LuaSyntaxNode {
 public:
     DocBaseSyntax(LuaNodeOrToken n);
 };

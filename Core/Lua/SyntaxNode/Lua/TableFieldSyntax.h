@@ -1,13 +1,19 @@
 #pragma once
 
+#include "ExprSyntax.h"
 #include "LuaBaseSyntax.h"
 
 class TableFieldSyntax : public LuaBaseSyntax {
 public:
-    TableFieldSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::TableField;
+    }
 
-    bool IsKeyValue = false;
+    explicit TableFieldSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class ExprSyntax *Key = nullptr;
-    class ExprSyntax *Value = nullptr;
+    ExprSyntax GetIndexKey(const LuaSyntaxTree& t) const;
+
+    std::string_view GetStringKey(const LuaSyntaxTree& t) const;
+
+    ExprSyntax GetValueExpr(const LuaSyntaxTree& t) const;
 };

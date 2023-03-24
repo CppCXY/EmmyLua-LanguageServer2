@@ -1,10 +1,15 @@
 #pragma once
 
+#include "ExprSyntaxList.h"
 #include "StmtSyntax.h"
 
-class ReturnStmtSyntax : public StmtSyntax {
+class ReturnStmtSyntax : public LuaBaseSyntax {
 public:
-    ReturnStmtSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::ReturnStatement;
+    }
 
-    class ExprSyntaxList *ReturnExprList = nullptr;
+    explicit ReturnStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    ExprSyntaxList GetReturnExprList(const LuaSyntaxTree& t) const;
 };
