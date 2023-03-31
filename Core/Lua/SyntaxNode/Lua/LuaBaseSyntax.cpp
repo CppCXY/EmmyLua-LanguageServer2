@@ -7,6 +7,10 @@ bool LuaBaseSyntax::CanCast(LuaSyntaxNodeKind kind) {
 LuaBaseSyntax::LuaBaseSyntax(LuaNodeOrToken node) : LuaSyntaxNode(node) {
 }
 
-CommentSyntax LuaBaseSyntax::GetComment(const LuaSyntaxTree &t) {
+CommentSyntax LuaBaseSyntax::GetComment(const LuaSyntaxTree &t) const {
     return GetMember<CommentSyntax>(t);
+}
+
+std::vector<CommentSyntax> LuaBaseSyntax::GetComments(const LuaSyntaxTree &t) const {
+    return GetMembers<CommentSyntax>(t);
 }

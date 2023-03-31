@@ -12,6 +12,4 @@ public:
     explicit BodySyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
     std::vector<StmtSyntax> GetStmts(const LuaSyntaxTree& t);
-
-    std::vector<CommentSyntax> GetComments(const LuaSyntaxTree& t);
 };

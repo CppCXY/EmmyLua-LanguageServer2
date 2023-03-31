@@ -11,6 +11,7 @@
 #include "ExprSyntax.h"
 #include "ExprSyntaxList.h"
 #include "ForNumberStmtSyntax.h"
+#include "ForRangeStmtSyntax.h"
 #include "FuncNameExprSyntax.h"
 #include "FuncStmtSyntax.h"
 #include "GotoStmtSyntax.h"

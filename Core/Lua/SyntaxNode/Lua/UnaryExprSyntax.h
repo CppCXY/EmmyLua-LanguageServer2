@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ExprSyntax.h"
+#include "Lua/Define/LuaOperatorType.h"
 
 class UnaryExprSyntax : public LuaBaseSyntax {
 public:
@@ -10,7 +11,7 @@ public:
 
     explicit UnaryExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    //    LuaTokenKind UnaryOp = LuaTokenKind::TK_NOT;
+    UnOpr GetUnaryOp(const LuaSyntaxTree& t) const;
 
     ExprSyntax GetInnerExpr(const LuaSyntaxTree &t) const;
 };

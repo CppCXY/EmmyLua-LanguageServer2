@@ -17,5 +17,8 @@ LuaSyntaxNodeKind LuaSyntaxNode::GetKind(const LuaSyntaxTree &t) const {
 }
 
 void LuaSyntaxNode::Accept(LuaVisitor &visitor, const LuaSyntaxTree &t) {
-    visitor.Visit(this, t);
+    this.Descendants()
+        .Visit<BodySYntax>([](auto b, auto& t) {
+
+            });
 }

@@ -13,10 +13,6 @@ class LuaSource;
 
 class LuaParser {
 public:
-    static UnOpr GetUnaryOperator(LuaTokenKind op);
-
-    static BinOpr GetBinaryOperator(LuaTokenKind op);
-
     LuaParser(const LuaSource *source, std::vector<LuaToken> &&tokens);
 
     bool Parse();

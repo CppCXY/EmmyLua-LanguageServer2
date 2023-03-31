@@ -22,6 +22,7 @@ target_sources(Core
 
         # define
         Define/LuaIdentify.cpp
+        Define/LuaOperatorType.cpp
 
         # node
         SyntaxNode/LuaSyntaxNode.cpp
@@ -78,6 +79,7 @@ target_sources(Core
         SyntaxNode/Lua/WhileStmtSyntax.cpp
         SyntaxNode/Lua/DoStmtSyntax.cpp
         SyntaxNode/Lua/ForNumberStmtSyntax.cpp
+        SyntaxNode/Lua/ForRangeStmtSyntax.cpp
         SyntaxNode/Lua/RepeatStmtSyntax.cpp
         SyntaxNode/Lua/FuncStmtSyntax.cpp
         SyntaxNode/Lua/FuncNameExprSyntax.cpp

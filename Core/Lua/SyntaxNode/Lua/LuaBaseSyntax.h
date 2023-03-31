@@ -9,5 +9,7 @@ public:
 
     explicit LuaBaseSyntax(LuaNodeOrToken node = LuaNodeOrToken());
 
-    CommentSyntax GetComment(const LuaSyntaxTree &t);
+    CommentSyntax GetComment(const LuaSyntaxTree &t) const;
+
+    std::vector<CommentSyntax> GetComments(const LuaSyntaxTree &t) const;
 };
