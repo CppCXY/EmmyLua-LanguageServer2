@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Lua/SyntaxNode/Visitor/LuaVisitor.h"
 #include "Lua/SyntaxTree/LuaNodeOrToken.h"
 
 class LuaSyntaxNode {

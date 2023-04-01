@@ -463,7 +463,15 @@ CompleteMarker LuaDocParser::DocDiagnostic() {
 CompleteMarker LuaDocParser::NormalComment() {
     auto m = _p.Mark();
 
+    if (Current() == TK_DASHES) {
+        Next();
+    }
+
     if (Current() == TK_COMMENT_CONTENT) {
+        Next();
+    }
+
+    if (Current() == TK_REST) {
         Next();
     }
 

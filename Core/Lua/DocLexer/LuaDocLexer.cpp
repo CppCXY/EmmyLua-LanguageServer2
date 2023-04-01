@@ -5,24 +5,24 @@
 using enum LuaTokenKind;
 
 std::map<std::string, LuaTokenKind, std::less<>> LuaDocLexer::LuaTag = {
-        {"class", TK_TAG_CLASS},
-        {"enum", TK_TAG_ENUM},
-        {"interface", TK_TAG_INTERFACE},
-        {"field", TK_TAG_FIELD},
-        {"generic", TK_TAG_GENERIC},
-        {"type", TK_TAG_TYPE},
-        {"param", TK_TAG_PARAM},
-        {"alias", TK_TAG_ALIAS},
-        {"private", TK_TAG_PRIVATE},
-        {"public", TK_TAG_PUBLIC},
-        {"protected", TK_TAG_PROTECTED},
-        {"overload", TK_TAG_OVERLOAD},
-        {"override", TK_TAG_OVERRIDE},
-        {"language", TK_TAG_LANGUAGE},
-        {"deprecated", TK_TAG_DEPRECATED},
-        {"since", TK_TAG_SINCE},
-        {"version", TK_TAG_VERSION},
-        {"diagnostic", TK_TAG_DIAGNOSTIC}};
+    {"class", TK_TAG_CLASS},
+    {"enum", TK_TAG_ENUM},
+    {"interface", TK_TAG_INTERFACE},
+    {"field", TK_TAG_FIELD},
+    {"generic", TK_TAG_GENERIC},
+    {"type", TK_TAG_TYPE},
+    {"param", TK_TAG_PARAM},
+    {"alias", TK_TAG_ALIAS},
+    {"private", TK_TAG_PRIVATE},
+    {"public", TK_TAG_PUBLIC},
+    {"protected", TK_TAG_PROTECTED},
+    {"overload", TK_TAG_OVERLOAD},
+    {"override", TK_TAG_OVERRIDE},
+    {"language", TK_TAG_LANGUAGE},
+    {"deprecated", TK_TAG_DEPRECATED},
+    {"since", TK_TAG_SINCE},
+    {"version", TK_TAG_VERSION},
+    {"diagnostic", TK_TAG_DIAGNOSTIC}};
 
 LuaDocLexer::LuaDocLexer(std::string_view source, std::size_t offset)
     : _reader(source, offset),
@@ -120,7 +120,7 @@ LuaTokenKind LuaDocLexer::ReadInit() {
             if (count == 3) {
                 return TK_DASH_DASH_DASH;
             } else {
-                ChangeState(State::ReadComment);
+                ChangeState(State::ReadRest);
                 return TK_DASHES;
             }
         }

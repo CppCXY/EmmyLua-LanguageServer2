@@ -61,14 +61,14 @@ struct LuaVisitor {
             traverseStack.pop();
 
             for_each_tuple_break(
-                    [n, &t](auto &visitor) {
-                        if (visitor.CanCast(n.GetSyntaxKind(t))) {
-                            visitor(n, t);
-                            return true;
-                        }
-                        return false;
-                    },
-                    _tupleVisitor);
+                [n, &t](auto &visitor) {
+                    if (visitor.CanCast(n.GetSyntaxKind(t))) {
+                        visitor(n, t);
+                        return true;
+                    }
+                    return false;
+                },
+                _tupleVisitor);
 
             if (n.IsNode(t)) {
                 auto children = n.GetChildren(t);
