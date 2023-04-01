@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lua/SyntaxNode/Visitor/LuaVisitor.h"
 #include "Lua/SyntaxTree/LuaNodeOrToken.h"
 
 class LuaSyntaxNode {
@@ -50,7 +51,10 @@ public:
         return result;
     }
 
-    void Accept(class LuaVisitor &visitor, const LuaSyntaxTree &t);
+    template<class Visitor>
+    void Accept(const Visitor &visitor, const LuaSyntaxTree &t) {
+        visitor.Visit(_node, t);
+    }
 
 protected:
     LuaNodeOrToken _node;

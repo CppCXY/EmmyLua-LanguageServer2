@@ -15,10 +15,3 @@ LuaSyntaxNode::~LuaSyntaxNode() {
 LuaSyntaxNodeKind LuaSyntaxNode::GetKind(const LuaSyntaxTree &t) const {
     return _node.GetSyntaxKind(t);
 }
-
-void LuaSyntaxNode::Accept(LuaVisitor &visitor, const LuaSyntaxTree &t) {
-    this.Descendants()
-        .Visit<BodySYntax>([](auto b, auto& t) {
-
-            });
-}

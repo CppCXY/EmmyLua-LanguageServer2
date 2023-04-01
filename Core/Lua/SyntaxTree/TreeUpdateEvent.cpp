@@ -1,7 +1,7 @@
 #include "TreeUpdateEvent.h"
 #include "Lua/Kind/LuaTokenKind.h"
 #include "Lua/LuaLexer/LuaLexer.h"
-#include "LuaSyntaxTree.h"
+#include "LuaNodeOrToken.h"
 
 using enum LuaTokenKind;
 

@@ -10,14 +10,14 @@ class ForRangeStmtSyntax : public LuaBaseSyntax {
 
     explicit ForRangeStmtSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    std::vector<std::string_view> GetIterNames(const LuaSyntaxTree& t);
-
-    bool IsIpairs(const LuaSyntaxTree& t) const;
-
-    bool IsPairs(const LuaSyntaxTree& t) const;
-
-    ExprSyntaxList GetExprList(const LuaSyntaxTree& t);
-
-    BodySyntax GetBody(const LuaSyntaxTree& t);
+//    std::vector<std::string_view> GetIterNames(const LuaSyntaxTree& t) const;
+//
+//    bool IsIpairs(const LuaSyntaxTree& t) const;
+//
+//    bool IsPairs(const LuaSyntaxTree& t) const;
+//
+//    ExprSyntaxList GetExprList(const LuaSyntaxTree& t) const;
+//
+//    BodySyntax GetBody(const LuaSyntaxTree& t) const;
 };
 

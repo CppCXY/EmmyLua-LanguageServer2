@@ -1,6 +1,4 @@
 ﻿#include "LuaNodeOrToken.h"
-#include "Lua/Source/LuaSource.h"
-#include "Lua/SyntaxTree/LuaSyntaxTree.h"
 
 LuaNodeOrToken::LuaNodeOrToken(std::size_t index)
     : _index(index) {

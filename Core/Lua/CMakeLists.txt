@@ -102,8 +102,7 @@ target_sources(Core
         SyntaxNode/Lua/TableFieldSyntax.cpp
         SyntaxNode/Lua/IndexExprSyntax.cpp
         SyntaxNode/Lua/CallExprSyntax.cpp
-
-        SyntaxNode/Visitor/LuaVisitor.cpp
+        
 
         # kind
         Kind/LuaSyntaxMultiKind.cpp

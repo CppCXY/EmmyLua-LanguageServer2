@@ -11,5 +11,5 @@ public:
 
     explicit StringLiteralExprSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    std::string_view GetContent(const LuaSyntaxTree& t) const;
+//    std::string_view GetContent(const LuaSyntaxTree& t) const;
 };

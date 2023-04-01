@@ -256,8 +256,6 @@ void LuaTreeBuilder::FinishNode(LuaSyntaxTree &t, LuaParser &p) {
         if (node.Type == NodeOrTokenType::Node) {
             auto edge = BindRightComment(node.Data.Node.Kind, t, p);
             EatTriviaByCount(edge, t, p);
-
-            BuildSyntax(LuaNodeOrToken(nodePos), t);
         }
 
         _nodePosStack.pop();
