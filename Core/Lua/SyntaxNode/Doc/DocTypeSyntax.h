@@ -1,10 +1,15 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
+#include "TypeSyntaxList.h"
 
 class DocTypeSyntax : public DocBaseSyntax {
 public:
-    DocTypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocType;
+    }
 
-    class TypeSyntaxList* TypeList = nullptr;
+    explicit DocTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    TypeSyntaxList GetTypeList(const LuaSyntaxTree &t) const;
 };

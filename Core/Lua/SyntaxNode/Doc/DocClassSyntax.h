@@ -1,13 +1,20 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
+#include "GenericDefListSyntax.h"
+#include "TypeSyntaxList.h"
 
 class DocClassSyntax : public DocBaseSyntax {
 public:
-    DocClassSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocClass;
+    }
 
-    std::string_view Name;
+    explicit DocClassSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class GenericDefListSyntax *GenericDefList = nullptr;
-    class TypeSyntaxList *ExtendTypeList = nullptr;
+    std::string_view GetName(const LuaSyntaxTree &t) const;
+
+    GenericDefListSyntax GetGenericDefList(const LuaSyntaxTree &t) const;
+
+    TypeSyntaxList GetExtendTypeList(const LuaSyntaxTree &t) const;
 };

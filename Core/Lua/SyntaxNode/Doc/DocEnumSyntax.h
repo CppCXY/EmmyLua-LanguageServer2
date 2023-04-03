@@ -1,14 +1,20 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
+#include "EnumFieldSyntax.h"
+#include "TypeSyntax.h"
 
 class DocEnumSyntax : public DocBaseSyntax {
 public:
-    DocEnumSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocEnum;
+    }
 
-    std::string_view Name;
+    explicit DocEnumSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class TypeSyntax *SuperType = nullptr;
+    std::string_view GetName(const LuaSyntaxTree& t) const;
 
-    std::vector<class EnumFieldSyntax *> Fields;
+    TypeSyntax GetBaseType(const LuaSyntaxTree& t) const;
+
+    std::vector<EnumFieldSyntax> GetFields(const LuaSyntaxTree& t) const;
 };

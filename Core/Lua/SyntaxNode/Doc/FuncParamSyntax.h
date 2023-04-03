@@ -4,8 +4,11 @@
 
 class FuncParamSyntax : public DocBaseSyntax {
 public:
-    FuncParamSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::FunctionParam;
+    }
 
-    std::string_view Name;
-    class TypeSyntax *Type = nullptr;
+    explicit FuncParamSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetName(const LuaSyntaxTree& t) const;
 };

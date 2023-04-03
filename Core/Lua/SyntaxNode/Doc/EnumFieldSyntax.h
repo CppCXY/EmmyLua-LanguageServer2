@@ -4,8 +4,14 @@
 
 class EnumFieldSyntax : public DocBaseSyntax {
 public:
-    EnumFieldSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::EnumField;
+    }
 
-    std::string_view Name;
+    explicit EnumFieldSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetName(const LuaSyntaxTree& t) const;
+
+
 };
 

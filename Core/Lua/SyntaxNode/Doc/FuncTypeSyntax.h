@@ -1,12 +1,17 @@
 #pragma once
 
+#include "FuncParamSyntaxList.h"
 #include "TypeSyntax.h"
 
 class FuncTypeSyntax : public TypeSyntax {
 public:
-    FuncTypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::FunctionType;
+    }
 
-    class FuncParamTypeList *FuncParamTypeList = nullptr;
+    explicit FuncTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class TypeSyntax* ReturnType = nullptr;
+    FuncParamSyntaxList GetFuncParamTypeList(const LuaSyntaxTree& t) const;
+
+    TypeSyntax GetReturnType(const LuaSyntaxTree& t) const;
 };

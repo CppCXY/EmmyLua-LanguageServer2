@@ -4,7 +4,7 @@
 
 class TypeSyntax : public DocBaseSyntax {
 public:
-    TypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind);
 
-
+    explicit TypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 };

@@ -4,7 +4,11 @@
 
 class DocSinceSyntax : public DocBaseSyntax {
 public:
-    DocSinceSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocSince;
+    }
 
-    std::string_view Content;
+    explicit DocSinceSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetContent(const LuaSyntaxTree& t) const;
 };

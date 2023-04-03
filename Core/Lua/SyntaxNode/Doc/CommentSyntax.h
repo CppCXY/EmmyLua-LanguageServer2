@@ -1,8 +1,13 @@
-#include "Lua/SyntaxNode/LuaSyntaxNode.h"
+#include "DocBaseSyntax.h"
+#include "DocTagSyntax.h"
 
-class CommentSyntax : public LuaSyntaxNode {
+class CommentSyntax : public DocBaseSyntax {
 public:
-    CommentSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::Comment;
+    }
 
+    explicit CommentSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
+    std::vector<DocTagSyntax> GetTags(const LuaSyntaxTree &t) const;
 };

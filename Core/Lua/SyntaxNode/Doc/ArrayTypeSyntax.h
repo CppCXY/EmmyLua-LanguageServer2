@@ -2,9 +2,13 @@
 
 #include "TypeSyntax.h"
 
-class ArrayTypeSyntax : public TypeSyntax {
+class ArrayTypeSyntax : public DocBaseSyntax {
 public:
-    ArrayTypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::ArrayType;
+    }
 
-    class TypeSyntax* Type = nullptr;
+    explicit ArrayTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    TypeSyntax GetBaseType(const LuaSyntaxTree& t) const;
 };

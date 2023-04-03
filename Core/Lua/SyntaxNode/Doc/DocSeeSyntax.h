@@ -4,8 +4,11 @@
 
 class DocSeeSyntax : public DocBaseSyntax {
 public:
-    DocSeeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocSee;
+    }
 
-    std::string_view Content;
+    explicit DocSeeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetContent(const LuaSyntaxTree& t) const;
 };
-

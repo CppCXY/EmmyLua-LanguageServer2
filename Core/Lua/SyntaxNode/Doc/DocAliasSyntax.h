@@ -1,12 +1,17 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
+#include "TypeSyntax.h"
 
 class DocAliasSyntax : public DocBaseSyntax {
 public:
-    DocAliasSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocAlias;
+    }
 
-    std::string_view Name;
+    explicit DocAliasSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class TypeSyntax *Type = nullptr;
+    std::string_view GetName(const LuaSyntaxTree &t) const;
+
+    TypeSyntax GetType(const LuaSyntaxTree &t) const;
 };

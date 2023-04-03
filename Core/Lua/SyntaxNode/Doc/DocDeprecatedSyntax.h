@@ -4,6 +4,10 @@
 
 class DocDeprecatedSyntax : public DocBaseSyntax {
 public:
-    DocDeprecatedSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocDeprecated;
+    }
+
+    explicit DocDeprecatedSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
 };

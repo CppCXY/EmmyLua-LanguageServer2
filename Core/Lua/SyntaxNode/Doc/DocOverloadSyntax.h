@@ -1,10 +1,15 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
+#include "FuncTypeSyntax.h"
 
-class DocOverloadSyntax : public DocBaseSyntax{
+class DocOverloadSyntax : public DocBaseSyntax {
 public:
-    DocOverloadSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocOverload;
+    }
 
-    class FuncTypeSyntax * OverloadFunc = nullptr;
+    explicit DocOverloadSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    FuncTypeSyntax GetOverloadFunc(const LuaSyntaxTree& t) const;
 };

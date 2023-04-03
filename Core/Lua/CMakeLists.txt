@@ -30,6 +30,7 @@ target_sources(Core
 
         # node/doc
         SyntaxNode/Doc/CommentSyntax.cpp
+        SyntaxNode/Doc/DocTagSyntax.cpp
         SyntaxNode/Doc/DocBaseSyntax.cpp
         SyntaxNode/Doc/DocClassSyntax.cpp
         SyntaxNode/Doc/GenericDefListSyntax.cpp

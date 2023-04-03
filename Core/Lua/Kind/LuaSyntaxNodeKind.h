@@ -92,9 +92,9 @@ enum class LuaSyntaxNodeKind : int {
 
     Error,
 
+    // emmylua doc
     Comment,
 
-    // emmylua doc
     DocClass,
 
     DocInterface,
@@ -108,6 +108,8 @@ enum class LuaSyntaxNodeKind : int {
     DocField,
 
     DocParam,
+
+    DocReturn,
 
     DocGeneric,
 
@@ -331,6 +333,8 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "EnumField";
         case LuaSyntaxNodeKind::NormalComment:
             return "NormalComment";
+        case LuaSyntaxNodeKind::Complete:
+            return "Complete";
     }
     return "Unknown";
 }

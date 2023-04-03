@@ -81,3 +81,33 @@ bool detail::multi_match::TypeMatch(LuaSyntaxNodeKind k) {
         }
     }
 }
+
+bool detail::multi_match::DocTagMatch(LuaSyntaxNodeKind k) {
+    switch (k) {
+        case LuaSyntaxNodeKind::DocClass:
+        case LuaSyntaxNodeKind::DocInterface:
+        case LuaSyntaxNodeKind::DocEnum:
+        case LuaSyntaxNodeKind::DocAlias:
+        case LuaSyntaxNodeKind::DocGeneric:
+        case LuaSyntaxNodeKind::DocSee:
+
+        case LuaSyntaxNodeKind::DocSince:
+        case LuaSyntaxNodeKind::DocType:
+        case LuaSyntaxNodeKind::DocParam:
+        case LuaSyntaxNodeKind::DocReturn:
+        case LuaSyntaxNodeKind::DocField:
+
+        case LuaSyntaxNodeKind::DocPublic:
+        case LuaSyntaxNodeKind::DocProtected:
+        case LuaSyntaxNodeKind::DocPrivate:
+        case LuaSyntaxNodeKind::DocOverride:
+
+        case LuaSyntaxNodeKind::DocOverload:
+        case LuaSyntaxNodeKind::DocDiagnostic: {
+            return true;
+        }
+        default: {
+            return false;
+        }
+    }
+}

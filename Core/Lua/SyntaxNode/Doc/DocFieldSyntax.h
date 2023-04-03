@@ -1,19 +1,25 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
+#include "FieldIndexSyntax.h"
 #include "Lua/Define/AccessVisibility.h"
+#include "TypeSyntax.h"
 
 class DocFieldSyntax : public DocBaseSyntax {
 public:
-    DocFieldSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocField;
+    }
 
-    AccessVisibility Visibility = AccessVisibility::Public;
+    explicit DocFieldSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    bool Nullable = false;
+    AccessVisibility GetVisibility(const LuaSyntaxTree& t) const;
 
-    std::string_view Name;
+    bool IsNullable(const LuaSyntaxTree& t) const;
 
-    class FieldIndexSyntax *Index = nullptr;
+    std::string_view GetName(const LuaSyntaxTree& t) const;
 
-    class TypeSyntax *Type = nullptr;
+    FieldIndexSyntax GetIndex(const LuaSyntaxTree& t) const;
+
+    TypeSyntax GetType(const LuaSyntaxTree& t) const;
 };

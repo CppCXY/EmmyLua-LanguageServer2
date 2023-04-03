@@ -4,7 +4,9 @@
 
 class FieldIndexSyntax : public DocBaseSyntax {
 public:
-    FieldIndexSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::FieldIndex;
+    }
 
-    LuaNodeOrToken Index;
+    explicit FieldIndexSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 };

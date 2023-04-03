@@ -1,14 +1,19 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
+#include "TypeSyntax.h"
 
 class DocParamSyntax : public DocBaseSyntax {
 public:
-    DocParamSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocParam;
+    }
 
-    std::string_view Name;
+    explicit DocParamSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    bool Nullable = false;
+    std::string_view GetName(const LuaSyntaxTree& t) const;
 
-    class TypeSyntax *Type = nullptr;
+    bool IsNullable(const LuaSyntaxTree& t) const;
+
+    TypeSyntax GetType(const LuaSyntaxTree& t) const;
 };

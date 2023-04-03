@@ -4,5 +4,9 @@
 
 class DocOverrideSyntax : public DocBaseSyntax {
 public:
-    DocOverrideSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::DocOverride;
+    }
+
+    explicit DocOverrideSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 };

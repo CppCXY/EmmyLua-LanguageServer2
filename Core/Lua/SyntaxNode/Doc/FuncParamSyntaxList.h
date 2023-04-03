@@ -1,11 +1,15 @@
 #pragma once
 
 #include "DocBaseSyntax.h"
+#include "FuncParamSyntax.h"
 
 class FuncParamSyntaxList : public DocBaseSyntax {
 public:
-    FuncParamSyntaxList(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::FunctionTypeParamTypeList;
+    }
 
-    std::vector<class FuncParamSyntax*> FuncParams;
+    explicit FuncParamSyntaxList(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<FuncParamSyntax> GetFuncParams(const LuaSyntaxTree& t) const;
 };
-
