@@ -2,9 +2,13 @@
 
 #include "TypeSyntax.h"
 
-class IdTypeSyntax : public TypeSyntax {
+class IdTypeSyntax : public DocBaseSyntax {
 public:
-    IdTypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::IdType;
+    }
 
-    std::string_view Id;
+    explicit IdTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetName(const LuaSyntaxTree& t) const;
 };

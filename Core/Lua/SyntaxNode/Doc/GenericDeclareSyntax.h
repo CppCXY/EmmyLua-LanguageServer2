@@ -4,6 +4,11 @@
 
 class GenericDeclareSyntax : public DocBaseSyntax {
 public:
-    GenericDeclareSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::GenericDeclare;
+    }
+
+    explicit GenericDeclareSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
 
 };

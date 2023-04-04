@@ -1,9 +1,14 @@
 #pragma once
 
-#include "TypeSyntax.h"
+#include "DocBaseSyntax.h"
 
-class StringTypeSyntax : public TypeSyntax {
+class StringTypeSyntax : public DocBaseSyntax {
 public:
-    StringTypeSyntax(LuaNodeOrToken n);
-    std::string_view InnerText;
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::StringType;
+    }
+
+    explicit StringTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::string_view GetStringText(const LuaSyntaxTree& t) const;
 };

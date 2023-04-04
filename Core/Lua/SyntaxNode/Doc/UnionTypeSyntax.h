@@ -4,8 +4,11 @@
 
 class UnionTypeSyntax : public TypeSyntax {
 public:
-    UnionTypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::UnionType;
+    }
 
-    class TypeSyntax *Left = nullptr;
-    class TypeSyntax *Right = nullptr;
+    explicit UnionTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<TypeSyntax> GetUnionTypes(const LuaSyntaxTree& t) const;
 };

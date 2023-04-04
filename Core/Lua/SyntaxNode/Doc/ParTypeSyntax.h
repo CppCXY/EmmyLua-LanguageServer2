@@ -2,9 +2,13 @@
 
 #include "TypeSyntax.h"
 
-class ParTypeSyntax : public TypeSyntax {
+class ParTypeSyntax : public DocBaseSyntax {
 public:
-    ParTypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::ParType;
+    }
 
-    class TypeSyntax *Inner = nullptr;
+    explicit ParTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    TypeSyntax GetInnerType(const LuaSyntaxTree& t) const;
 };

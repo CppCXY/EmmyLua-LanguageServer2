@@ -139,7 +139,7 @@ enum class LuaSyntaxNodeKind : int {
 
     TableType,
 
-    TableFieldType,
+    TableTypeField,
 
     ParType,
 
@@ -158,8 +158,6 @@ enum class LuaSyntaxNodeKind : int {
     ArrayType,
 
     GenericType,
-
-    GenericParamTypeList,
 
     GenericDeclare,
 
@@ -303,7 +301,7 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "TypeList";
         case LuaSyntaxNodeKind::TableType:
             return "TableType";
-        case LuaSyntaxNodeKind::TableFieldType:
+        case LuaSyntaxNodeKind::TableTypeField:
             return "TableFieldType";
         case LuaSyntaxNodeKind::ParType:
             return "ParType";
@@ -323,8 +321,6 @@ constexpr std::string_view GetSyntaxKindDebugName(LuaSyntaxNodeKind kind) {
             return "ArrayType";
         case LuaSyntaxNodeKind::GenericType:
             return "GenericType";
-        case LuaSyntaxNodeKind::GenericParamTypeList:
-            return "GenericParamTypeList";
         case LuaSyntaxNodeKind::GenericDeclare:
             return "GenericDeclare";
         case LuaSyntaxNodeKind::FieldIndex:

@@ -594,7 +594,7 @@ CompleteMarker LuaDocParser::PrimaryType() {
                     auto m = cm.Precede(_p);
                     m.PreComplete(_p, LuaSyntaxNodeKind::GenericType);
 
-                    TryAndNext(GenericParamTypeList());
+                    GenericParamTypeList();
 
                     cm = m.Complete(_p);
                 }
@@ -644,7 +644,7 @@ endLoop:
 // { aaaa: number, [1]: number, [string]: number }
 CompleteMarker LuaDocParser::TableFieldType() {
     auto m = _p.Mark();
-    m.PreComplete(_p, LuaSyntaxNodeKind::TableFieldType);
+    m.PreComplete(_p, LuaSyntaxNodeKind::TableTypeField);
 
     if (Current() == TK_NAME) {
         Next();
@@ -741,7 +741,6 @@ CompleteMarker LuaDocParser::ParType() {
 
 CompleteMarker LuaDocParser::GenericParamTypeList() {
     auto m = _p.Mark();
-    m.PreComplete(_p, LuaSyntaxNodeKind::GenericParamTypeList);
 
     CheckTokenAndNext(TK_LT);
 

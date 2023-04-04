@@ -1,10 +1,15 @@
 #pragma once
 
+#include "TableTypeFieldSyntax.h"
 #include "TypeSyntax.h"
 
-class TableTypeSyntax : public TypeSyntax {
+class TableTypeSyntax : public DocBaseSyntax {
 public:
-    TableTypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::TableType;
+    }
 
-    std::vector<class TableFieldTypeSyntax *> Fields;
+    explicit TableTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<TableTypeFieldSyntax> GetFields(const LuaSyntaxTree &t) const;
 };

@@ -2,10 +2,13 @@
 
 #include "DocBaseSyntax.h"
 
-class GenericDefListSyntax: public DocBaseSyntax {
+class GenericDefListSyntax : public DocBaseSyntax {
 public:
-    GenericDefListSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::GenericDefList;
+    }
 
-    std::vector<std::string_view> TypeNameList;
+    explicit GenericDefListSyntax(LuaNodeOrToken n = LuaNodeOrToken());
+
+    std::vector<std::string_view> GetDefNames(const LuaSyntaxTree &t) const;
 };
-

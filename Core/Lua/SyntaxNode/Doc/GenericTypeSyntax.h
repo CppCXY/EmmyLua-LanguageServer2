@@ -2,11 +2,15 @@
 
 #include "TypeSyntax.h"
 
-class GenericTypeSyntax : public TypeSyntax {
+class GenericTypeSyntax : public DocBaseSyntax {
 public:
-    GenericTypeSyntax(LuaNodeOrToken n);
+    static bool CanCast(LuaSyntaxNodeKind kind) {
+        return kind == LuaSyntaxNodeKind::GenericType;
+    }
 
-    std::string_view BaseName;
+    explicit GenericTypeSyntax(LuaNodeOrToken n = LuaNodeOrToken());
 
-    class GenericParamTypeSyntaxList *GenericList = nullptr;
+    std::string_view GetBaseName(const LuaSyntaxTree &t) const;
+
+    std::vector<TypeSyntax> GetTypeList(const LuaSyntaxTree &t) const;
 };

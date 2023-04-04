@@ -43,7 +43,6 @@ target_sources(Core
         SyntaxNode/Doc/FuncParamSyntax.cpp
         SyntaxNode/Doc/ParTypeSyntax.cpp
         SyntaxNode/Doc/GenericTypeSyntax.cpp
-        SyntaxNode/Doc/GenericParamTypeSyntaxList.cpp
         SyntaxNode/Doc/UnionTypeSyntax.cpp
         SyntaxNode/Doc/ArrayTypeSyntax.cpp
         SyntaxNode/Doc/TableTypeSyntax.cpp
@@ -103,7 +102,9 @@ target_sources(Core
         SyntaxNode/Lua/TableFieldSyntax.cpp
         SyntaxNode/Lua/IndexExprSyntax.cpp
         SyntaxNode/Lua/CallExprSyntax.cpp
-        
+
+        # iterator
+        SyntaxNode/Iterator/SyntaxNodeIterator.cpp
 
         # kind
         Kind/LuaSyntaxMultiKind.cpp
