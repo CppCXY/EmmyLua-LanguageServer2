@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 project(Core)
 
-add_library(Core STATIC "")
+add_library(Core STATIC "" Compilation/Symbol/SymbolAnalyze.cpp Compilation/Symbol/SymbolAnalyze.h)
 
 target_include_directories(Core
         PUBLIC

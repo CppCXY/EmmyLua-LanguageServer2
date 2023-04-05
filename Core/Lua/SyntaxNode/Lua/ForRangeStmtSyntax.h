@@ -4,6 +4,7 @@
 #include "ExprSyntax.h"
 
 class ForRangeStmtSyntax : public LuaBaseSyntax {
+public:
     static bool CanCast(LuaSyntaxNodeKind kind) {
         return kind == LuaSyntaxNodeKind::ForRangeStatement;
     }

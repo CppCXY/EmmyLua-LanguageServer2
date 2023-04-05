@@ -7,6 +7,9 @@ LuaWorkspace::LuaWorkspace()
     : _idCounter(0) {
 }
 
+void LuaWorkspace::LoadWorkspace(std::string_view workspace, const std::function<void(std::string_view, bool)> &callback) {
+}
+
 void LuaWorkspace::AddDocument(LuaDocument::DocumentId id, std::string &&text) {
     auto ptr = std::make_unique<LuaDocument>(id);
     ptr->Initialize(std::move(text));
@@ -39,7 +42,7 @@ void LuaWorkspace::UpdateDocument(LuaDocument::DocumentId id, const lsp::Range &
     }
 
     auto tree = doc->GetSyntaxTree();
-    auto& source = tree->GetSource();
+    auto &source = tree->GetSource();
     auto fileUpdateEvent = SourceUpdateEvent::From(source.GetLineIndex(), range, std::move(text));
     auto treeUpdateEvent = TreeUpdateEvent::From(fileUpdateEvent, *tree);
 

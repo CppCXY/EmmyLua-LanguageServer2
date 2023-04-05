@@ -9,7 +9,6 @@ public:
     }
 
     explicit LuaSyntaxNode(LuaNodeOrToken n);
-    virtual ~LuaSyntaxNode();
 
     LuaNodeOrToken GetNode() const;
 

@@ -60,15 +60,26 @@ struct LuaVisitor {
             LuaNodeOrToken n = traverseStack.top();
             traverseStack.pop();
 
-            for_each_tuple_break(
-                [n, &t](auto &visitor) {
-                    if (visitor.CanCast(n.GetSyntaxKind(t))) {
+//            for_each_tuple_break(
+//                [n, &t](auto &visitor) {
+//                    if (visitor.CanCast(n.GetSyntaxKind(t))) {
+//                        visitor(n, t);
+//                        return true;
+//                    }
+//                    return false;
+//                },
+//                _tupleVisitor);
+
+            std::apply([n, &t](auto&&... visitor) {
+                bool stop = false;
+                ([&]() {
+                    if (!stop && visitor.CanCast(n.GetSyntaxKind(t))) {
+                        stop = true;
                         visitor(n, t);
-                        return true;
                     }
-                    return false;
-                },
-                _tupleVisitor);
+                }(),
+                 ...);
+            }, _tupleVisitor);
 
             if (n.IsNode(t)) {
                 auto children = n.GetChildren(t);
