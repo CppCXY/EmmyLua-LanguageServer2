@@ -12,4 +12,6 @@ public:
     explicit NameDefSyntaxList(LuaNodeOrToken n = LuaNodeOrToken());
 
     std::vector<NameDefSyntax> GetList(const LuaSyntaxTree &t) const;
+
+    std::vector<std::string_view> GetNames(const LuaSyntaxTree& t) const;
 };

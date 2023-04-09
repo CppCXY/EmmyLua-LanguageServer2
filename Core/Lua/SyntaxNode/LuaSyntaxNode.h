@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Iterator/SyntaxNodeIterator.h"
 #include "Lua/SyntaxTree/LuaNodeOrToken.h"
 
 class LuaSyntaxNode {
@@ -53,6 +54,20 @@ public:
     void Accept(const Visitor &visitor, const LuaSyntaxTree &t) {
         visitor.Visit(_node, t);
     }
+
+    template<class Visitor>
+    void AcceptChildren(const Visitor &visitor, const LuaSyntaxTree &t) {
+        visitor.VisitChildren(_node, t);
+    }
+
+    template<class Visitor>
+    void AcceptSelfAndChildren(const Visitor &visitor, const LuaSyntaxTree &t) {
+        visitor.VisitSelfAndChildren(_node, t);
+    }
+
+//    auto Iter() const {
+//        return SyntaxNodeFilterIterator(SyntaxNodeIterator(_node), [](auto n) { return true; });
+//    }
 
 protected:
     LuaNodeOrToken _node;

@@ -2,6 +2,9 @@ target_sources(Core
         PRIVATE
         Compilation.cpp
         SemanticModel/SemanticModel.cpp
-        Symbol/SymbolAnalyze.cpp
-
+        Symbol/SymbolAnalyzer.cpp
+        Symbol/SymbolAnalyzer.cpp
+        Symbol/Symbols.cpp
+        Symbol/SymbolTable.cpp
+        Symbol/Scope.cpp
         )

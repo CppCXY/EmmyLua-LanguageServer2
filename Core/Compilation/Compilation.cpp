@@ -1,20 +1,22 @@
 #include "Compilation.h"
+#include "Compilation/Symbol/SymbolAnalyzer.h"
 
 Compilation::Compilation()
     : _idCounter(0) {
 }
 
-Compilation::TreeId Compilation::AddSyntaxTree(const LuaSyntaxTree &t) {
-
+Compilation::CompilationUnitId Compilation::AddSyntaxTree(const LuaSyntaxTree &t) {
+    SymbolAnalyzer symbolAnalyzer;
+    symbolAnalyzer.AnalyzeSymbol(t);
 }
 
-void Compilation::RemoveSyntaxTree(Compilation::TreeId treeId) {
+void Compilation::RemoveSyntaxTree(Compilation::CompilationUnitId id) {
 }
 
-SemanticModel Compilation::GetSemanticModel(Compilation::TreeId treeId) {
+SemanticModel Compilation::GetSemanticModel(Compilation::CompilationUnitId id) {
     return SemanticModel(this);
 }
 
-Compilation::TreeId Compilation::AllocId() {
+Compilation::CompilationUnitId Compilation::AllocId() {
     return _idCounter++;
 }

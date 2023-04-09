@@ -1,22 +1,24 @@
 #pragma once
 
 #include "Compilation/SemanticModel/SemanticModel.h"
+#include "Compilation/Symbol/SymbolTable.h"
 #include "Lua/SyntaxTree/LuaSyntaxTree.h"
 
 class Compilation {
 public:
-    using TreeId = std::size_t;
+    using CompilationUnitId = std::size_t;
 
     Compilation();
 
-    TreeId AddSyntaxTree(const LuaSyntaxTree &t);
+    CompilationUnitId AddSyntaxTree(const LuaSyntaxTree &t);
 
-    void RemoveSyntaxTree(TreeId treeId);
+    void RemoveSyntaxTree(CompilationUnitId id);
 
-    SemanticModel GetSemanticModel(TreeId treeId);
+    SemanticModel GetSemanticModel(CompilationUnitId id);
 
 private:
-    TreeId AllocId();
+    CompilationUnitId AllocId();
 
-    TreeId _idCounter;
+    CompilationUnitId _idCounter;
+    std::unordered_map<CompilationUnitId, SymbolTable> _symbolTables;
 };

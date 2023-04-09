@@ -12,14 +12,6 @@
 #include <fstream>
 #include <iostream>
 
-template<class F>
-double benchmark(F func) {
-    auto start = std::chrono::steady_clock::now();
-    func();
-    auto end = std::chrono::steady_clock::now();
-    return std::chrono::duration<double>(end - start).count();
-}
-
 int main() {
     std::string s = R"(
 local t = 123
@@ -29,6 +21,7 @@ local t = 123
 
     auto r = t->GetRootNode();
     LuaSyntaxNode root(r);
+//    root.Iter().Filter(LuaSyntaxNodeKind::Body);
 
     return 0;
 }
